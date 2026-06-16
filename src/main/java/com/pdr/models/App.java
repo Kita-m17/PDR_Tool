@@ -33,5 +33,7 @@ public class App{
 
         SimpleCReasoner reasoner = new SimpleCReasoner();
 
+        System.out.println("Does the belief set entail that penguins fly? " + reasoner.query(beliefSet, f));
+
     }
 }
