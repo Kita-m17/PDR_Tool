@@ -1,59 +1,60 @@
 /*
+ * File: Symbols.java
+ * Package: com.pdr.utils
+ *
  * Original Author: Thabo Vincent Moloi (2024 Honours Project, University of Cape Town)
- * Status: Extended and modified for use in this project.
- * Context: Used as part of the PDR project
- * Purpose: Educational use - Provides a centralized class for defining and managing logical symbols used in the project.
+ * Adapted by: Julia Cotterrell (2025 Honours Project, University of Cape Town)
+ * Modified by Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Changes: Updated package to com.pdr.utils, changed defeasible implication symbol from ~> to ~|, and ensured the class is final with a private constructor to prevent instantiation.
+ * Purpose: Educational use only.
  */
-
 package com.pdr.utils;
 
 public final class Symbols {
 
-    /**
-        * Get the string representation of the implication symbol.
-        * @return
-    */
-    public static String IMPLICATION() {
-        return "->";
-    }
+  private Symbols() {
+    // Private constructor to prevent instantiation
+  }
 
-    /**
-        * Get the string representation of the disjunction symbol.
-        * @return
-    */
-    public static String DISJUNCTION() {
-        return "||";
-    }
+  /** 
+   * @return String
+   */
+  public static String IMPLICATION() {
+    return "=>";
+  }
 
-    /**
-        * Get the string representation of the conjunction symbol.
-        * @return
-    */
-    public static String CONJUNCTION() {
-        return "&&";
-    }
+  /** 
+   * @return String
+   */
+  public static String DISJUNCTION() {
+    return "||";
+  }
 
-    /**
-        * Get the string representation of the equivalence symbol.
-        * @return
-    */
-    public static String EQUIVALENCE() {
-        return "<=>";
-    }
+  /** 
+   * @return String
+   */
+  public static String CONJUNCTION() {
+    return "&&";
+  }
 
-    /**
-        * Get the string representation of the negation symbol.
-        * @return
-    */
-    public static String NEGATION() {
-        return "!";
-    }
+  /** 
+   * @return String
+   */
+  public static String EQUIVALENCE() {
+    return "<=>";
+  }
 
-    /**
-        * Get the string representation of the defeasible implication symbol.
-        * @return
-    */
-    public static String DEFEASIBLE_IMPLICATION() {
-        return "~|";
-    }
+  /** 
+   * @return String
+   */
+  public static String NEGATION() {
+    return "!";
+  }
+
+  /** 
+   * @return String
+   */
+  public static String DEFEASIBLE_IMPLICATION() {
+    return "~|";
+  }
 }
