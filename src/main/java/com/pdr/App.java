@@ -8,10 +8,18 @@ import org.tweetyproject.logics.pl.syntax.PlFormula;
 import org.tweetyproject.logics.pl.syntax.Proposition;
 import org.tweetyproject.logics.cl.syntax.Conditional;
 
+import com.pdr.models.BaseRankImplementation;
 import com.pdr.models.DefeasibleImplication;
 import com.pdr.models.KnowledgeBase;
+import com.pdr.models.Rank;
+import com.pdr.models.Ranking;
+
 
 public class App {
+
+    private static String describeRank(int rankNumber) {
+        return rankNumber == Integer.MAX_VALUE ? "∞" : String.valueOf(rankNumber);
+    }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -59,34 +67,55 @@ public class App {
 
         System.out.println("Final Knowledge Base: " + kb);
 
-        System.out.println("Enter a query to check (type 'exit' to quit):");
-        in = scanner.nextLine();
-        String[] parts = in.split(",\\s*");
+        // System.out.println("Enter a query to check (type 'exit' to quit):");
+        // in = scanner.nextLine();
+        // String[] parts = in.split(",\\s*");
 
-        if (parts.length < 3) {
-            System.out.println("Invalid input. Format: type, left, right");
+        // if (parts.length < 3) {
+        //     System.out.println("Invalid input. Format: type, left, right");
+        // }
+
+        // String type = parts[0].trim().toLowerCase();
+        // PlFormula left = parseFormula(parts[1].trim());
+        // PlFormula right = parseFormula(parts[2].trim());
+
+        // Implication query;
+
+        // switch (type) {
+        //     case "implication":
+        //         query = new Implication(left, right);
+        //         break;
+        //     case "defeasible":
+        //         query = new DefeasibleImplication(left, right);
+        //         break;
+        //     default:
+        //         System.out.println("Unknown formula type. Use 'implication' or 'defeasible'.");
+        //         scanner.close();
+        //         return;
+        // }
+
+        // System.out.println("Query:" + query.toString());
+
+        System.out.println("Knowledge Base: " + kb);
+        System.out.println();
+        BaseRankImplementation baseRank = BaseRankImplementation.constructBaseRank(kb);
+        
+        System.out .println("Trace of the algorithm:");
+        for (var traceStep : baseRank.getTraceSteps()) {
+            System.out.println("Step " + ": " + traceStep);
+            System.out.println("--------------------------------------------------");
         }
 
-        String type = parts[0].trim().toLowerCase();
-        PlFormula left = parseFormula(parts[1].trim());
-        PlFormula right = parseFormula(parts[2].trim());
+        System.out.println();
+        System.out.println("Final BaseRank Result:");
+        System.out.println("n = " + baseRank.getN());
+        System.out.println();
 
-        Implication query;
-
-        switch (type) {
-            case "implication":
-                query = new Implication(left, right);
-                break;
-            case "defeasible":
-                query = new DefeasibleImplication(left, right);
-                break;
-            default:
-                System.out.println("Unknown formula type. Use 'implication' or 'defeasible'.");
-                scanner.close();
-                return;
+        System.out.println("Ranking:");
+        for (Rank rank : baseRank.getRanking()) {
+            System.out.println("Rank " + describeRank(rank.getRankNumber()) + ": " + rank.getFormulas());
         }
 
-        System.out.println("Query:" + query.toString());
         scanner.close();
     }
 
