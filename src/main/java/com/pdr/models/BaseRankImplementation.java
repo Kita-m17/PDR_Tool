@@ -35,10 +35,10 @@ public class BaseRankImplementation {
     private Ranking ranking; //final ranking
     private Ranking sequence; //sequence of ranks generated along the way
     private final int n; //number of finite ranks
-    private List<TraceStep> traceSteps = new ArrayList<>(); //trace of the algorithm
+    private List<BaseRankStep> traceSteps = new ArrayList<>(); //trace of the algorithm
 
     // Constructor with explicit components
-    public BaseRankImplementation(KnowledgeBase knowledgeBase, Ranking sequence, Ranking ranking, int n, List<TraceStep> traceSteps) {
+    public BaseRankImplementation(KnowledgeBase knowledgeBase, Ranking sequence, Ranking ranking, int n, List<BaseRankStep> traceSteps) {
         this.sequence = sequence;
         this.ranking = ranking;
         this.knowledgeBase = knowledgeBase;
@@ -46,6 +46,12 @@ public class BaseRankImplementation {
         this.traceSteps = traceSteps;
     }
 
+    /**
+     *  Copy constructor
+     */
+    public BaseRankImplementation(BaseRankImplementation baseRank) {
+        this(baseRank.getKnowledgeBase(), baseRank.getSequence(), baseRank.getRanking(), baseRank.getN(), baseRank.getTraceSteps());
+    }
 
     /**
      * Constructs a base rank given a knowledge base.
@@ -70,7 +76,7 @@ public class BaseRankImplementation {
         Ranking ranking = new Ranking();
         Ranking sequence = new Ranking();
 
-        List<TraceStep> traceSteps = new ArrayList<>();
+        List<BaseRankStep> traceSteps = new ArrayList<>();
 
         int i = 0;
         while(!previousKB.equals(currentKB)){ //while Ei-1 != Ei
@@ -97,7 +103,7 @@ public class BaseRankImplementation {
             }
 
             //Ri := Ei\Ei+1;
-            Rank rank = new Rank();
+            Rank rank = new Rank(); //get new rank
 
             //add formula to rank
             for (PlFormula formula : previousKB) {
@@ -117,7 +123,7 @@ public class BaseRankImplementation {
 
             sequence.addRank(previousKB.equals(currentKB) ? Integer.MAX_VALUE : i, previousKB);
 
-            traceSteps.add(new TraceStep(i, previousKB, exceptionalityChecks, new KnowledgeBase(rank.getFormulas()), new KnowledgeBase(currentKB)));
+            traceSteps.add(new BaseRankStep(i, previousKB, exceptionalityChecks, new KnowledgeBase(rank.getFormulas()), new KnowledgeBase(currentKB)));
 
             i++;
         }
@@ -161,7 +167,7 @@ public class BaseRankImplementation {
     /**
      * @return List<TraceStep> The trace of the algorithm, detailing each step of the base rank construction.
      */
-    public List<TraceStep> getTraceSteps() {
+    public List<BaseRankStep> getTraceSteps() {
         return traceSteps;
     }
 }
