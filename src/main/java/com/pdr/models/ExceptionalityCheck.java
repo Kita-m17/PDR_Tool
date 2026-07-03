@@ -88,14 +88,14 @@ public class ExceptionalityCheck {
         //return this.antecedant + ": " + (this.isExceptional ? "exceptional" : "not exceptional") + " - Reason: " + this.reason;
         if (this.isExceptional){
             return "'" + this.antecedant + "' IS exceptional\n"
-                + "   The knowledge base " + this.reason + "   classically entails !" + this.antecedant + "\n"
-                + "   -> All rules with the antecedent '" + this.antecedant + "' carry forward to the next iteration\n"
-                + "   -> The following rules are carried forward:\n" + formulaList + "\n";
+                + "   -> Reason: The knowledge base " + this.reason + " classically entails !" + this.antecedant + "\n"
+                + "   -> The following rules with the antecedent '" + this.antecedant + "' are carried forward to the next iteration\n"
+                + formulaList + "\n";
         }else{
             return "'" + this.antecedant + "' IS NOT exceptional\n"
-                + "   The knowledge base " + this.reason + "   does not classically entail !" + this.antecedant + "\n"
-                + "   -> All rules with the antecedent '" + this.antecedant + "' are assigned to this rank\n"
-                + "   -> The following rules are assigned to Rank " + this.rankNumber + ":\n" + formulaList + "\n";
+                + "   -> Reason: The knowledge base " + this.reason + " does not classically entail !" + this.antecedant + "\n"
+                + "   -> The following rules with the antecedent '" + this.antecedant + "' are assigned to Rank " + this.rankNumber + ":\n" 
+                + formulaList + "\n";
         }
     }
 }
