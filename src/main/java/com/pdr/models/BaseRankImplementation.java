@@ -1,7 +1,9 @@
 package com.pdr.models;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.tweetyproject.logics.pl.reasoner.SatReasoner;
 import org.tweetyproject.logics.pl.sat.Sat4jSolver;
@@ -83,23 +85,36 @@ public class BaseRankImplementation {
             previousKB = currentKB;
             currentKB = new KnowledgeBase();
 
+            // Build antecedent -> formulas map
+            Map<PlFormula, List<PlFormula>> antecedentMap = new LinkedHashMap<>();
+            for (PlFormula formula : previousKB) {
+                PlFormula ant = ((Implication) formula).getFirstFormula();
+                antecedentMap.computeIfAbsent(ant, k -> new ArrayList<>()).add(formula);
+            }
+
             //Ei+1:={a-> B ∈Ei |Ei |=¬a};
             KnowledgeBase exceptionals = new KnowledgeBase();
             KnowledgeBase union = previousKB.union(classicalKB);
+            // KnowledgeBase materialisedUnion = union.materialise();
 
             List<ExceptionalityCheck> exceptionalityChecks = new ArrayList<ExceptionalityCheck>();
-            
 
-            for (PlFormula antecedent : previousKB.antecedents()) {
+            // check each antecedent for exceptionality and create ExceptionalityCheck objects
+            for (Map.Entry<PlFormula, List<PlFormula>> entry : antecedentMap.entrySet()) {
+                PlFormula antecedent = entry.getKey();
                 PlFormula negatedAntecedent = new Negation(antecedent);
+                
                 boolean isExceptional = reasoner.query(union, negatedAntecedent);
 
-                String reason = isExceptional ? union + "entails " + negatedAntecedent : union + "does not entail " + negatedAntecedent;
+                List<PlFormula> affectedFormulas = entry.getValue();
+
+                // String reason = isExceptional ? union + " entails " + negatedAntecedent : union + " does not entail " + negatedAntecedent;
+                String reason = union.toString(); 
+                exceptionalityChecks.add(new ExceptionalityCheck(antecedent, isExceptional, reason, i, affectedFormulas));
 
                 if (isExceptional) {
                     exceptionals.add(antecedent);
                 }
-                exceptionalityChecks.add(new ExceptionalityCheck(antecedent, isExceptional, reason));
             }
 
             //Ri := Ei\Ei+1;

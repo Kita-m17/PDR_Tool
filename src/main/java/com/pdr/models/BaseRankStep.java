@@ -75,10 +75,18 @@ public class BaseRankStep {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Iteration: ").append(iteration).append("\n");
-        sb.append("Considered Formulas (Ei): ").append(consideredFormulas).append("\n");
-        sb.append("Exceptionality Checks: ").append(checks).append("\n");
-        sb.append("Assigned Rank (Ri): ").append(assignedRank).append("\n");
-        sb.append("Carried Forward (Ei+1): ").append(carriedForward).append("\n");
+        if (consideredFormulas.isEmpty()) 
+            return ""; // skip empty steps
+        else
+            sb.append("   Considered Formulas (Ei): ").append(consideredFormulas).append("\n");
+
+        sb.append("   Exceptionality Checks:\n");
+        for( ExceptionalityCheck check: checks){
+            sb.append("   - ").append(check.toString()).append("\n");
+        }
+
+        sb.append("   Assigned Rank (Ri): ").append(assignedRank).append("\n");
+        sb.append("   Carried Forward (Ei+1): ").append(carriedForward).append("\n");
         return sb.toString();
     }
 }
