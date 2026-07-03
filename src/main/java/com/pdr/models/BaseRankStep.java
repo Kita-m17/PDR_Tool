@@ -78,14 +78,14 @@ public class BaseRankStep {
         if (consideredFormulas.isEmpty()) 
             return ""; // skip empty steps
         else
-            sb.append("   Considered Formulas (Ei): ").append(consideredFormulas).append("\n");
+            sb.append("   Considered Formulas (Ei): ").append(consideredFormulas).append("\n\n");
 
         sb.append("   Exceptionality Checks:\n");
         for( ExceptionalityCheck check: checks){
-            sb.append("   - ").append(check.toString()).append("\n");
+            sb.append("   -> ").append(check.toString()).append("\n");
         }
 
-        sb.append("   Assigned Rank (Ri): ").append(assignedRank).append("\n");
+        // sb.append("   Assigned Rank (Ri): ").append(assignedRank).append("\n");
         sb.append("   Carried Forward (Ei+1): ").append(carriedForward).append("\n");
         return sb.toString();
     }

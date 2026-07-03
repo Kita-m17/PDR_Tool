@@ -146,7 +146,7 @@ public class App {
         System.out.println("Query: " + query);
         System.out.println();
 
-        System.out.println("  Does the knowledge base entail that " 
+        System.out.println("Does the knowledge base entail that " 
         + query.getFirstFormula() + " typically implies " 
         + query.getSecondFormula() + "?");
         System.out.println();
