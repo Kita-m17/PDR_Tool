@@ -77,11 +77,10 @@ public class EntailmentStep {
      */
     @Override
     public String toString() {
-        return "EntailmentStep " + iteration +
-                ": remaining=" + remaining +
-                ", exceptional=" + antecedentExceptional +
-                " (" + reason + ")" +
-                ", removed=" + removed;
+        return "EntailmentStep " + iteration + "\n" +
+                "   Remaining: " + remaining + "\n" +
+                "   Exceptional: " + antecedentExceptional + "\n" +
+                "   Reason: " + reason + "\n" +
+                "   Removed: " + removed;
     }
-    
 }
