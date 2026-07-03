@@ -42,14 +42,14 @@ public class RationalClosureImpl implements ReasonerService {
      *
      * @param baseRank The base ranking implementation
      * @param queryFormula The query formula
-     * @param antecedent The antecedent formula
      * @return The entailment result along with the trace
      */
     @Override
-    public Entailment getEntailment(BaseRankImplementation baseRank, PlFormula queryFormula, PlFormula antecedent) {
+    public Entailment getEntailment(BaseRankImplementation baseRank, PlFormula queryFormula) {
 
         // Get inputs
-        PlFormula negation = new Negation(((Implication) queryFormula).getFirstFormula());
+        PlFormula antecedent = ((Implication) queryFormula).getFirstFormula();
+        PlFormula negation = new Negation(antecedent);
         KnowledgeBase knowledgeBase = baseRank.getKnowledgeBase();
         Ranking baseRanking = baseRank.getRanking();
         Ranking removedRanking = new Ranking();

@@ -18,5 +18,5 @@ import com.pdr.models.BaseRankImplementation;
 import com.pdr.models.Entailment;
 
 public interface ReasonerService {
-    public Entailment getEntailment(BaseRankImplementation baseRank, PlFormula queryFormula, PlFormula antecedent);
+    public Entailment getEntailment(BaseRankImplementation baseRank, PlFormula queryFormula);
 }
