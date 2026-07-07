@@ -13,9 +13,9 @@
 package com.pdr.services;
 
 import com.pdr.models.RationalClosureImpl;
-// import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Component;
 
-// @Component
+@Component
 public class ReasonerFactory {
     public static ReasonerService createReasoner(String type) {
         return switch (type) {

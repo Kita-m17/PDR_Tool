@@ -45,7 +45,7 @@ public class RationalClosureImpl implements ReasonerService {
      * @return The entailment result along with the trace
      */
     @Override
-    public Entailment getEntailment(BaseRankImplementation baseRank, PlFormula queryFormula) {
+    public Entailment getEntailment(BaseRank baseRank, PlFormula queryFormula) {
 
         // Get inputs
         PlFormula antecedent = ((Implication) queryFormula).getFirstFormula();
