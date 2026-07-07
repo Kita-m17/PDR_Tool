@@ -14,9 +14,9 @@ package com.pdr.services;
 
 import org.tweetyproject.logics.pl.syntax.PlFormula;
 
-import com.pdr.models.BaseRankImplementation;
+import com.pdr.models.BaseRank;
 import com.pdr.models.Entailment;
 
 public interface ReasonerService {
-    public Entailment getEntailment(BaseRankImplementation baseRank, PlFormula queryFormula);
+    public Entailment getEntailment(BaseRank baseRank, PlFormula queryFormula);
 }
