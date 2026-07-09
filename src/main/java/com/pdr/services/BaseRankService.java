@@ -35,6 +35,25 @@ import com.pdr.models.Ranking;
 
 @Service
 public class BaseRankService {
+    /**
+        * Algorithm1.BaseRank 
+           Input: A knowledge base K 
+           Output: An ordered tuple (R0,...,Rn−1,R∞,n) 
+        1  i:=0; 
+        2  E0 := − →K; 
+        3  repeat 
+        4  Ei+1 := { α → β ∈ Ei | Ei |= ¬α}; 
+        5  Ri := Ei\Ei+1; 
+        6  i := i+1; 
+        7  until Ei−1 = Ei; 
+        8  R∞ := Ei−1; 
+        9  if Ei−1 = ∅then 
+        10    n := i−1; 
+        11 else 
+        12    n := i; 
+        13 return (R0,...,Rn−1,R∞,n)
+    */
+
 
     public BaseRankService() {
         // Default constructor
@@ -88,6 +107,7 @@ public class BaseRankService {
 
             sequence.addRank(previousKB.equals(currentKB) ? Integer.MAX_VALUE : i, previousKB);
 
+
             traceSteps.add(new BaseRankStep(i, previousKB, exceptionalityChecks, new KnowledgeBase(rank.getFormulas()), new KnowledgeBase(currentKB)));
 
             i++;
@@ -97,7 +117,8 @@ public class BaseRankService {
         int n = currentKB.isEmpty() ? i - 1 : i;
 
         //the infinite rank - classical statements plus anything not placed in a finite rank
-        ranking.addRank(Integer.MAX_VALUE, classicalKB.union(currentKB));
+        KnowledgeBase rankInfinityFormulas = classicalKB.union(currentKB);
+        ranking.addRank(Integer.MAX_VALUE, rankInfinityFormulas);
         return new BaseRank(knowledgeBase, sequence, ranking, n, traceSteps);
     }
 
@@ -122,7 +143,8 @@ public class BaseRankService {
 
         //Ei+1:={a-> B ∈Ei |Ei |=¬a};
         KnowledgeBase exceptionals = new KnowledgeBase();
-        KnowledgeBase union = previousKB.union(classical);
+        KnowledgeBase materialisedDefeasible = previousKB.materialise();
+        KnowledgeBase union = materialisedDefeasible.union(classical);
         
         // check each antecedent for exceptionality and create ExceptionalityCheck objects
         for (Map.Entry<PlFormula, List<PlFormula>> entry : antecedentMap.entrySet()) {
