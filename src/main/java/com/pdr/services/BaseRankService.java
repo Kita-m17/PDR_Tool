@@ -119,6 +119,7 @@ public class BaseRankService {
         //the infinite rank - classical statements plus anything not placed in a finite rank
         KnowledgeBase rankInfinityFormulas = classicalKB.union(currentKB);
         ranking.addRank(Integer.MAX_VALUE, rankInfinityFormulas);
+        traceSteps.add(new BaseRankStep(Integer.MAX_VALUE, new KnowledgeBase(rankInfinityFormulas), new ArrayList<>(), new KnowledgeBase(rankInfinityFormulas), new KnowledgeBase()));
         return new BaseRank(knowledgeBase, sequence, ranking, n, traceSteps);
     }
 

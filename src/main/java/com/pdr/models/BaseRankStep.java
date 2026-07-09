@@ -74,7 +74,14 @@ public class BaseRankStep {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        if (iteration == Integer.MAX_VALUE){
+            sb.append("Rank ∞ Assignment:\n   The following classical formulas are assigned to Rank ∞ because they are never exceptional\n   -> they hold in all worlds\n").append("   Considered Formulas (R∞): ").append(consideredFormulas).append("\n\n");
+            return sb.toString();
+        }
+
         sb.append("Iteration: ").append(iteration).append("\n");
+
+
         if (consideredFormulas.isEmpty()) 
             return ""; // skip empty steps
         else
