@@ -18,6 +18,9 @@ import org.tweetyproject.logics.pl.syntax.Proposition;
 
 import com.pdr.models.DefeasibleImplication;
 import com.pdr.models.KnowledgeBase;
+
+import jakarta.annotation.PostConstruct;
+
 import com.pdr.models.BaseRank;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +28,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class KnowledgeBaseService{
-    private KnowledgeBase knowledgeBase = getDefault();
 
     @Autowired
     private BaseRankService baseRankService;
 
+    private KnowledgeBase knowledgeBase;
     private BaseRank baseRank;
 
-    private KnowledgeBase getDefault() {
+    @PostConstruct
+    public void init(){
+        this.knowledgeBase = buildDefault();
+        this.baseRank = baseRankService.constructBaseRank(this.knowledgeBase);
+    }
+    
+
+    private KnowledgeBase buildDefault() {
         Proposition p = new Proposition("p");
         Proposition b = new Proposition("b");
         Proposition f = new Proposition("f");
@@ -44,8 +54,6 @@ public class KnowledgeBaseService{
         kb.add(new DefeasibleImplication(b, w));
         kb.add(new DefeasibleImplication(p, new Negation(f)));
 
-        this.baseRank = baseRankService.constructBaseRank(kb);
-
         return kb;
     }
 
@@ -53,7 +61,7 @@ public class KnowledgeBaseService{
      * @return the default knowledgebase
      */
     public KnowledgeBase getKnowledgeBase() {
-        return getDefault();
+        return this.knowledgeBase;
     }
 
     /**
@@ -62,6 +70,10 @@ public class KnowledgeBaseService{
     public void setKnowledgeBase(KnowledgeBase kb) {
         this.knowledgeBase = kb;
         this.baseRank = baseRankService.constructBaseRank(kb);
+    }
+
+    public BaseRank getBaseRank(){
+        return this.baseRank;
     }
 
 }
