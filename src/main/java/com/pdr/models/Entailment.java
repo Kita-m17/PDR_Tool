@@ -78,6 +78,9 @@ public abstract class Entailment {
         private boolean entailed;
         private List<EntailmentStep> traceSteps;
 
+        /**
+         * 
+         */
         public T withKnowledgeBase(KnowledgeBase knowledgeBase) {
             this.knowledgeBase = knowledgeBase;
             return self();
