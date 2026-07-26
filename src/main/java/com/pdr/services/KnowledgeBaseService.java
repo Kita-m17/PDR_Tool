@@ -41,6 +41,12 @@ public class KnowledgeBaseService{
         this.baseRank = baseRankService.constructBaseRank(this.knowledgeBase);
     }
     
+    public KnowledgeBaseService(BaseRankService baseRankService){
+        this.baseRankService = baseRankService;
+        this.knowledgeBase = buildDefault();
+        this.baseRank = baseRankService.constructBaseRank(knowledgeBase);
+    }
+    
 
     private KnowledgeBase buildDefault() {
         Proposition p = new Proposition("p");
