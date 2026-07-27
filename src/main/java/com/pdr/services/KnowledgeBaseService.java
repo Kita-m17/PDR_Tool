@@ -12,74 +12,19 @@
  */
 package com.pdr.services;
 
-import org.tweetyproject.logics.pl.syntax.Implication;
-import org.tweetyproject.logics.pl.syntax.Negation;
-import org.tweetyproject.logics.pl.syntax.Proposition;
-
-import com.pdr.models.DefeasibleImplication;
-import com.pdr.models.KnowledgeBase;
-
-import jakarta.annotation.PostConstruct;
 
 import com.pdr.models.BaseRank;
+import com.pdr.models.KnowledgeBase;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-@Service
-public class KnowledgeBaseService{
-
-    @Autowired
-    private BaseRankService baseRankService;
-
-    private KnowledgeBase knowledgeBase;
-    private BaseRank baseRank;
-
-    @PostConstruct
-    public void init(){
-        this.knowledgeBase = buildDefault();
-        this.baseRank = baseRankService.constructBaseRank(this.knowledgeBase);
-    }
-    
-    public KnowledgeBaseService(BaseRankService baseRankService){
-        this.baseRankService = baseRankService;
-        this.knowledgeBase = buildDefault();
-        this.baseRank = baseRankService.constructBaseRank(knowledgeBase);
-    }
-    
-
-    private KnowledgeBase buildDefault() {
-        Proposition p = new Proposition("p");
-        Proposition b = new Proposition("b");
-        Proposition f = new Proposition("f");
-        Proposition w = new Proposition("w");
-
-        KnowledgeBase kb = new KnowledgeBase();
-        kb.add(new Implication(p, b));
-        kb.add(new DefeasibleImplication(b, f));
-        kb.add(new DefeasibleImplication(b, w));
-        kb.add(new DefeasibleImplication(p, new Negation(f)));
-
-        return kb;
-    }
-
+public interface KnowledgeBaseService{
     /**
      * @return the default knowledgebase
      */
-    public KnowledgeBase getKnowledgeBase() {
-        return this.knowledgeBase;
-    }
+    public KnowledgeBase getKnowledgeBase();
 
     /**
-     * @param kb
+     * @return the base rank
      */
-    public void setKnowledgeBase(KnowledgeBase kb) {
-        this.knowledgeBase = kb;
-        this.baseRank = baseRankService.constructBaseRank(kb);
-    }
-
-    public BaseRank getBaseRank(){
-        return this.baseRank;
-    }
+    public BaseRank getBaseRank();
 
 }
