@@ -14,10 +14,12 @@ package com.pdr.models;
 
 // Represents an entailment result under rational closure
 public class RationalEntailment extends Entailment{
+    protected final Ranking removedRanking;
 
     // Private constructor, only accessible via the builder
     private RationalEntailment(RationalEntailmentBuilder builder){
         super(builder);
+        this.removedRanking = builder.removedRanking;
     }
 
     /**
@@ -28,9 +30,22 @@ public class RationalEntailment extends Entailment{
         return new RationalEntailmentBuilder();
     }
 
+    /**
+     * @return Ranking
+     */
+    public Ranking getRemovedRanking(){
+        return removedRanking;
+    }
+
     // builer class for rational entailment
     public static class RationalEntailmentBuilder extends EntailmentBuilder<RationalEntailmentBuilder>{
-        
+        private Ranking removedRanking;
+
+        public RationalEntailmentBuilder withRemovedRanking(Ranking removedRanking){
+            this.removedRanking = removedRanking;
+            return self();
+        }
+
         @Override
         protected RationalEntailmentBuilder self(){
             return this;

@@ -21,7 +21,6 @@ public abstract class Entailment {
     protected final Ranking baseRanking; // The ranking of the knowledge base used for defeasible reasoning
     protected final boolean entailed; // Whether the query is entailed
     protected final List<EntailmentStep> traceSteps; // Trace of the algorithm
-    protected final Ranking removedRanking;
 
 
     /**
@@ -33,7 +32,6 @@ public abstract class Entailment {
         this.baseRanking = builder.baseRanking;
         this.entailed = builder.entailed;
         this.traceSteps = builder.traceSteps;
-        this.removedRanking = builder.removedRanking;
     }
 
     // --- Getters ---
@@ -67,13 +65,6 @@ public abstract class Entailment {
     }
 
     /**
-     * @return Ranking the removed ranks
-     */
-    public Ranking getRemovedRanking(){
-        return this.removedRanking;
-    }
-
-    /**
      * @return List<EntailmentStep>  The trace of the algorithm, detailing each step of the base rank construction.
      */
     public List<EntailmentStep> getTraceSteps() {
@@ -87,7 +78,6 @@ public abstract class Entailment {
         private Ranking baseRanking;
         private boolean entailed;
         private List<EntailmentStep> traceSteps;
-        private Ranking removedRanking;
 
         /**
          * @return 
@@ -114,11 +104,6 @@ public abstract class Entailment {
 
         public T withTraceSteps(List<EntailmentStep> traceSteps) {
             this.traceSteps = traceSteps;
-            return self();
-        }
-
-        public T withRemovedRanking(Ranking removedRanking){
-            this.removedRanking = removedRanking;
             return self();
         }
 
