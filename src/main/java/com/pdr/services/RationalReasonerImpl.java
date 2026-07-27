@@ -86,6 +86,8 @@ public class RationalReasonerImpl implements ReasonerService {
             trace.add(new EntailmentStep(i, currentUnion, true, antecedent + " is exceptional w.r.t. R∞ U R - removing Rank " + i, new KnowledgeBase(toRemove.getFormulas())));
 
             removedRanking.add(toRemove);
+
+            /*** Type 1 - tweety code*/
             finiteRanks = finiteRanks.difference( new KnowledgeBase(toRemove.getFormulas())); //remove the curreny rank from the union:  R:=R\Ri
             i++;
 

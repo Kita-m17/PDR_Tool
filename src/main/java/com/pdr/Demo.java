@@ -9,9 +9,9 @@ import com.pdr.models.DefeasibleImplication;
 import com.pdr.models.Entailment;
 import com.pdr.models.KnowledgeBase;
 import com.pdr.models.Rank;
-import com.pdr.models.RationalClosureImpl;
 import com.pdr.services.BaseRankService;
 import com.pdr.services.BaseRankServiceImp;
+import com.pdr.services.RationalReasonerImpl;
 
 
 
@@ -85,7 +85,7 @@ public class Demo {
         + query.getSecondFormula() + "?");
         System.out.println();
 
-        Entailment entailment = new RationalClosureImpl().getEntailment(baseRank, query);
+        Entailment entailment = new RationalReasonerImpl().getEntailment(baseRank, query);
 
         System.out .println("Step-through:");
         for (var traceStep : entailment.getTraceSteps()) {

@@ -11,6 +11,9 @@
  */
 package com.pdr.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.tweetyproject.logics.pl.reasoner.SatReasoner;
 import org.tweetyproject.logics.pl.sat.Sat4jSolver;
 import org.tweetyproject.logics.pl.sat.SatSolver;
@@ -19,8 +22,6 @@ import org.tweetyproject.logics.pl.syntax.Negation;
 import org.tweetyproject.logics.pl.syntax.PlFormula;
 
 import com.pdr.services.ReasonerService;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementation of the Rational Closure reasoning algorithm
@@ -72,6 +73,8 @@ public class RationalClosureImpl implements ReasonerService {
             trace.add(new EntailmentStep(i, new KnowledgeBase(union), true, antecedent + " is exceptional w.r.t. " + union + " - removing Rank " + i, new KnowledgeBase(toRemove.getFormulas())));
 
             removedRanking.add(toRemove);
+
+            //**Type 2 - */
             union.removeAll(toRemove.getFormulas()); //remove the curreny rank from the union:  R:=R\Ri
             i++;
         }
