@@ -1,3 +1,13 @@
+/*
+ * File: ErrorResponse.java
+ * Package: com.pdr.models
+ *
+ * Original Author: Thabo Vincent Moloi , Honours Project (2024), University of Cape Town
+ 
+ * Status: Reused unchanged in this project.
+ * Context: Developed for PDR's project.
+ * Purpose: Educational use only.
+ */
 package com.pdr.models;
 
 public class ErrorResponse {
