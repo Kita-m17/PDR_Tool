@@ -12,14 +12,13 @@
 
 package com.pdr.services;
 
-import com.pdr.models.RationalClosureImpl;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ReasonerFactory {
     public static ReasonerService createReasoner(String type) {
         return switch (type) {
-            case "rational" -> new RationalClosureImpl();
+            case "rational" -> new RationalReasonerImpl();
             // case "lexical" -> new LexicalReasonerImpl();
             // case "relevant" -> new RelevantReasonerImpl();
             default -> throw new IllegalArgumentException("Unknown reasoner: " + type);
