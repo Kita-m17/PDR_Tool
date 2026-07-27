@@ -63,11 +63,11 @@ public class RationalReasonerImpl implements ReasonerService {
 
         List<EntailmentStep> trace = new ArrayList<>(); // Trace of the entailment process
 
-        //R_infinity
+        //get R_infinity
         Rank infinityRank = baseRanking.getRank(Integer.MAX_VALUE);
         KnowledgeBase r_infinity = new KnowledgeBase(infinityRank.getFormulas());
 
-        //finite ranks
+        //get the finite ranks
         KnowledgeBase finiteRanks = new KnowledgeBase();
         for(Rank rank: baseRanking){
             if(rank.getRankNumber() != Integer.MAX_VALUE)
@@ -76,18 +76,25 @@ public class RationalReasonerImpl implements ReasonerService {
         
         int i = 0;
 
+        //union of the ranks: R∞ ∪ R
         KnowledgeBase currentUnion = r_infinity.union(finiteRanks);
 
-        //while (R∞ ∪ R) |= ¬α and  R̸= ∅ do
-        while (!finiteRanks.isEmpty() && reasoner.query(currentUnion, negation) && i < baseRanking.size() - 1) {
+        //while (R∞ ∪ R) |= ¬α and  R != ∅ do
+        while (reasoner.query(currentUnion, negation) && !finiteRanks.isEmpty()) {
+            /**
+             * This is different for each algorithm - for the rational closure, we remove the entire rank
+             */
             Rank toRemove = baseRanking.get(i); //get the current rank to remove
+            removedRanking.add(toRemove);
 
             //add current step to trace
             trace.add(new EntailmentStep(i, currentUnion, true, antecedent + " is exceptional w.r.t. R∞ U R - removing Rank " + i, new KnowledgeBase(toRemove.getFormulas())));
 
-            removedRanking.add(toRemove);
-
-            /*** Type 1 - tweety code*/
+            /** 
+             * Remove ranks type 1 - tweety code
+             * This will be different for each algorithm
+             * ccreate a knowledge base with the ranks to remove and can use the difference() tweety method to remove those formulas
+            */
             finiteRanks = finiteRanks.difference( new KnowledgeBase(toRemove.getFormulas())); //remove the curreny rank from the union:  R:=R\Ri
             i++;
 
@@ -107,6 +114,7 @@ public class RationalReasonerImpl implements ReasonerService {
             .withBaseRanking(baseRanking)
             .withEntailed(entailed)
             .withTraceSteps(trace)
+            .withRemovedRanking(removedRanking)
             .build();
     }
 }
