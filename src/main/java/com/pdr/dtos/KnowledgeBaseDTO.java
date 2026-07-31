@@ -9,7 +9,6 @@
  * and encrypted communication.
  * Purpose: Educational use only.
  */
-
 package com.pdr.dtos;
 import java.util.List;
 
