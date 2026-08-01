@@ -14,7 +14,7 @@ import java.util.List;
 
 // Data Transfer Object (DTO) for carrying a knowledge base between backend and frontend
 public class KnowledgeBaseDTO {
-    private List<String> formulas;
+    private List<String> formulas; //list of formulas in the kb
 
     /**
      * Default Constructor
