@@ -2,9 +2,11 @@ package com.pdr.models;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.stereotype.Service;
+import java.util.stream.Collectors;
+import com.pdr.dtos.BaseRankDTO;
+import com.pdr.dtos.RankDTO;
+import com.pdr.dtos.BaseRankStepDTO;
 
-@Service
 public class BaseRank {
     private final KnowledgeBase knowledgeBase;
     private Ranking ranking; //final ranking
@@ -62,4 +64,11 @@ public class BaseRank {
     public List<BaseRankStep> getTraceSteps() {
         return traceSteps;
     }
+
+    public BaseRankDTO toDTO(){
+        List<RankDTO> sequenceDTO = this.sequence.stream().map(Rank::toDTO).collect(Collectors.toList());
+        List<RankDTO> rankingDTO = this.ranking.stream().map(Rank::toDTO).collect(Collectors.toList());
+        List<BaseRankStepDTO> traceStepsDTO = this.traceSteps.stream().map(BaseRankStep::toDTO).collect(Collectors.toList());
+        return new BaseRankDTO(this.knowledgeBase.toStringList(), sequenceDTO, rankingDTO, traceStepsDTO);
+    }   
 }
