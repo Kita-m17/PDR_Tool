@@ -65,6 +65,10 @@ public class BaseRank {
         return traceSteps;
     }
 
+    /**
+     * Converts this BaseRank instance to a BaseRankDTO for data transfer.
+     * @return BaseRankDTO The DTO representation of this BaseRank
+     */
     public BaseRankDTO toDTO(){
         List<RankDTO> sequenceDTO = this.sequence.stream().map(Rank::toDTO).collect(Collectors.toList());
         List<RankDTO> rankingDTO = this.ranking.stream().map(Rank::toDTO).collect(Collectors.toList());
