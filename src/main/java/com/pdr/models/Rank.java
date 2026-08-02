@@ -14,6 +14,7 @@ package com.pdr.models;
 import java.util.Collection;
 
 import org.tweetyproject.logics.pl.syntax.PlFormula;
+import com.pdr.dtos.RankDTO;
 
 /**
     * Represents a rank in a ranked knowledge base, containing a set of formulas and a rank number.
@@ -82,5 +83,14 @@ public class Rank {
     */
     public KnowledgeBase getFormulas() {
         return formulas;
+    }
+
+    /**
+        * convert the rank to a rank DTO.
+        * @param formulas
+        * @return RankDTO
+     */
+    public RankDTO toDTO() {
+        return new RankDTO(this.rankNumber, this.formulas.toStringList());
     }
 }
