@@ -11,13 +11,21 @@
 package com.pdr.models;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.tweetyproject.logics.pl.syntax.PlFormula;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pdr.dtos.RankDTO;
+
 // Base class for Entailment results
 public abstract class Entailment {
+    @JsonIgnore
     protected final KnowledgeBase knowledgeBase; // The knowledge base from which the entailment is derived
+    @JsonIgnore
     protected final PlFormula queryFormula; // The formula being queried for entailment
+    @JsonIgnore
     protected final Ranking baseRanking; // The ranking of the knowledge base used for defeasible reasoning
     protected final boolean entailed; // Whether the query is entailed
     protected final List<EntailmentStep> traceSteps; // Trace of the algorithm
@@ -69,6 +77,21 @@ public abstract class Entailment {
      */
     public List<EntailmentStep> getTraceSteps() {
         return traceSteps;
+    }
+
+    @JsonProperty("queryFormula")
+    public String getQueryFormulaString() {
+        return queryFormula != null ? queryFormula.toString() : null;
+    }
+
+    @JsonProperty("knowledgeBase")
+    public List<String> getKnowledgeBaseStrings() {
+        return knowledgeBase != null ? knowledgeBase.toStringList() : null;
+    }
+
+    @JsonProperty("baseRanking")
+    public List<RankDTO> getBaseRankingDTO() {
+        return baseRanking != null ? baseRanking.stream().map(Rank::toDTO).collect(Collectors.toList()) : null;
     }
 
     // Builder for Entailment
