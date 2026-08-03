@@ -12,8 +12,15 @@
  */
 package com.pdr.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
+import java.util.stream.Collectors;
+import com.pdr.dtos.RankDTO;
+
 // Represents an entailment result under rational closure
 public class RationalEntailment extends Entailment{
+    @JsonIgnore
     protected final Ranking removedRanking;
 
     // Private constructor, only accessible via the builder
@@ -35,6 +42,11 @@ public class RationalEntailment extends Entailment{
      */
     public Ranking getRemovedRanking(){
         return removedRanking;
+    }
+
+    @JsonProperty("removedRanking")
+    public List<RankDTO> getRemovedRankingDTO(){
+        return removedRanking != null ? removedRanking.stream().map(Rank::toDTO).collect(Collectors.toList()) : null;
     }
 
     // builer class for rational entailment
