@@ -11,6 +11,10 @@
 */
 package com.pdr.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -31,7 +35,8 @@ public class Ranking extends ArrayList<Rank> {
         * 
         * @param ranks
     */
-    public Ranking(Collection<? extends Rank> ranks) {
+    @JsonCreator
+    public Ranking(@JsonProperty("ranking") Collection<? extends Rank> ranks) {
         super(ranks);
     }
 

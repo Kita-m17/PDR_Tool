@@ -14,11 +14,14 @@ package com.pdr.models;
 import java.util.Collection;
 
 import org.tweetyproject.logics.pl.syntax.PlFormula;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.pdr.dtos.RankDTO;
 
 /**
     * Represents a rank in a ranked knowledge base, containing a set of formulas and a rank number.
 */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Rank {
   
     /**
