@@ -80,9 +80,7 @@ public class Demo {
         System.out.println("Query: " + query);
         System.out.println();
 
-        System.out.println("Does the knowledge base entail that " 
-        + query.getFirstFormula() + " typically implies " 
-        + query.getSecondFormula() + "?");
+        System.out.println("Does the knowledge base defeasibly entail: " + query.toString());
         System.out.println();
 
         Entailment entailment = new RationalReasonerImpl().getEntailment(baseRank, query);
