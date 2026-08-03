@@ -38,7 +38,6 @@ public class KnowledgeBaseServiceImpl implements KnowledgeBaseService{
         this.knowledgeBase = buildDefault();
         this.baseRank = baseRankService.constructBaseRank(this.knowledgeBase);
     }
-    
     /**
      * Build the default knowledge base
      * @return
@@ -69,6 +68,7 @@ public class KnowledgeBaseServiceImpl implements KnowledgeBaseService{
     /**
      * @param kb set the kb and construct the base rank
      */
+    @Override
     public void setKnowledgeBase(KnowledgeBase kb) {
         this.knowledgeBase = kb;
         this.baseRank = baseRankService.constructBaseRank(kb);

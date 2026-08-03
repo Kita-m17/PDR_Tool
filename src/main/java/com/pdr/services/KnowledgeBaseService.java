@@ -26,5 +26,10 @@ public interface KnowledgeBaseService{
      * @return the base rank
      */
     public BaseRank getBaseRank();
+    
+    /**
+     * @param kb
+     */
+    public void setKnowledgeBase(KnowledgeBase kb);
 
 }
