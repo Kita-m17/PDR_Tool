@@ -6,12 +6,19 @@ import java.util.stream.Collectors;
 import com.pdr.dtos.BaseRankDTO;
 import com.pdr.dtos.RankDTO;
 import com.pdr.dtos.BaseRankStepDTO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 public class BaseRank {
     private final KnowledgeBase knowledgeBase;
+
+    @JsonManagedReference
     private Ranking ranking; //final ranking
+
+    @JsonManagedReference
     private Ranking sequence; //sequence of ranks generated along the way
+    
     private final int n; //number of finite ranks
+    
     private List<BaseRankStep> traceSteps = new ArrayList<>(); //trace of the algorithm
 
     // Constructor with explicit components
@@ -72,7 +79,7 @@ public class BaseRank {
     public BaseRankDTO toDTO(){
         List<RankDTO> sequenceDTO = this.sequence.stream().map(Rank::toDTO).collect(Collectors.toList());
         List<RankDTO> rankingDTO = this.ranking.stream().map(Rank::toDTO).collect(Collectors.toList());
-        List<BaseRankStepDTO> traceStepsDTO = this.traceSteps.stream().map(BaseRankStep::toDTO).collect(Collectors.toList());
+        List<BaseRankStepDTO> traceStepsDTO = this.traceSteps.stream().filter(step -> !step.getConsideredFormulas().isEmpty()).map(BaseRankStep::toDTO).collect(Collectors.toList());
         return new BaseRankDTO(this.knowledgeBase.toStringList(), sequenceDTO, rankingDTO, traceStepsDTO);
     }   
 }

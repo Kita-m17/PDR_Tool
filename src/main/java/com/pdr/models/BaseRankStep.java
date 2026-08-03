@@ -8,6 +8,9 @@
  */
 package com.pdr.models;
 import java.util.List;
+import com.pdr.dtos.BaseRankStepDTO;
+import com.pdr.dtos.ExceptionalityCheckDTO;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a single step in the trace of the BaseRank algorithm.
@@ -69,6 +72,11 @@ public class BaseRankStep {
      */
     public KnowledgeBase getCarriedForward() {
         return carriedForward;
+    }
+
+    public BaseRankStepDTO toDTO() {
+        List<ExceptionalityCheckDTO> checksDTO = this.checks.stream().map(ExceptionalityCheck::toDTO).collect(Collectors.toList());
+        return new BaseRankStepDTO(this.iteration, this.consideredFormulas.toStringList(), this.assignedRank.toStringList(), this.carriedForward.toStringList(), checksDTO);
     }
 
     @Override
