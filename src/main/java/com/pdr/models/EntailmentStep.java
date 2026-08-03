@@ -8,14 +8,24 @@
  */
 package com.pdr.models;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pdr.dtos.EntailmentStepDTO;
+
 /**
  * This class represents a single step in the trace of the Entailment
  */
 public class EntailmentStep {
     private final int iteration; // The iteration number of this entailment step
+    
+    @JsonIgnore
     private final KnowledgeBase remaining; // The remaining knowledge base after this entailment step
     private final boolean antecedentExceptional; // True if the antecedent is exceptional, false otherwise
     private final String reason; // Reason for the exceptionality result, e.g., "Exceptional because it leads to a contradiction."
+    
+    @JsonIgnore
     private final KnowledgeBase removed; // The removed knowledge base after this entailment step
 
     /**
@@ -70,6 +80,20 @@ public class EntailmentStep {
      */
     public KnowledgeBase getRemoved() {
         return removed;
+    }
+
+    public EntailmentStepDTO toDTO() {
+        return new EntailmentStepDTO(iteration, remaining.toStringList(), antecedentExceptional, reason, removed.toStringList());
+    }
+
+    @JsonProperty("remaining")
+    public List<String> getRemainingStrings() {
+        return remaining != null ? remaining.toStringList() : null;
+    }
+
+    @JsonProperty("removed")
+    public List<String> getRemovedStrings() {
+        return removed != null ? removed.toStringList() : null;
     }
 
     /**
