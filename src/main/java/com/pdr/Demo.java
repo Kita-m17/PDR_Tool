@@ -31,10 +31,10 @@ public class Demo {
         System.out.println("===========================================");
         System.out.println();
 
-        DefeasibleImplication def1 = new DefeasibleImplication(new Proposition("bird"), new Proposition("flies"));
-        Implication imp1 = new Implication(new Proposition("penguin"), new Proposition("bird"));
-        DefeasibleImplication def2 = new DefeasibleImplication(new Proposition("penguin"), new Negation(new Proposition("flies")));
-        DefeasibleImplication def3 = new DefeasibleImplication(new Proposition("bird"), new Proposition("wings"));
+        Implication imp1 = new Implication(new Proposition("p"), new Proposition("a"));
+        DefeasibleImplication def1 = new DefeasibleImplication(new Proposition("a"), new Proposition("l"));
+        DefeasibleImplication def2 = new DefeasibleImplication(new Proposition("p"), new Negation(new Proposition("w")));
+        DefeasibleImplication def3 = new DefeasibleImplication(new Proposition("a"), new Proposition("w"));
         
         kb.add(def1);
         kb.add(imp1);
@@ -68,7 +68,7 @@ public class Demo {
             System.out.println("Rank " + describeRank(rank.getRankNumber()) + ": " + rank.getFormulas());
         }
 
-        DefeasibleImplication query = new DefeasibleImplication(new Proposition("penguin"), new Negation(new Proposition("flies")));
+        DefeasibleImplication query = new DefeasibleImplication(new Proposition("p"), new Proposition("l"));
 
         System.out.println();
         System.out.println("==============================================");
