@@ -1,0 +1,73 @@
+const BASE_URL = 'http://localhost:8080/api';
+
+export interface RankDTO {
+    rankNumber: number;
+    rankName: string;
+    knowledgeBase: string[];
+}
+
+export interface ExceptionalityCheckDTO {
+    antecedant: string;
+    reason: string;
+    rankNumber: number;
+    affectedRules: string[];
+    exceptionality: boolean;
+}
+
+export interface BaseRankStepDTO {
+    iteration: number;
+    consideredFormulas: string[];
+    assignedRanks: string[];
+    carriedForward: string[];
+    checks: ExceptionalityCheckDTO[];
+}
+
+export interface BaseRankDTO {
+    knowledgeBase: string[];
+    sequence: RankDTO[];
+    ranking: RankDTO[];
+    traceSteps: BaseRankStepDTO[];
+}
+
+export interface EntailmentStepDTO {
+    iteration: number;
+    antecedentExceptional: boolean;
+    reason: string;
+    remaining: string[];
+    removed: string[];
+}
+
+export interface EntailmentDTO {
+    entailed: boolean;
+    queryFormula: string;
+    knowledgeBase: string[];
+    baseRanking: RankDTO[];
+    removedRanking: RankDTO[];
+    traceSteps: EntailmentStepDTO[];
+}
+
+// POST /api/knowledge-base/create-knowledge-base
+export const submitKnowledgeBase = async (formulas: string[]): Promise<BaseRankDTO> => {
+    const response = await fetch(`${BASE_URL}/knowledge-base/create-knowledge-base`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ formulas }),
+    });
+    
+    if (!response.ok) 
+        throw new Error('Failed to submit knowledge base');
+    return response.json();
+};
+
+// POST /api/entailment/{algorithm}
+export const submitQuery = async (algorithm: string, query: string): Promise<EntailmentDTO> => {
+    const response = await fetch(`${BASE_URL}/entailment/${algorithm}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: query,
+    });
+
+    if (!response.ok) 
+        throw new Error('Failed to submit query');
+    return response.json();
+};
