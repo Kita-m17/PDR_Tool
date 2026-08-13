@@ -3,18 +3,36 @@ import { Button } from "../ui/Buttons";
 
 interface QueryInputProps {
     onSubmit: (query: string) => void;
+    defaultValue?: string;
 }
 
-const QueryInput: React.FC<QueryInputProps> = ({ onSubmit }) => {
-    const [antecedent, setAntecedent] = useState('penguin');
-    const [consequent, setConsequent] = useState('flies');
-    const [relation, setRelation] = useState('~|'); // Default relation
-    const [negate, setNegate] = useState(true);
+const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue }) => {
 
-    const preview = antecedent && consequent ? `${antecedent} ${relation} ${negate ? '!':''}${consequent}` : '';
-    const handleSubmit = () =>{
-        if (preview) onSubmit(preview);
+    //parse defaultValue back into parts
+    const parseDefault = (val?: string) => {
+        if (!val) 
+            return { antecedent: 'penguin', relation: '~|', consequent: 'flies', negate: true };
+
+        const relation = val.includes('~|') ? '~|' : '=>';
+        const parts = val.split(relation);
+
+        const antecedent = parts[0]?.trim() || 'penguin';
+        const rawConsequent = parts[1]?.trim() || 'flies';
+        const negate = rawConsequent.startsWith('!');
+        const consequent = negate ? rawConsequent.substring(1) : rawConsequent;
+        return { antecedent, relation, consequent, negate };
     };
+
+    const defaults = parseDefault(defaultValue); // get default vals
+
+    //get query
+    const [antecedent, setAntecedent] = useState(defaults.antecedent);
+    const [consequent, setConsequent] = useState(defaults.consequent);
+    const [relation, setRelation] = useState(defaults.relation);
+    const [negate, setNegate] = useState(defaults.negate);
+
+    //preview query
+    const preview = antecedent && consequent ? `${antecedent} ${relation} ${negate ? '!':''}${consequent}` : '';
 
     React.useEffect(() => {
         if (antecedent && consequent) {
@@ -23,9 +41,18 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit }) => {
         }
     }, [antecedent, relation, consequent, negate, onSubmit]);
 
+    // set to default
+    React.useEffect(() => {
+        const defaults = parseDefault(defaultValue);
+        setAntecedent(defaults.antecedent);
+        setRelation(defaults.relation);
+        setConsequent(defaults.consequent);
+        setNegate(defaults.negate);
+    }, [defaultValue]);
+
     return(
         <div className = "mb-8">
-            <h2 className = "text-xl font-bold text-foreground mb-1">
+            <h2 className = "text-primary font-semibold mb-3">
                 2. Query
                 <span className = "ml-2 text-blue-700 cursor-pointer">ⓘ</span>
             </h2>

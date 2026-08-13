@@ -16,13 +16,14 @@ type KBFormValues = z.infer<typeof kbSchema>;
 
 interface FormulaCardProps {
     onSubmit: (formulas: string[]) => void;
+    defaultValue?:string;
 }
 
-const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit }) => {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm<KBFormValues>({
+const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue }) => {
+    const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<KBFormValues>({
         resolver: zodResolver(kbSchema),
         defaultValues: {
-            input: '(bird~|flies),(penguin=>bird),(penguin~|!flies)'
+            input: defaultValue || '(bird~|flies),(penguin=>bird),(penguin~|!flies)'
         }
     });
 
@@ -32,6 +33,10 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit }) => {
         const formulas = inputValue.split(',').map(f => f.trim()).filter(f => f.length > 0);
         onSubmit(formulas);
     }, [inputValue, onSubmit]);
+
+    React.useEffect(() => {
+        reset({ input: defaultValue || '(bird~|flies),(penguin=>bird),(penguin~|!flies)' });
+    }, [defaultValue, reset]);
 
     {/* Ensure user inputs a valid KB */}
     const onValid = (data: KBFormValues) => {

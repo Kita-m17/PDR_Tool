@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import FormulaCard from './components/input/FormulaCard';
@@ -7,38 +8,49 @@ import EntailmentQueryCard from './components/input/EntailmentQueryCard';
 import { Button } from './components/ui/Buttons';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { submitKnowledgeBase, submitQuery, BaseRankDTO, EntailmentDTO } from './api/api';
+import RCStepThrough from './components/results/RCStepThrough';
 
-function App() {
-  const [formulas, setFormulas] = useState<string[]>(['(bird~|flies)', '(penguin=>bird)', '(penguin~|!flies)']);
-  const [query, setQuery] = useState('');
-  const [algorithm, setAlgorithm] = useState('rational');
-  const [baseRankResult, setBaseRankResult] = useState<BaseRankDTO | null>(null);
-  const [entailmentResult, setEntailmentResult] = useState<EntailmentDTO | null>(null);
+interface InputPageProps {
+  formulas: string[];
+  setFormulas: (f: string[]) => void;
+  query: string;
+  setQuery: (q: string) => void;
+  algorithm: string;
+  setAlgorithm: (a: string) => void;
+}
+
+function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgorithm }: InputPageProps) {
+  const navigate = useNavigate();
+  const DEFAULT_FORMULAS = ['(bird~|flies)', '(penguin=>bird)', '(penguin~|!flies)'];
+  const DEFAULT_QUERY = 'penguin~|!flies';
+
+  // const [formulas, setFormulas] = useState<string[]>(['(bird~|flies)', '(penguin=>bird)', '(penguin~|!flies)']);
+  // const [query, setQuery] = useState('penguin~|!flies');
+  // const [algorithm, setAlgorithm] = useState('rational');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleEvaluate = async () => {
-    if (formulas.length === 0) {
-      setError('Please enter a knowledge base');
-      return;
+    if (formulas.length === 0) { 
+      setError('Please enter a knowledge base'); 
+      return; 
     }
-    if (!query) {
-      setError('Please enter a query');
-      return;
+
+    if (!query) { 
+      setError('Please enter a query'); 
+      return; 
     }
 
     setLoading(true);
     setError(null);
 
     try {
-      // 1. submit KB, get BaseRank trace
       const baseRank = await submitKnowledgeBase(formulas);
-      setBaseRankResult(baseRank);
-
-      // 2. submit query, get entailment trace
       const entailment = await submitQuery(algorithm, query);
-      setEntailmentResult(entailment);
-
+      navigate('/results', { 
+        state: { baseRank, entailment, query, algorithm } 
+      });
+      
     } catch (err) {
       setError('Something went wrong. Make sure the backend is running.');
     } finally {
@@ -46,9 +58,16 @@ function App() {
     }
   };
 
+  const handleReset = () => {
+    setFormulas(DEFAULT_FORMULAS);
+    setQuery(DEFAULT_QUERY);
+    setAlgorithm('rational');
+  };
+
   return (
     <div className="min-h-screen bg-accent flex flex-col">
       <Header />
+
       <main className="flex-1 px-8 py-8">
 
         {/* Top row: KB and Query side by side */}
@@ -56,21 +75,18 @@ function App() {
           
           {/* KB Card — wider */}
           <div className="mb-4 bg-white rounded-xl border border-border shadow-sm p-6 flex-[2]">
-            <FormulaCard onSubmit={setFormulas} />
+            <FormulaCard onSubmit={setFormulas} defaultValue={formulas.join(',')} />
           </div>
 
           {/* Query Card — narrower */}
           <div className="mb-4 mt-2 bg-white rounded-xl border border-border shadow-sm p-6 flex-[1]">
-            <QueryInput onSubmit={setQuery} />
+            <QueryInput onSubmit={setQuery} defaultValue={query}/>
           </div>
         </div>
         
         {/* Algorithm selection */}
         <div className="bg-white rounded-xl border border-border shadow-sm p-6 mt-2"> 
-          <EntailmentQueryCard 
-            selected={algorithm}
-            onAlgorithmChange={setAlgorithm}
-          /> 
+          <EntailmentQueryCard selected={algorithm} onAlgorithmChange={setAlgorithm}/> 
         </div>
 
         {/* Error message */}
@@ -82,6 +98,15 @@ function App() {
 
         {/* Evaluate button */}
         <div className="flex justify-end flex-col items-end mt-6">
+          <div className="flex gap-3">
+            <Button
+                variant="outline"
+                size="lg"
+                onClick={handleReset}
+            >
+                Reset to Defaults
+            </Button>
+
             <Button
                 // type="submit"
                 variant="primary"
@@ -96,29 +121,34 @@ function App() {
             <p className="text-xs text-muted-foreground mt-1">
                 Proceed to step-by-step evaluation.
             </p>
+          </div>
         </div>
-
-        {/* Results — placeholder for now */}
-        {baseRankResult && (
-          <div className="mt-8 bg-white rounded-xl border border-border shadow-sm p-6">
-            <pre className="text-xs overflow-auto">
-              {JSON.stringify(baseRankResult, null, 2)}
-            </pre>
-          </div>
-        )}
-
-        {entailmentResult && (
-          <div className="mt-4 bg-white rounded-xl border border-border shadow-sm p-6">
-            <pre className="text-xs overflow-auto">
-              {JSON.stringify(entailmentResult, null, 2)}
-            </pre>
-          </div>
-        )}
-
       </main>
-      <Footer />
-    </div>
+    <Footer/>
+  </div>
   );
+}
+
+function App(){
+  const [formulas, setFormulas] = useState<string[]>(['(bird~|flies)', '(penguin=>bird)', '(penguin~|!flies)']);
+  const [query, setQuery] = useState('penguin~|!flies');
+  const [algorithm, setAlgorithm] = useState('rational');
+
+  return(
+    <Routes>
+      <Route path="/" element={
+        <InputPage 
+          formulas={formulas}
+          setFormulas={setFormulas}
+          query={query}
+          setQuery={setQuery}
+          algorithm={algorithm}
+          setAlgorithm={setAlgorithm}
+        />
+      }/>
+      <Route path="/results" element = {<RCStepThrough/>}/>
+    </Routes>
+  )
 }
 
 export default App;
