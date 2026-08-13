@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -20,8 +21,74 @@
         <dependency>
             <groupId>org.tweetyproject</groupId>
             <artifactId>tweety-full</artifactId>
+=======
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Spring Boot parent -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.5</version>
+    </parent>
+
+    <!-- Project coordinates -->
+    <groupId>com.pdr</groupId>
+    <artifactId>pdr-tool</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <!-- Project properties -->
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+
+        <!-- Spring Boot dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Tweety Dependency -->
+        <dependency>
+            <groupId>org.tweetyproject</groupId>
+            <artifactId>commons</artifactId>
+            <version>1.30</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.tweetyproject.logics</groupId>
+            <artifactId>pl</artifactId>
+>>>>>>> Nikita
             <version>1.30</version>
         </dependency>
     </dependencies>
 
+<<<<<<< HEAD
+=======
+    <!-- Build configuration -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.pdr.App</mainClass>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
+            </plugin>
+        </plugins>
+        <finalName>app</finalName>
+    </build>
+>>>>>>> Nikita
 </project>

@@ -16,10 +16,13 @@
       <option name="name" value="JBoss Community repository" />
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
+<<<<<<< HEAD
     <remote-repository>
       <option name="id" value="tweety-repo" />
       <option name="name" value="tweety-repo" />
       <option name="url" value="https://tweetyproject.org/maven/" />
     </remote-repository>
+=======
+>>>>>>> Nikita
   </component>
 </project>
