@@ -3,17 +3,21 @@ package com.pdr.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.tweetyproject.logics.pl.syntax.PlFormula;
 
 import com.pdr.dtos.BaseRankDTO;
 import com.pdr.dtos.KnowledgeBaseDTO;
+import com.pdr.models.ErrorResponse;
 import com.pdr.models.KnowledgeBase;
 import com.pdr.services.KnowledgeBaseService;
 import com.pdr.utils.DefeasibleParser;
@@ -58,6 +62,25 @@ public class KnowledgeBaseController {
         kbService.setKnowledgeBase(kb);
 
         return ResponseEntity.ok(kbService.getBaseRank().toDTO());
+    }
+
+    
+    //Endpoint: POST /api/knowledge-base/create-knowledge-base
+    //Creates a new KB from formulas provided in the request body
+    @PostMapping("/file")
+    public ResponseEntity<?> createKbFromFile(@RequestParam("file") MultipartFile file) {
+        try {
+            if (file == null || file.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400, "Bad Request", "No file uploaded"));
+            }
+            
+            KnowledgeBase kb = parser.parseInputStream(file.getInputStream());
+            kbService.setKnowledgeBase(kb);
+            return ResponseEntity.ok(kbService.getBaseRank().toDTO());
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400, "Bad Request", "Invalid knowledge base file."));
+        }
     }
 
 }
