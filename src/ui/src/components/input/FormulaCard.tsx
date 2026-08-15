@@ -16,7 +16,7 @@ type KBFormValues = z.infer<typeof kbSchema>;
 
 interface FormulaCardProps {
     onSubmit: (formulas: string[]) => void;
-    defaultValue?:string;
+    defaultValue?: string;
 }
 
 const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue }) => {
@@ -26,6 +26,8 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue }) => 
             input: defaultValue || '(bird~|flies),(penguin=>bird),(penguin~|!flies)'
         }
     });
+
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
 
     // watch the input and update parent on every change
     const inputValue = watch('input');
@@ -42,6 +44,36 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue }) => 
     const onValid = (data: KBFormValues) => {
         const formulas = data.input.split(',').map(f => f.trim()).filter(f => f.length > 0);
         onSubmit(formulas);
+    };
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch('http://localhost:8080/api/knowledge-base/file', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) throw new Error('Upload failed');
+
+            // const baseRank = await response.json();
+            const data = await response.json();
+            console.log('Response from file upload:', data);  // ← add this
+            console.log('KB:', data.knowledgeBase);  
+
+            // update the textarea with the uploaded KB
+            const formulaString = data.knowledgeBase.join(',');
+            reset({ input: formulaString });
+            onSubmit(data.knowledgeBase);
+
+        } catch (err) {
+            console.error('File upload failed', err);
+        }
     };
 
     return (
@@ -61,8 +93,6 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue }) => 
                     {...register("input")}
                     className="mt-4 w-full border border-border rounded-lg p-4 font-mono text-sm h-40 resize-y focus:outline-none focus:border-primary"
                     placeholder="e.g. (bird~|flies),(penguin=>bird),(penguin~|!flies)"
-                    // value={input}
-                    // onChange={(e) => setInput(e.target.value)}
                 />  
 
                 {errors.input && (
@@ -76,12 +106,21 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue }) => 
 
                 {/* Buttons */}
                 <div className="flex justify-end gap-3 mt-3">
-                    <Button variant="outline" size="default"  onClick={() => {}}>
+                    {/* Hidden file input */}
+                    <input
+                        type="file"
+                        accept=".txt"
+                        className="hidden"
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                    />
+
+                    <Button variant="outline" size="default" type="button" onClick={() => fileInputRef.current?.click()}>
                         <UploadIcon className="mr-2 h-4 w-4" />
                         Upload
                     </Button>
 
-                    <Button variant="outline" size="default" onClick={() => {}}>
+                    <Button variant="outline" size="default" type="button" onClick={() => {}}>
                         Load Example 
                         <TriangleDownIcon className="ml-2 h-4 w-4" />
                     </Button>

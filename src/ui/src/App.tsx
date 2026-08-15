@@ -117,10 +117,6 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
                 {loading ? 'Evaluating...' : 'Evaluate'}
                 <ArrowRightIcon className="ml-2 h-4 w-4" />
             </Button>
-
-            <p className="text-xs text-muted-foreground mt-1">
-                Proceed to step-by-step evaluation.
-            </p>
           </div>
         </div>
       </main>
