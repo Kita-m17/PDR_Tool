@@ -9,6 +9,7 @@ import { Button } from './components/ui/Buttons';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { submitKnowledgeBase, submitQuery, BaseRankDTO, EntailmentDTO } from './api/api';
 import RCStepThrough from './components/results/RCStepThrough';
+import BaseRankStepThrough from './components/results/BaseRankStepThrough';
 
 interface InputPageProps {
   formulas: string[];
@@ -47,7 +48,7 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
     try {
       const baseRank = await submitKnowledgeBase(formulas);
       const entailment = await submitQuery(algorithm, query);
-      navigate('/results', { 
+      navigate('/baserank', { 
         state: { baseRank, entailment, query, algorithm } 
       });
       
@@ -75,7 +76,13 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
           
           {/* KB Card — wider */}
           <div className="mb-4 bg-white rounded-xl border border-border shadow-sm p-6 flex-[2]">
-            <FormulaCard onSubmit={setFormulas} defaultValue={formulas.join(',')} />
+            <FormulaCard onSubmit={setFormulas} defaultValue={formulas.join(',')}
+                onLoadExample={(exampleFormulas, exampleQuery, exampleAlgorithm) => {
+                    setFormulas(exampleFormulas);
+                    setQuery(exampleQuery);
+                    setAlgorithm(exampleAlgorithm);
+                }}
+            />
           </div>
 
           {/* Query Card — narrower */}
@@ -99,21 +106,11 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
         {/* Evaluate button */}
         <div className="flex justify-end flex-col items-end mt-6">
           <div className="flex gap-3">
-            <Button
-                variant="outline"
-                size="lg"
-                onClick={handleReset}
-            >
+            <Button variant="outline" size="lg" onClick={handleReset}>
                 Reset to Defaults
             </Button>
 
-            <Button
-                // type="submit"
-                variant="primary"
-                size="lg"
-                onClick={handleEvaluate}
-                disabled={loading}
-            >
+            <Button variant="primary" size="lg" onClick={handleEvaluate} disabled={loading}>
                 {loading ? 'Evaluating...' : 'Evaluate'}
                 <ArrowRightIcon className="ml-2 h-4 w-4" />
             </Button>
@@ -142,6 +139,7 @@ function App(){
           setAlgorithm={setAlgorithm}
         />
       }/>
+      <Route path="/baserank" element={<BaseRankStepThrough />} />
       <Route path="/results" element = {<RCStepThrough/>}/>
     </Routes>
   )

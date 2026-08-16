@@ -4,6 +4,7 @@ import { UploadIcon, TriangleDownIcon} from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { EXAMPLES } from '../../api/examples';
 
 const kbSchema = z.object({
     input: z.string().min(1, "Knowledge base cannot be empty").refine(
@@ -17,15 +18,18 @@ type KBFormValues = z.infer<typeof kbSchema>;
 interface FormulaCardProps {
     onSubmit: (formulas: string[]) => void;
     defaultValue?: string;
+    onLoadExample?: (formulas: string[], query: string, algorithm: string) => void;
 }
 
-const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue }) => {
+const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoadExample }) => {
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<KBFormValues>({
         resolver: zodResolver(kbSchema),
         defaultValues: {
             input: defaultValue || '(bird~|flies),(penguin=>bird),(penguin~|!flies)'
         }
     });
+
+    const [showExamples, setShowExamples] = useState(false);
 
     const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -120,10 +124,29 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue }) => 
                         Upload
                     </Button>
 
-                    <Button variant="outline" size="default" type="button" onClick={() => {}}>
+                    <Button variant="outline" size="default" type="button" onClick={() => setShowExamples(!showExamples)}>
                         Load Example 
                         <TriangleDownIcon className="ml-2 h-4 w-4" />
                     </Button>
+
+                    {showExamples && (
+                        <div className ="absolute right-0 top-10 bg-white border border-border rounded-lg shadow-lg z-10 w-64">
+                            {EXAMPLES.map((example) => (
+                                <button key={example.label} className="w-full text-left px-4 py-3 hover:bg-accent text-sm border-b border-border last:border-0" type="button"
+                                    onClick={() => {
+                                        const formulaString = example.formulas.join(',');
+                                        reset({ input: formulaString });
+                                        onSubmit(example.formulas);
+                                        onLoadExample?.(example.formulas, example.query, example.algorithm);
+                                        setShowExamples(false);
+                                    }}
+                                >
+                                    <p className="font-medium text-foreground">{example.label}</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">{example.description}</p>
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </form>
         </div>

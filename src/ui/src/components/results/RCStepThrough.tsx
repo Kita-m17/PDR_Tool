@@ -8,7 +8,7 @@ import RankingVisualiser from './RankingVisualiser';
 import AlgorithmView from './AlgorithmView';
 import ExplanationView from './ExplanationView';
 import StepControls from './StepControls';
-import { ArrowLeftIcon } from '@radix-ui/react-icons';
+import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import { Button } from '../ui/Buttons';
 
 interface ResultsState {
@@ -21,7 +21,8 @@ interface ResultsState {
 const RCStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { entailment, query } = location.state as ResultsState;
+    // const { entailment, query } = location.state as ResultsState;
+    const { baseRank, entailment, query, algorithm } = location.state as ResultsState;
 
     const steps = buildDebuggerSteps(entailment);
     const [currentStep, setCurrentStep] = useState(0);
@@ -53,11 +54,14 @@ const RCStepThrough: React.FC = () => {
                         </p>
                     </div>
 
-                    <Button onClick={() => navigate('/')} className="text-sm text-muted-foreground border border-border rounded-lg px-4 py-2 hover:bg-white transition"
+                    <Button className="text-sm text-muted-foreground border border-border rounded-lg px-4 py-2 hover:bg-white transition"
+                        onClick={() => navigate('/baserank', {
+                            state: { baseRank, entailment, query, algorithm }
+                        })} 
                     >
                         <span className="flex items-center gap-1">
                             <ArrowLeftIcon className="h-3 w-3" />
-                            Edit Query
+                            Back to BaseRank
                         </span>
                     </Button>
                 </div>
@@ -95,6 +99,16 @@ const RCStepThrough: React.FC = () => {
                         onEnd={() => setCurrentStep(steps.length - 1)}
                     />
                 </div>
+
+                {/* Done button, only on final step */}
+                {step.isFinalStep && (
+                    <div className="flex justify-end mt-4">
+                        <Button variant="primary" size="lg" onClick={() => navigate('/')}>
+                            Done
+                            <ArrowRightIcon className="ml-2 h-4 w-4" />
+                        </Button>
+                    </div>
+                )}
 
             </main>
             
