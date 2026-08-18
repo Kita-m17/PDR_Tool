@@ -27,7 +27,7 @@ const BaseRankStepThrough: React.FC = () => {
     const pseudocode = [
         { num: 1, code: 'i := 0' },
         { num: 2, code: 'E₀ := K→  (materialise K)' },
-        { num: 3, code: 'while Eᵢ₋₁ ≠ Eᵢ' },
+        { num: 3, code: 'while Eᵢ₋₁ ≠ Eᵢ:' },
         { num: 4, code: '    Eᵢ₊₁ := { α→β ∈ Eᵢ | Eᵢ |= ¬α }', indent: true },
         { num: 5, code: '    Rᵢ := Eᵢ \\ Eᵢ₊₁', indent: true },
         { num: 6, code: '    i := i + 1', indent: true },

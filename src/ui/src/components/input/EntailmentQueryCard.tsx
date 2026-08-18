@@ -17,9 +17,10 @@ const EntailmentQueryCard: React.FC<EntailmentQueryCardProps> = ({selected, onAl
 
     return (
         <div className="mb-8">
-            <h2 className="text-xl font-bold text-foreground mb-1">
+            <h2 className = "text-primary font-semibold mb-3">
                 3. Entailment Algorithm
             </h2>
+            
             <p className="text-muted-foreground text-sm mb-10">
                 Choose the algorithm you want to use to evaluate the query.
             </p>

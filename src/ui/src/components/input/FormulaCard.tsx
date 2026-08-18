@@ -82,7 +82,7 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
 
     return (
         <div className = "mb-8">
-            <h2 className = "text-xl font-bold text-foreground mb-1">
+            <h2 className = "text-primary font-semibold mb-3">
                 1. Knowledge Base, <span className="italic">K</span>
                 <span className="ml-2 text-blue-700 cursor-pointer">ⓘ</span>
             </h2>
