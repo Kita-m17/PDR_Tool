@@ -20,7 +20,7 @@ public class ReasonerFactory {
     public static ReasonerService createReasoner(String type) {
         return switch (type) {
             case "rational" -> new RationalClosureImpl();
-            // case "lexical" -> new LexicalReasonerImpl();
+            case "lexicographic" -> new LexicographicReasonerImpl();
             // case "relevant" -> new RelevantReasonerImpl();
             default -> throw new IllegalArgumentException("Unknown reasoner: " + type);
         };

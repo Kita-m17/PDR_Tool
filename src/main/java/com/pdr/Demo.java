@@ -8,9 +8,13 @@ import com.pdr.models.BaseRank;
 import com.pdr.models.DefeasibleImplication;
 import com.pdr.models.Entailment;
 import com.pdr.models.KnowledgeBase;
+import com.pdr.models.LexicographicEntailment;
+import com.pdr.models.LexicographicStep;
 import com.pdr.models.Rank;
+import com.pdr.models.SubKnowledgeBaseCheck;
 import com.pdr.services.BaseRankService;
 import com.pdr.services.BaseRankServiceImp;
+import com.pdr.services.LexicographicReasonerImpl;
 import com.pdr.services.RationalReasonerImpl;
 
 
@@ -101,5 +105,33 @@ public class Demo {
         + " defeasibly conclude that " 
         + query.getFirstFormula() + " typically " 
         + query.getSecondFormula() + ".");
+
+
+        System.out.println();
+        System.out.println("==============================================");
+        System.out.println("|| PHASE 3: Lexicographic Closure Entailment||");
+        System.out.println("==============================================");
+        System.out.println();
+        System.out.println("Instead of discarding the rank, we form sub-knowledge bases to keep as many statements as");
+        System.out.println("we can, dropping one more only when each sub-knowledge base still refutes");
+        System.out.println("the antecedent.");
+        System.out.println();
+ 
+        Entailment lexicographic = new LexicographicReasonerImpl().getEntailment(baseRank, query);
+        LexicographicEntailment lexicographicResult = (LexicographicEntailment) lexicographic;
+ 
+        System.out .println("Step-through:");
+        for (LexicographicStep traceStep : lexicographicResult.getLexicographicSteps()) {
+            System.out.println(traceStep);
+            System.out.println("");
+        }
+ 
+        System.out.println("Final check - the query must hold in surviving sub-knowledge bases:");
+        for (SubKnowledgeBaseCheck check : lexicographicResult.getFinalChecks()) {
+            System.out.println("   -> " + check);
+        }
+ 
+        System.out.println("Result: " + query + " is " + (lexicographic.getEntailed() ? "entailed" : "not entailed"));
     }
 }
+

@@ -23,7 +23,7 @@ public class Ranking extends ArrayList<Rank> {
         * Constructs an empty ranking.
     */
     public Ranking() {
-        super();
+        super();`
     }
 
     /**
