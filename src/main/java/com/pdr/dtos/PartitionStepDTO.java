@@ -2,7 +2,8 @@ package com.pdr.dtos;
 
 import java.util.List;
 
-public class JustificationStepDTO {
+// Data Transfer Object (DTO) for a single Partition trace step
+public class PartitionStepDTO {
     private Integer ID;
     private List<String> set;
     private Boolean isEntailed;

@@ -1,8 +1,9 @@
 package com.pdr.services;
 
-import com.pdr.models.Justification;
-import com.pdr.models.JustificationStep;
+import com.pdr.models.Partition;
+import com.pdr.models.PartitionStep;
 import com.pdr.models.KnowledgeBase;
+import org.springframework.stereotype.Service;
 import org.tweetyproject.logics.pl.reasoner.SatReasoner;
 import org.tweetyproject.logics.pl.sat.Sat4jSolver;
 import org.tweetyproject.logics.pl.sat.SatSolver;
@@ -12,11 +13,11 @@ import org.tweetyproject.logics.pl.syntax.PlFormula;
 
 import java.util.ArrayList;
 import java.util.List;
-
-public class JustificationUsingPowersetImpl implements JustificationService{
+@Service
+public class PartitionUsingPowersetImpl implements PartitionService {
 
     @Override
-    public Justification getPartition(KnowledgeBase knowledgeBase, PlFormula query) {
+    public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query) {
         List<KnowledgeBase> list = getPowerSets(knowledgeBase);
         int min = Integer.MAX_VALUE;
         List<KnowledgeBase> resList = new ArrayList<>();
@@ -24,7 +25,7 @@ public class JustificationUsingPowersetImpl implements JustificationService{
         SatSolver.setDefaultSolver(new Sat4jSolver());
         SatReasoner reasoner = new SatReasoner();
         System.out.println("query: "+query.toString());
-        Justification result = new Justification();
+        Partition result = new Partition();
         result.setTraceSteps(new ArrayList<>());
         int count =1;
 
@@ -32,9 +33,9 @@ public class JustificationUsingPowersetImpl implements JustificationService{
 
         for(KnowledgeBase combination:list){
 
-            JustificationStep step = new JustificationStep();
+            PartitionStep step = new PartitionStep();
             step.setId(count);
-            step.setSet(combination.getStringFormulas());
+            step.setSet(combination);
             for(PlFormula pl:classicalKnowledgeBase){
                 combination.add(pl);
             }
@@ -94,10 +95,10 @@ public class JustificationUsingPowersetImpl implements JustificationService{
         }
         relevantString = relevantString.difference(classicalKnowledgeBase);
         irrelevantString = irrelevantString.difference(classicalKnowledgeBase);
-        result.setClassicalStatements(classicalKnowledgeBase.getStringFormulas());
-        result.setRelevantPartition(relevantString.getStringFormulas());
-        result.setIrrelevantPartition(irrelevantString.getStringFormulas());
-        result.setKnowledgeBase(knowledgeBase.getStringFormulas());
+        result.setClassicalStatements(classicalKnowledgeBase);
+        result.setRelevantPartition(relevantString);
+        result.setIrrelevantPartition(irrelevantString);
+        result.setKnowledgeBase(knowledgeBase);
         return result;
     }
 

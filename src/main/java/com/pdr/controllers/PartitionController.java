@@ -1,9 +1,7 @@
 package com.pdr.controllers;
 
 import com.pdr.models.ErrorResponse;
-import com.pdr.models.Justification;
-import com.pdr.models.KnowledgeBase;
-import com.pdr.services.JustificationService;
+import com.pdr.services.PartitionService;
 import com.pdr.services.KnowledgeBaseService;
 import com.pdr.utils.DefeasibleParser;
 import org.springframework.http.HttpStatus;
@@ -12,15 +10,15 @@ import org.springframework.web.bind.annotation.*;
 import org.tweetyproject.logics.pl.syntax.PlFormula;
 
 @RestController
-@RequestMapping("/api/justification/relevant/basic") // Default mapping
+@RequestMapping("/api/partition/relevant/basic") // Default mapping
 @CrossOrigin(origins = "http://localhost:3000")
-public class JustificationController {
-    private final JustificationService justificationService;
+public class PartitionController {
+    private final PartitionService partitionService;
     private final KnowledgeBaseService kbService;
     private final DefeasibleParser parser;
 
-    public JustificationController(JustificationService justificationService, KnowledgeBaseService kbService, DefeasibleParser parser) {
-        this.justificationService = justificationService;
+    public PartitionController(PartitionService partitionService, KnowledgeBaseService kbService, DefeasibleParser parser) {
+        this.partitionService = partitionService;
         this.kbService = kbService;
         this.parser = parser;
     }
@@ -37,7 +35,7 @@ public class JustificationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
         }
 
-        return ResponseEntity.ok(justificationService.getPartition(kbService.getKnowledgeBase(), formula));
+        return ResponseEntity.ok(partitionService.getPartition(kbService.getKnowledgeBase(), formula).toDTO());
     }
 
 

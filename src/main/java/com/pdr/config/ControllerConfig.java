@@ -1,9 +1,7 @@
 package com.pdr.config;
 
-import com.pdr.services.JustificationService;
-import com.pdr.services.JustificationUsingPowersetImpl;
-import com.pdr.services.KnowledgeBaseService;
-import com.pdr.services.KnowledgeBaseServiceImpl;
+import com.pdr.services.PartitionService;
+import com.pdr.services.PartitionUsingPowersetImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,9 +9,5 @@ import org.springframework.context.annotation.Configuration;
 public class ControllerConfig {
 
 
-    @Bean
-    public JustificationService justificationService(){
-        return new JustificationUsingPowersetImpl();
-    }
 
 }

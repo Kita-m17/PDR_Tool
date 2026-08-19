@@ -48,7 +48,7 @@ public class ReasonerController {
         this.parser = parser;
     }
 
-    //Endpoint:POST /api/entailment/{reasoner}/{queryFormula}
+    //Endpoint:POST /api/entailment/{reasoner}
     @PostMapping("/{reasoner}")
     public ResponseEntity<?> getEntailment(
             @PathVariable String reasoner, //chosen reasoner type (e.g., "rational")
