@@ -1,62 +1,23 @@
 package com.pdr.dtos;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 // Data Transfer Object (DTO) for a single Partition trace step
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PartitionStepDTO {
     private Integer ID;
     private List<String> set;
-    private Boolean isEntailed;
-    private Boolean isMinimal;
+    private boolean isEntailed;
+    private boolean isMinimal;
     private String reason;
     private List<List<String>> justificationsSoFar;
 
-    public Boolean getEntailed() {
-        return isEntailed;
-    }
 
-    public Boolean getMinimal() {
-        return isMinimal;
-    }
-
-    public Integer getID() {
-        return ID;
-    }
-
-    public List<List<String>> getJustificationsSoFar() {
-        return justificationsSoFar;
-    }
-
-    public List<String> getSet() {
-        return set;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setEntailed(Boolean entailed) {
-        isEntailed = entailed;
-    }
-
-    public void setMinimal(Boolean minimal) {
-        isMinimal = minimal;
-    }
-
-    public void setID(Integer ID) {
-        this.ID = ID;
-    }
-
-    public void setJustificationsSoFar(List<List<String>> justificationsSoFar) {
-        this.justificationsSoFar = justificationsSoFar;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
-    public void setSet(List<String> set) {
-        this.set = set;
-    }
 
 }

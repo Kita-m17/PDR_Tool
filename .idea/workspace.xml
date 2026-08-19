@@ -5,19 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="47a1af81-9f9a-4eb7-b8f7-7edd1851beb9" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/pdr/models/RelevantEntailment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/BasicRelevantReasonerImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/config/ControllerConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/config/ControllerConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/controllers/JustificationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/controllers/PartitionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/controllers/ReasonerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/controllers/ReasonerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/dtos/JustificationStepDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/dtos/PartitionDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/models/Justification.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/models/Partition.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/models/JustificationStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/models/PartitionStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/JustificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/JustificationUsingPowersetImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionUsingPowersetImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/ReasonerFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/ReasonerFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/dtos/PartitionDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/dtos/PartitionDTO.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

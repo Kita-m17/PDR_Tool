@@ -33,10 +33,10 @@ public class Partition {
                 ? this.traceSteps.stream().map(PartitionStep::toDTO).collect(Collectors.toList())
                 : new ArrayList<>();
         return new PartitionDTO(
-                this.relevantPartition != null ? this.relevantPartition.toStringList() : new ArrayList<>(),
-                this.irrelevantPartition != null ? this.irrelevantPartition.toStringList() : new ArrayList<>(),
-                this.classicalStatements != null ? this.classicalStatements.toStringList() : new ArrayList<>(),
-                this.knowledgeBase != null ? this.knowledgeBase.toStringList() : new ArrayList<>(),
+                this.relevantPartition != null ? this.relevantPartition.getStringFormulas() : new ArrayList<>(),
+                this.irrelevantPartition != null ? this.irrelevantPartition.getStringFormulas() : new ArrayList<>(),
+                this.classicalStatements != null ? this.classicalStatements.getStringFormulas() : new ArrayList<>(),
+                this.knowledgeBase != null ? this.knowledgeBase.getStringFormulas() : new ArrayList<>(),
                 traceStepsDTO
         );
     }
