@@ -296,17 +296,17 @@ const BaseRankStepThrough: React.FC = () => {
                     />
                 </div>
 
-                {/*continue to rc */}
+                {/*continue to the algorithm-specific step-through, based on what was actually selected */}
                 {step.isFinalStep && (
                     <div className="flex justify-end">
                         <Button variant="primary" size="lg"
-                            onClick={() => 
-                                navigate('/results/relevant/basic', {
+                            onClick={() =>
+                                navigate(algorithm === 'basic relevant' ? '/results/relevant/basic' : '/results/rational', {
                                     state: { baseRank, entailment, query, algorithm }
                                 }
                             )}
                         >
-                            Continue to Rational Closure
+                            {algorithm === 'basic relevant' ? 'Continue to Relevant Closure' : 'Continue to Rational Closure'}
                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                         </Button>
                     </div>

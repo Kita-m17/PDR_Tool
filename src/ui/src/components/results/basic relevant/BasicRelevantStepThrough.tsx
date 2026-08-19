@@ -75,7 +75,8 @@ const RCStepThrough: React.FC = () => {
 
                 {/* Ranking visualiser, full width */}
                 <div className="bg-white border border-border rounded-xl p-6 mb-4">
-                    <RankingVisualiser rankingState={step.rankingState} />
+                    <RankingVisualiser rankingState={step.rankingState} currentRankIndex={step.currentRankIndex} currentRPrime={step.currentRPrime} />
+
                 </div>
 
                 {/* Algorithm + Explanation side by side */}

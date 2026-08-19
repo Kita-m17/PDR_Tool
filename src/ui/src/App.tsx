@@ -28,7 +28,7 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
 
   // const [formulas, setFormulas] = useState<string[]>(['(bird~|flies)', '(penguin=>bird)', '(penguin~|!flies)']);
   // const [query, setQuery] = useState('penguin~|!flies');
-   const [algorithm, setAlgorithm] = useState('rational');
+   //const [algorithm, setAlgorithm] = useState('rational');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
