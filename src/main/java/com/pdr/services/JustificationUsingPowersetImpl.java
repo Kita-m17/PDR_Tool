@@ -1,0 +1,125 @@
+package com.pdr.services;
+
+import com.pdr.models.Justification;
+import com.pdr.models.JustificationStep;
+import com.pdr.models.KnowledgeBase;
+import org.tweetyproject.logics.pl.reasoner.SatReasoner;
+import org.tweetyproject.logics.pl.sat.Sat4jSolver;
+import org.tweetyproject.logics.pl.sat.SatSolver;
+import org.tweetyproject.logics.pl.syntax.Implication;
+import org.tweetyproject.logics.pl.syntax.Negation;
+import org.tweetyproject.logics.pl.syntax.PlFormula;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class JustificationUsingPowersetImpl implements JustificationService{
+
+    @Override
+    public Justification getPartition(KnowledgeBase knowledgeBase, PlFormula query) {
+        List<KnowledgeBase> list = getPowerSets(knowledgeBase);
+        int min = Integer.MAX_VALUE;
+        List<KnowledgeBase> resList = new ArrayList<>();
+        KnowledgeBase res = new KnowledgeBase();
+        SatSolver.setDefaultSolver(new Sat4jSolver());
+        SatReasoner reasoner = new SatReasoner();
+        System.out.println("query: "+query.toString());
+        Justification result = new Justification();
+        result.setTraceSteps(new ArrayList<>());
+        int count =1;
+
+        KnowledgeBase classicalKnowledgeBase = knowledgeBase.separate()[1];
+
+        for(KnowledgeBase combination:list){
+
+            JustificationStep step = new JustificationStep();
+            step.setId(count);
+            step.setSet(combination.getStringFormulas());
+            for(PlFormula pl:classicalKnowledgeBase){
+                combination.add(pl);
+            }
+            if(step.getId()!=1){
+
+                step.setJustificationsSoFar(new ArrayList<>((result.getTraceSteps().get(step.getId()-2)).getJustificationsSoFar()));
+            }else{
+                step.setJustificationsSoFar(new ArrayList<>());
+            }
+
+            System.out.println("subset: "+combination+" entailemnt: "+reasoner.query(combination,new Negation(((Implication) query).getFirstFormula())));
+            //System.out.println(new Negation(((Implication) query).getFirstFormula()));
+            if(reasoner.query(combination,new Negation(((Implication) query).getFirstFormula()))){
+                boolean minimal = true;
+                step.setEntailed(true);
+                for(int i =0;i<resList.size();i++){
+                    if(combination.containsAll(resList.get(i)) ){
+                        // System.out.println("Relevant: "+combination +" i: "+i);
+
+                        minimal = false;
+                    }
+                }
+
+                //System.out.println("Relevant: "+combination);
+
+                if(minimal){
+                    step.setMinimal(true);
+                    System.out.println("Relevant: "+combination);
+                    resList.add(combination);
+
+                }
+
+
+            }
+            if(step.isEntailed() && step.isMinimal()){
+
+
+
+
+                step.getJustificationsSoFar().add(step.getSet());
+
+
+            }
+            result.getTraceSteps().add(step);
+            count++;
+        }
+
+
+
+
+        System.out.println("Possible relevant sets: "+resList);
+        KnowledgeBase relevantString = new KnowledgeBase();
+        KnowledgeBase irrelevantString = new KnowledgeBase(knowledgeBase);
+        for(KnowledgeBase kb:resList){
+            relevantString = relevantString.union(kb);
+            irrelevantString = irrelevantString.difference(kb);
+        }
+        relevantString = relevantString.difference(classicalKnowledgeBase);
+        irrelevantString = irrelevantString.difference(classicalKnowledgeBase);
+        result.setClassicalStatements(classicalKnowledgeBase.getStringFormulas());
+        result.setRelevantPartition(relevantString.getStringFormulas());
+        result.setIrrelevantPartition(irrelevantString.getStringFormulas());
+        result.setKnowledgeBase(knowledgeBase.getStringFormulas());
+        return result;
+    }
+
+    public static List<KnowledgeBase> getPowerSets(KnowledgeBase kb){
+
+        List<KnowledgeBase> res = new ArrayList<>();
+        res.add(new KnowledgeBase());
+        kb = kb.separate()[0];
+        List<PlFormula> plFormulas = new ArrayList<>(kb);
+
+        for(PlFormula pl:plFormulas){
+            List<KnowledgeBase> snapshot = new ArrayList<>(res);
+            for(KnowledgeBase list: snapshot){
+                KnowledgeBase tmp = new KnowledgeBase(list);
+                tmp.add(pl);
+                res.add(tmp);
+            }
+        }
+
+        return res;
+
+    }
+
+
+}

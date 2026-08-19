@@ -14,6 +14,7 @@
 
 package com.pdr.models;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -192,4 +193,18 @@ public class KnowledgeBase extends PlBeliefSet {
         }
         return formula;
     }
+
+    @Override
+    public boolean contains(Object o) {
+        return super.contains(o);
+    }
+    public List<String> getStringFormulas(){
+        List<PlFormula> list= new ArrayList<PlFormula>(this);
+        List<String> result = new ArrayList<>();
+        for(PlFormula pl:list){
+            result.add(pl.toString());
+        }
+        return result;
+    }
+
 }
