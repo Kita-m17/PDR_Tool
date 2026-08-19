@@ -78,6 +78,9 @@ public class BasicRelevantReasonerImpl implements ReasonerService {
         return new RelevantEntailment.RelevantEntailmentBuilder()
                 .withEntailed(entailment)
                 .withTraceSteps(trace)
+                .withBaseRanking(baseRanking)
+                .withKnowledgeBase(knowledgeBase)
+                .withQueryFormula(queryFormula)
                 .build();
 
 

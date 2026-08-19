@@ -6,7 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="47a1af81-9f9a-4eb7-b8f7-7edd1851beb9" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/dtos/PartitionDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/dtos/PartitionDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/BasicRelevantReasonerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/BasicRelevantReasonerImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/src/components/input/EntailmentQueryCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/input/EntailmentQueryCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantAlgorithmView.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantAlgorithmView.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantExplanationView.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantExplanationView.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantSteps.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantSteps.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/src/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,9 +62,15 @@
     "git-widget-placeholder": "Liam",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/liamd/Home/Academic/Honours/PDR Project/PDR_Tool/src/ui/src/components/results/basic relevant",
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\liamd\Home\Academic\Honours\PDR Project\PDR_Tool\src\ui\src\components\results\basic relevant" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.pdr.App" />

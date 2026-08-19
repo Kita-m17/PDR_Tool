@@ -51,8 +51,8 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
     steps.push({
         stepNumber: 1,
         totalSteps: 0,
-        highlightedLines: [1, 2],
-        explanation: `Before beginning the entailment check, we materialise the ranked knowledge base.\n\nEach defeasible statement α ~| β is converted to a classical implication α → β. This allows us to use classical entailment checking (via a SAT solver) throughout the algorithm.\n\nThe finite ranks form the working set R, while R∞ contains the classical statements that always remain.`,
+        highlightedLines: [3, 3],
+        explanation: `Before beginning the entailment check, we materialise the ranked knowledge base.\n\nEach defeasible statement α ~| β is converted to a classical implication α → β. This allows us to use classical entailment checking (via a SAT solver) throughout the algorithm.\n\nThe finite ranks form the sets Ri, while R∞ contains the classical statements that always remain.`,
         workingSet: finiteRanks.flatMap(r => r.knowledgeBase),
         rInfinity,
         materialisedWorking: finiteRanks.flatMap(r => 
@@ -69,8 +69,8 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
     steps.push({
         stepNumber: 2,
         totalSteps: 0, //will update at the end
-        highlightedLines: [1, 2],
-        explanation: `We begin the entailment process by combining all finite ranks into one working set R, alongside R∞ which always remains.\n\nWorking set R contains all defeasible statements. R∞ contains the classical statements that are never removed.`,
+        highlightedLines: [4, 5],
+        explanation: `We begin the entailment process by initialising R' to the relevant partition and R- to the irrelevant partition.\n\nR∞ contains the classical statements that are never removed.`,
         workingSet: finiteRanks.flatMap(r => r.knowledgeBase).map(f => f.replace('~|', '=>')),
         rInfinity,
         rankingState: buildRankingState(baseRanking, removedSoFar, -1),
@@ -89,8 +89,8 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
             steps.push({
                 stepNumber: steps.length + 1,
                 totalSteps: 0,
-                highlightedLines: [3],
-                explanation: `Checking: is the query antecedent still exceptional w.r.t. R∞ U R?\n\nThe materialised knowledge base classically entails the negation of the antecedent, meaning assuming it is true leads to a contradiction.\n\nResult: YES, the antecedent IS exceptional. We must remove the lowest rank.`,
+                highlightedLines: [6],
+                explanation: `Checking: is the query antecedent still exceptional w.r.t. R∞ U R- U R' and R' is not empty?\n\nR∞ U R- U R' classically entails the negation of the antecedent, meaning assuming it is true leads to a contradiction.\n\nResult: YES, the antecedent IS exceptional. We must remove the relevant statements in the exceptional ranks, starting from the lowest rank 0.`,
                 workingSet: traceStep.remaining.map(f => f.replace('~|', '=>')),
                 rInfinity,
                 rankingState: buildRankingState(baseRanking, removedSoFar, rankBeingRemoved?.rankNumber ?? -1),
@@ -107,8 +107,8 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
             steps.push({
                 stepNumber: steps.length + 1,
                 totalSteps: 0,
-                highlightedLines: [4, 5],
-                explanation: `Since the antecedent is exceptional, we remove the lowest rank from the working set.\n\nRemoved: { ${traceStep.removed.map(f => f.replace('~|', '=>')).join(', ')} }\n\nThe working set R is now smaller. We go back to check the while condition again.`,
+                highlightedLines: [7, 8],
+                explanation: `Since the antecedent is exceptional, we remove the relevant statements from the R'.\n\nRemoved: { ${traceStep.removed.map(f => f.replace('~|', '=>')).join(', ')} }\n\nR' is now smaller. We go back to check the while condition again.`,
                 workingSet: traceStep.remaining.filter(f => !traceStep.removed.includes(f)).map(f => f.replace('~|', '=>')),
                 rInfinity,
                 rankingState: buildRankingState(baseRanking, removedSoFar, -1),
@@ -122,8 +122,8 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
             steps.push({
                 stepNumber: steps.length + 1,
                 totalSteps: 0,
-                highlightedLines: [3],
-                explanation: `Checking: is the query antecedent still exceptional w.r.t. R∞ U R?\n\nThe materialised knowledge base does NOT classically entail the negation of the antecedent, no contradiction arises.\n\nResult: NO, the antecedent is no longer exceptional. The loop stops.`,
+                highlightedLines: [6],
+                explanation: `Checking: is the query antecedent still exceptional w.r.t. R∞ U R- U R'?\n\nR∞ U R- U R' does NOT classically entail the negation of the antecedent, no contradiction arises.\n\nResult: NO, the antecedent is no longer exceptional. The loop stops.`,
                 workingSet: traceStep.remaining.map(f => f.replace('~|', '=>')),
                 rInfinity,
                 rankingState: buildRankingState(baseRanking, removedSoFar, -1),
@@ -136,8 +136,8 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
             steps.push({
                 stepNumber: steps.length + 1,
                 totalSteps: 0,
-                highlightedLines: [6],
-                explanation: `We now perform the final classical entailment check.\n\nDoes R∞ U R classically entail the materialised query?\n\nRemaining set: { ${traceStep.remaining.map(f => f.replace('~|', '=>')).join(', ')} }`,
+                highlightedLines: [10],
+                explanation: `We now perform the final classical entailment check.\n\nDoes R∞ U R- U R' classically entail the materialised query?\n\nRemaining set: { ${traceStep.remaining.map(f => f.replace('~|', '=>')).join(', ')} }`,
                 workingSet: traceStep.remaining.map(f => f.replace('~|', '=>')),
                 rInfinity,
                 rankingState: buildRankingState(baseRanking, removedSoFar, -1),

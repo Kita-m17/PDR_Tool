@@ -128,18 +128,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
                 </div>
             )}
 
-            {/* Drowning problem */}
-            {step.isFinalStep && (
-                <div className="mt-4 rounded-lg p-4 border bg-blue-50 border-blue-200">
-                    <p className="font-semibold text-blue-700 mb-1">
-                        Note: Limitation of the Rational Closure
-                    </p>
 
-                    <p className="text-xs text-blue-600">
-                        Since the Rational Closure removes the entire rank, it may remove rules that are unrelated to the conflict. This is known as the "drowning problem". Lexicographic and Relevant Closure address this limitation.
-                    </p>
-                </div>
-            )}
         </div>
     );
 };
