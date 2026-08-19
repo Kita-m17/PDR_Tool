@@ -9,6 +9,7 @@ import { Button } from './components/ui/Buttons';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { submitKnowledgeBase, submitQuery, BaseRankDTO, EntailmentDTO } from './api/api';
 import RCStepThrough from './components/results/RCStepThrough';
+import BasicRelevantStepThrough from './components/results/basic relevant/BasicRelevantStepThrough';
 import BaseRankStepThrough from './components/results/BaseRankStepThrough';
 
 interface InputPageProps {
@@ -140,7 +141,8 @@ function App(){
         />
       }/>
       <Route path="/baserank" element={<BaseRankStepThrough />} />
-      <Route path="/results" element = {<RCStepThrough/>}/>
+      <Route path="/results/rational" element = {<RCStepThrough/>}/>
+      <Route path="/results/relevant/basic" element = {<BasicRelevantStepThrough/>}/>
     </Routes>
   )
 }

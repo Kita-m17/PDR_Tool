@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BaseRankDTO, EntailmentDTO } from '../../api/api';
-import Header from '../layout/Header';
-import Footer from '../layout/Footer';
-import { baseRankSteps, BaseRankDebuggerStep } from './baseRankSteps';
-import StepControls from './StepControls';
+import { BaseRankDTO, EntailmentDTO } from '../../../api/api';
+import Header from '../../layout/Header';
+import Footer from '../../layout/Footer';
+import { baseRankSteps, BaseRankDebuggerStep } from './BasicRelevantbaseRankSteps';
+import StepControls from './BasicRelevantStepControls';
 import { ArrowRightIcon, ArrowLeftIcon, TriangleRightIcon } from '@radix-ui/react-icons';
-import { Button } from '../ui/Buttons';
+import { Button } from '../../ui/Buttons';
 
 interface ResultsState {
     baseRank: BaseRankDTO;
