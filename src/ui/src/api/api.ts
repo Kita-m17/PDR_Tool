@@ -46,6 +46,23 @@ export interface EntailmentDTO {
     traceSteps: EntailmentStepDTO[];
 }
 
+export interface PartitionStepDTO {
+    ID: number;
+    set: string[];
+    entailed: boolean;
+    minimal: boolean;
+    reason: string;
+    justificationsSoFar: string[][];
+}
+
+export interface PartitionDTO {
+    relevantPartition: string[];
+    irrelevantPartition: string[];
+    classicalStatements: string[];
+    knowledgeBase: string[];
+    traceSteps: PartitionStepDTO[];
+}
+
 // POST /api/knowledge-base/create-knowledge-base
 export const submitKnowledgeBase = async (formulas: string[]): Promise<BaseRankDTO> => {
     const response = await fetch(`${BASE_URL}/knowledge-base/create-knowledge-base`, {
@@ -67,7 +84,20 @@ export const submitQuery = async (algorithm: string, query: string): Promise<Ent
         body: query,
     });
 
-    if (!response.ok) 
+    if (!response.ok)
         throw new Error('Failed to submit query');
+    return response.json();
+};
+
+// POST /api/partition/relevant/basic/create
+export const submitPartitionQuery = async (query: string): Promise<PartitionDTO> => {
+    const response = await fetch(`${BASE_URL}/partition/relevant/basic/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: query,
+    });
+
+    if (!response.ok)
+        throw new Error('Failed to submit partition query');
     return response.json();
 };

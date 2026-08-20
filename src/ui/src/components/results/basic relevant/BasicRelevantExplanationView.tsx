@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { DebuggerStep } from './BasicRelevantSteps';
 import { InfoCircledIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import {Button} from '../../ui/Buttons'
+import { TexFormula } from '../../ui/TexFormula';
 
 interface ExplanationViewProps {
     step: DebuggerStep;
@@ -39,58 +40,46 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
                 {step.explanation}
             </p>
 
-            {/* shpw details button - only on while condition steps */}
-            {isWhileStep && (
-                <Button onClick={() => setShowDetails(!showDetails)} className="flex items-center gap-2 text-xs border border-gray-300 text-gray-500 rounded-lg px-3 py-1.5 hover:border-primary hover:text-primary transition-colors mt-2 mb-4">
-                    <InfoCircledIcon className="h-3 w-3" />
-                    {showDetails ? 'Hide details' : 'Show details'}
-                    {showDetails ? <ChevronUpIcon className="h-3 w-3" /> : <ChevronDownIcon className="h-3 w-3" />}
-                </Button>
-            )}
 
-            {/* details panel */}
-            {isWhileStep && showDetails &&(
-                <div className="mb-4 border border-border rounded-lg p-4 bg-accent">
-                    <p className="text-xs font-medium text-foreground mb-2">
-                        Relevant formulas checked:
-                    </p>
 
-                    <div className="font-mono text-xs text-foreground bg-white border border-border rounded p-2 mb-3">
-                        {'{ ' + (relevantFormulas.length > 0 ? relevantFormulas.join(', ') : step.workingSet.join(', ')) + ' }'}
-                    </div>
 
-                    <p className="text-xs text-muted-foreground">
-                        {step.highlightedLines.includes(3) && !step.isFinalStep ? step.workingSet.some(f => f.includes(step.queryAntecedent || ''))
-                                ? `These formulas together determine whether '${step.queryAntecedent}' leads to a contradiction when assumed true.`
-                                : `The full working set is checked classically to determine if '${step.queryAntecedent}' leads to a contradiction.`
-                                : ''
-                        }
-                    </p>
-                </div>
-            )}
 
             {/* show initial step */}
-            {step.isInitialStep && step.materialisedWorking && (
+            {step.isInitialStep && step.workingSet && (
                 <div className="mb-4">
                     <p className="text-sm font-medium text-foreground mb-2">
-                        Materialised working set R (for entailment checks):
+                        R':
                     </p>
 
                     <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                        {'{ ' + step.materialisedWorking.join(', ') + ' }'}
+                        {'{ ' + step.workingSet.join(', ') + ' }'}
                     </div>
                     
-                    <p className="text-xs text-muted-foreground mt-2">
-                        Note: ~| (defeasible) becomes =&gt; (classical) for SAT checking
-                    </p>
+
                 </div>
             )}
 
             {/* show the working set */}
-            {!step.isInitialStep && step.workingSet.length > 0 && (
+            {step.isWhileLoopIntersection && !step.isInitialStep && step.workingSet.length > 0 && (
                 <div className="mb-4">
+                <p className="text-sm font-medium text-foreground mb-2">
+                                        <TexFormula>{"\\{\\mathcal{R}'\\text{(before)}\\}:"}</TexFormula>
+                                    </p>
+
+                                    <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
+                                        {'{ ' + step.workingSet.join(', ') +","+step.removed.join(', ')+ ' }'}
+                                    </div>
+
+                              <p className="text-sm font-medium text-foreground mb-2">
+                                                   <TexFormula>{"\\{\\mathcal{R}_i \\cap \\mathcal{R}'\\}:"}</TexFormula>
+                                                  </p>
+
+                                                  <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
+                                                      {'{ ' + step.removed + ' }'}
+                                                  </div>
                     <p className="text-sm font-medium text-foreground mb-2">
-                        Working set R:
+                                                                <TexFormula>{"\\{\\mathcal{R}'\\text{(after)}\\}:"}</TexFormula>
+
                     </p>
 
                     <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
@@ -99,18 +88,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
                 </div>
             )}
 
-            {/* show rank infinity*/}
-            {step.rInfinity.length > 0 && (
-                <div className="mb-4">
-                    <p className="text-sm font-medium text-foreground mb-2">
-                        R∞:
-                    </p>
 
-                    <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                        {'{ ' + step.rInfinity.join(', ') + ' }'}
-                    </div>
-                </div>
-            )}
 
             {/* show the final step*/}
             {step.isFinalStep && (

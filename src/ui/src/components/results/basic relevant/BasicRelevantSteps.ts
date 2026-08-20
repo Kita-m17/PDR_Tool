@@ -12,13 +12,12 @@ export interface DebuggerStep {
     entailed?: boolean;
     materialisedWorking?: string[];
     isInitialStep?: boolean;
+    isBaseRank?: boolean;
+    isWhileLoopIntersection?: boolean;
     queryAntecedent?: string
     queryConsequent?: string;
-    // i - which rank is currently under consideration for removal, -1 when
-    // the loop isn't actively checking/removing a specific rank right now.
+    removed: string[];
     currentRankIndex: number;
-    // Live snapshot of R' at this point in the trace, so the visualiser can
-    // show it shrinking step by step.
     currentRPrime: string[];
 }
 
@@ -83,6 +82,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
     steps.push({
         stepNumber: 1,
         totalSteps: 0,
+        isBaseRank:true,
         highlightedLines: [3, 3],
         explanation: `Before beginning the entailment check, we materialise the ranked knowledge base.\n\nEach defeasible statement α ~| β is converted to a classical implication α → β. This allows us to use classical entailment checking (via a SAT solver) throughout the algorithm.\n\nThe finite ranks form the sets Ri, while R∞ contains the classical statements that always remain.`,
         workingSet: finiteRanks.flatMap(r => r.knowledgeBase),
@@ -92,7 +92,8 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
         ),
         rankingState: buildRankingState(baseRanking, removedFormulas, new Set(), -1),
         isFinalStep: false,
-        isInitialStep: true,
+        isInitialStep: false,
+        removed:[],
         queryAntecedent,
         queryConsequent,
         currentRankIndex: -1,
@@ -108,6 +109,9 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
         workingSet: finiteRanks.flatMap(r => r.knowledgeBase).map(f => f.replace('~|', '=>')),
         rInfinity,
         rankingState: buildRankingState(baseRanking, removedFormulas, new Set(), -1),
+        isInitialStep: true,
+        removed:[],
+
         isFinalStep: false,
         queryAntecedent,
         queryConsequent,
@@ -130,6 +134,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 workingSet: traceStep.remaining.map(f => f.replace('~|', '=>')),
                 rInfinity,
                 rankingState: buildRankingState(baseRanking, removedFormulas, new Set(), traceStep.iteration),
+                removed:[],
                 isFinalStep: false,
                 queryAntecedent,
                 queryConsequent,
@@ -150,7 +155,10 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 rInfinity,
                 rankingState: buildRankingState(baseRanking, removedFormulas, new Set(traceStep.removed), traceStep.iteration),
                 isFinalStep: false,
+                isWhileLoopIntersection:true,
                 queryAntecedent,
+                   removed:traceStep.removed,
+
                 queryConsequent,
                 currentRankIndex: traceStep.iteration,
                 currentRPrime: traceStep.remaining.map(f => f.replace('~|', '=>')),
@@ -172,6 +180,8 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 rankingState: buildRankingState(baseRanking, removedFormulas, new Set(), -1),
                 isFinalStep: false,
                 queryAntecedent,
+        removed:[],
+
                 queryConsequent,
                 currentRankIndex: -1,
                 currentRPrime: traceStep.remaining.map(f => f.replace('~|', '=>')),
@@ -188,6 +198,8 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 rankingState: buildRankingState(baseRanking, removedFormulas, new Set(), -1),
                 isFinalStep: true,
                 entailed,
+        removed:[],
+
                 queryAntecedent,
                 queryConsequent,
                 currentRankIndex: -1,

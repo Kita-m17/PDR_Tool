@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BaseRankDTO, EntailmentDTO } from '../../../api/api';
+import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../../api/api';
 import Header from '../../layout/Header';
 import Footer from '../../layout/Footer';
 import { buildDebuggerSteps, DebuggerStep } from './BasicRelevantSteps';
@@ -14,6 +14,7 @@ import { Button } from '../../ui/Buttons';
 interface ResultsState {
     baseRank: BaseRankDTO;
     entailment: EntailmentDTO;
+    partition: PartitionDTO;
     query: string;
     algorithm: string;
 }
@@ -22,7 +23,7 @@ const RCStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     // const { entailment, query } = location.state as ResultsState;
-    const { baseRank, entailment, query, algorithm } = location.state as ResultsState;
+    const { baseRank, entailment, partition, query, algorithm } = location.state as ResultsState;
 
     const steps = buildDebuggerSteps(entailment);
     const [currentStep, setCurrentStep] = useState(0);
@@ -56,13 +57,13 @@ const RCStepThrough: React.FC = () => {
                     </div>
 
                     <Button className="text-sm text-muted-foreground border border-border rounded-lg px-4 py-2 hover:bg-white transition"
-                        onClick={() => navigate('/baserank', {
-                            state: { baseRank, entailment, query, algorithm }
-                        })} 
+                        onClick={() => navigate('/results/relevant/basic/partition', {
+                            state: { baseRank, entailment, partition, query, algorithm }
+                        })}
                     >
                         <span className="flex items-center gap-1">
                             <ArrowLeftIcon className="h-3 w-3" />
-                            Back to BaseRank
+                            Back to Partition
                         </span>
                     </Button>
                 </div>
