@@ -7,6 +7,7 @@ import { baseRankSteps, BaseRankDebuggerStep } from './BasicRelevantbaseRankStep
 import StepControls from './BasicRelevantStepControls';
 import { ArrowRightIcon, ArrowLeftIcon, TriangleRightIcon } from '@radix-ui/react-icons';
 import { Button } from '../../ui/Buttons';
+import { TexFormula } from '../../ui/TexFormula';
 
 interface ResultsState {
     baseRank: BaseRankDTO;
@@ -24,17 +25,29 @@ const BaseRankStepThrough: React.FC = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const step: BaseRankDebuggerStep = steps[currentStep];
 
-    const pseudocode = [
-        { num: 1, code: 'i := 0' },
-        { num: 2, code: 'E₀ := K→  (materialise K)' },
-        { num: 3, code: 'while Eᵢ₋₁ ≠ Eᵢ:' },
-        { num: 4, code: '    Eᵢ₊₁ := { α→β ∈ Eᵢ | Eᵢ |= ¬α }', indent: true },
-        { num: 5, code: '    Rᵢ := Eᵢ \\ Eᵢ₊₁', indent: true },
-        { num: 6, code: '    i := i + 1', indent: true },
-        { num: 7, code: 'R∞ := Eᵢ₋₁' },
-        { num: 8, code: 'if Eᵢ₋₁ = ∅ then n := i − 1' },
-        { num: 9, code: 'else n := i' },
-        { num: 10, code: 'return (R₀, ..., Rₙ₋₁, R∞, n)' },
+    // Authored as LaTeX and rendered through TexFormula, same convention as
+    // BasicRelevantAlgorithmView.tsx. NOTE: this is a more detailed 0-15
+    // line numbering than the 1-10 scheme BasicRelevantbaseRankSteps.ts's
+    // highlightedLines currently targets, so the highlighted line won't line
+    // up 1:1 with the old scheme until that file's highlightedLines values
+    // are remapped to match.
+    const pseudocode: { num: number; tex: string; indent?: boolean }[] = [
+        { num: 0, tex: "\\text{Input: A knowledge base } \\mathcal{K}" },
+        { num: 1, tex: "\\text{Output: An ordered tuple } (\\mathcal{R}_0, \\dots, \\mathcal{R}_{n-1}, \\mathcal{R}_\\infty, n)" },
+        { num: 2, tex: "i := 0" },
+        { num: 3, tex: "\\mathcal{E}_0 := \\mathcal{\\overrightarrow{K}}" },
+        { num: 4, tex: "\\textbf{while}\\ \\mathcal{E}_{i-1} \\neq \\mathcal{E}_i\\ \\textbf{do}" },
+        { num: 5, tex: "\\mathcal{E}_{i+1} := \\{\\alpha \\to \\beta \\in \\mathcal{E}_i \\mid \\mathcal{E}_i \\models \\neg\\alpha\\}", indent: true },
+        { num: 6, tex: "\\mathcal{R}_i := \\mathcal{E}_i \\setminus \\mathcal{E}_{i+1}", indent: true },
+        { num: 7, tex: "i := i + 1", indent: true },
+        { num: 8, tex: "\\textbf{end while}" },
+        { num: 9, tex: "\\mathcal{R}_\\infty := \\mathcal{E}_{i-1}" },
+        { num: 10, tex: "\\textbf{if}\\ \\mathcal{E}_{i-1} = \\varnothing\\ \\textbf{then}" },
+        { num: 11, tex: "n := i - 1", indent: true },
+        { num: 12, tex: "\\textbf{else}" },
+        { num: 13, tex: "n := i", indent: true },
+        { num: 14, tex: "\\textbf{end if}" },
+        { num: 15, tex: "\\textbf{return}\\ (\\mathcal{R}_0, \\dots, \\mathcal{R}_{n-1}, \\mathcal{R}_\\infty, n)" },
     ];
 
     return (
@@ -129,14 +142,16 @@ const BaseRankStepThrough: React.FC = () => {
                             BaseRank (pseudocode)
                         </p>
 
-                        <div className="font-mono text-sm space-y-1">
+                        <div className="text-sm space-y-1">
 
                             {pseudocode.map((line) => {
                                 const isHighlighted = step.highlightedLines.includes(line.num);
                                 return (
-                                    <div key={line.num} className={`flex items-center gap-3 px-3 py-2 rounded-lg ${isHighlighted ? 'bg-amber-50 border border-amber-200' : ''}`}>
+                                    <div
+                                        key={line.num}
+                                        className={`flex items-center gap-3 px-3 py-2 rounded-lg ${isHighlighted ? 'bg-amber-50 border border-amber-200' : ''} ${line.indent ? 'pl-8' : ''}`}
+                                    >
                                         {isHighlighted
-
                                             ? <span className="text-amber-500"> <TriangleRightIcon/></span>
                                             : <span className="w-3" />
                                         }
@@ -153,7 +168,7 @@ const BaseRankStepThrough: React.FC = () => {
                                             ? 'text-foreground font-medium'
                                             : 'text-muted-foreground'
                                         }>
-                                            {line.code}
+                                            <TexFormula>{line.tex}</TexFormula>
                                         </span>
                                     </div>
                                 );

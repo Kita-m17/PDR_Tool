@@ -12,7 +12,7 @@ import RCStepThrough from './components/results/RCStepThrough';
 import BasicRelevantStepThrough from './components/results/basic relevant/BasicRelevantStepThrough';
 import BasicRelevantPartitionStepThrough from './components/results/basic relevant/BasicRelevantPartitionStepThrough';
 import BaseRankStepThrough from './components/results/BaseRankStepThrough';
-
+import BasicRelevantBaseRankStepThrough from './components/results/basic relevant/BasicRelevantBaseRankStepThrough';
 interface InputPageProps {
   formulas: string[];
   setFormulas: (f: string[]) => void;
@@ -142,7 +142,7 @@ function App(){
           setAlgorithm={setAlgorithm}
         />
       }/>
-      <Route path="/baserank" element={<BaseRankStepThrough />} />
+      <Route path="/baserank" element={<BasicRelevantBaseRankStepThrough />} />
       <Route path="/results/rational" element = {<RCStepThrough/>}/>
       <Route path="/results/relevant/basic" element = {<BasicRelevantStepThrough/>}/>
       <Route path="/results/relevant/basic/partition" element = {<BasicRelevantPartitionStepThrough/>}/>
