@@ -6,9 +6,11 @@ interface RankingVisualiserProps {
     rankingState: RankState[];
     currentRankIndex: number;
     currentRPrime: string[];
+    relevantPartition: string[];
+    irrelevantPartition: string[];
 }
 
-const RankingVisualiser: React.FC<RankingVisualiserProps> = ({ rankingState, currentRankIndex, currentRPrime }) => {
+const RankingVisualiser: React.FC<RankingVisualiserProps> = ({ rankingState, currentRankIndex, currentRPrime, relevantPartition, irrelevantPartition }) => {
     return (
         <div>
             <div className="flex items-center justify-between mb-3">
@@ -42,6 +44,45 @@ const RankingVisualiser: React.FC<RankingVisualiserProps> = ({ rankingState, cur
                             </span>
                         ))
                     )}
+                </div>
+            </div>
+
+            {/* Relevant / Irrelevant partition, computed by the powerset-based
+                justification search - static for the whole trace, shown here
+                as context for what the removal loop is working towards. */}
+            <div className="mb-4 grid grid-cols-2 gap-3">
+                <div className="rounded-lg border border-sky-200 bg-sky-50 p-3">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-sky-900">
+                        Relevant Partition
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                        {relevantPartition.length === 0 ? (
+                            <span className="text-sm text-muted-foreground">∅</span>
+                        ) : (
+                            relevantPartition.map((formula, i) => (
+                                <span key={i} className="font-mono text-sm text-sky-900">
+                                    {formula}
+                                </span>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                <div className="rounded-lg border border-border bg-gray-50 p-3">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Irrelevant Partition
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                        {irrelevantPartition.length === 0 ? (
+                            <span className="text-sm text-muted-foreground">∅</span>
+                        ) : (
+                            irrelevantPartition.map((formula, i) => (
+                                <span key={i} className="font-mono text-sm text-foreground">
+                                    {formula}
+                                </span>
+                            ))
+                        )}
+                    </div>
                 </div>
             </div>
 

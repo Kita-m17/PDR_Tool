@@ -6,12 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="47a1af81-9f9a-4eb7-b8f7-7edd1851beb9" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/src/api/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/api/api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/BaseRankStepThrough.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/BaseRankStepThrough.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantExplanationView.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantExplanationView.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantRankingVisualiser.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantRankingVisualiser.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantStepThrough.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantStepThrough.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantSteps.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantSteps.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -4,7 +4,7 @@ import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../../api/api';
 import Header from '../../layout/Header';
 import Footer from '../../layout/Footer';
 import { buildDebuggerSteps, DebuggerStep } from './BasicRelevantSteps';
-import RankingVisualiser from './BasicRelevantRankingVisualiser';
+import PrimeVisualiser from './BasicRelevantPrimeVisualiser';
 import AlgorithmView from './BasicRelevantAlgorithmView';
 import ExplanationView from './BasicRelevantExplanationView';
 import StepControls from './BasicRelevantStepControls';
@@ -74,9 +74,12 @@ const RCStepThrough: React.FC = () => {
                     <span className="font-mono text-foreground">{query}</span>
                 </div>
 
-                {/* Ranking visualiser, full width */}
+                {/* Prime (R') visualiser, full width */}
                 <div className="bg-white border border-border rounded-xl p-6 mb-4">
-                    <RankingVisualiser rankingState={step.rankingState} currentRankIndex={step.currentRankIndex} currentRPrime={step.currentRPrime} />
+                    <PrimeVisualiser
+                        currentRankIndex={step.currentRankIndex}
+                        currentRPrime={step.currentRPrime}
+                    />
 
                 </div>
 
@@ -87,7 +90,11 @@ const RCStepThrough: React.FC = () => {
                     </div>
 
                     <div className="bg-white border border-border rounded-xl p-6 flex-1">
-                        <ExplanationView step={step}/>
+                        <ExplanationView
+                            step={step}
+                            relevantPartition={partition?.relevantPartition ?? []}
+                            irrelevantPartition={partition?.irrelevantPartition ?? []}
+                        />
                     </div>
                 </div>
 
