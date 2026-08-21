@@ -1,4 +1,9 @@
-const BASE_URL = 'http://localhost:8080/api';
+// In production (the CRA build bundled into the Spring Boot jar's static
+// resources - see the Dockerfile) the frontend is served from the same
+// origin as the backend, so a relative path is correct and works no matter
+// what host/port fly.io puts the app on. In development (`npm start`) the
+// frontend runs on :3000 and the backend on :8080, so it needs the full URL.
+const BASE_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:8080/api';
 
 export interface RankDTO {
     rankNumber: number;

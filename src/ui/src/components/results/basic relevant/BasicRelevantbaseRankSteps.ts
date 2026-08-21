@@ -12,6 +12,7 @@ export interface BaseRankDebuggerStep {
     rankingState: BaseRankState[];
     isFinalStep: boolean;
     isInfinityStep: boolean;
+    isInitialStep?: boolean;
     materialisedFormulas?: string[]; //for materialisation step
     originalFormulas?: string[]; //for materialisation step
 }
@@ -51,10 +52,11 @@ export function baseRankSteps(baseRank: BaseRankDTO): BaseRankDebuggerStep[]{
         stepNumber: 1,
         totalSteps: 0,
         highlightedLines: [0],
-        explanation: `We start with the knowledge base K, which contains both defeasible and classical statements.\n\nDefeasible statements (α ~| β) express typical cases that can have exceptions.\nClassical statements (α => β) are strict rules that always hold.\n\nDefeasible statements: ${defeasible.join(', ') || 'none'}\nClassical statements: ${classical.join(', ') || 'none'}`,
+        explanation: `We start with the knowledge base K, which contains both defeasible and classical statements.\n\nDefeasible statements (α ~| β) express typical cases that can have exceptions.\nClassical statements (α => β) are strict rules that always hold. `,
         consideredFormulas: knowledgeBase,
         checks: [],
         assignedToRank: [],
+        isInitialStep:true,
         carriedForward: knowledgeBase,
         rankingState: buildBaseRankState(ranking, assignedSoFar, -1),
         isFinalStep: false,

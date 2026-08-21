@@ -6,7 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="47a1af81-9f9a-4eb7-b8f7-7edd1851beb9" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/src/api/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/api/api.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantBaseRankStepThrough.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantBaseRankStepThrough.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantbaseRankSteps.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantbaseRankSteps.ts" afterDir="false" />
     </list>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BaseRankDTO, EntailmentDTO } from '../../../api/api';
+import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../../api/api';
 import Header from '../../layout/Header';
 import Footer from '../../layout/Footer';
 import { baseRankSteps, BaseRankDebuggerStep } from './BasicRelevantbaseRankSteps';
@@ -12,14 +12,14 @@ import { TexFormula } from '../../ui/TexFormula';
 interface ResultsState {
     baseRank: BaseRankDTO;
     entailment: EntailmentDTO;
+    partition: PartitionDTO;
     query: string;
     algorithm: string;
 }
-
 const BaseRankStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { baseRank, entailment, query, algorithm } = location.state as ResultsState;
+    const { baseRank, entailment,partition, query, algorithm } = location.state as ResultsState;
 
     const steps = baseRankSteps(baseRank);
     const [currentStep, setCurrentStep] = useState(0);
@@ -186,6 +186,32 @@ const BaseRankStepThrough: React.FC = () => {
                             {step.explanation}
                         </p>
 
+                        {step.isInitialStep &&(
+                            <div className="mb-4">
+                                                <p className="text-sm font-medium text-foreground mb-2">
+                                                    In this knowledge base:
+                                                </p>
+                                                   <p className="text-sm font-medium text-foreground m-4">
+                                                    Defeasible:
+                                                    </p>
+                                                <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
+                                                    { step.consideredFormulas.filter(f => f.includes('~|')).join(", ") }
+                                                </div>
+
+                                                   <p className="text-sm font-medium text-foreground m-4">
+                                                    Classical:
+                                                    </p>
+                                                <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
+                                                    {step.consideredFormulas.filter(f => !f.includes('~|')).join(", ") }
+                                                </div>
+
+                                            </div>
+
+                            )
+                            }
+
+
+
                         {/* Materialisation panel */}
                         {step.materialisedFormulas && step.originalFormulas && (
                             <div className="mb-4">
@@ -227,7 +253,7 @@ const BaseRankStepThrough: React.FC = () => {
                                 </p>
 
                                 <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                    {'{ ' + step.materialisedFormulas.join(', ') + ' }'}
+                                    { step.materialisedFormulas.join(', ') }
                                 </div>
 
                                 <p className="text-xs text-muted-foreground mt-1">
@@ -313,19 +339,19 @@ const BaseRankStepThrough: React.FC = () => {
 
                 {/*continue to rc */}
                 {step.isFinalStep && (
-                    <div className="flex justify-end">
-                        <Button variant="primary" size="lg"
-                            onClick={() => 
-                                navigate('/results/relevant/basic', {
-                                    state: { baseRank, entailment, query, algorithm }
-                                }
-                            )}
-                        >
-                            Continue to Rational Closure
-                            <ArrowRightIcon className="ml-2 h-4 w-4" />
-                        </Button>
-                    </div>
-                )}
+                                    <div className="flex justify-end">
+                                        <Button variant="primary" size="lg"
+                                            onClick={() =>
+                                                navigate(algorithm === 'basic relevant' ? '/results/relevant/basic/partition' : '/results/rational', {
+                                                    state: { baseRank, entailment, partition, query, algorithm }
+                                                }
+                                            )}
+                                        >
+                                            {algorithm === 'basic relevant' ? 'Continue to Relevant Partition' : 'Continue to Rational Closure'}
+                                            <ArrowRightIcon className="ml-2 h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                )}
 
             </main>
             <Footer/>

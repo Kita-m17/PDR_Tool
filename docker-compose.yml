@@ -1,0 +1,46 @@
+services:
+  # Builds the React app with a stock Node image - no Dockerfile involved.
+  # Output goes into the `frontend_build` volume instead of onto disk, so it
+  # never touches (or gets mixed up with) your Windows node_modules.
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    environment:
+      # Stops react-scripts from treating ESLint warnings as build-failing
+      # errors, same reason it was set in the old Dockerfile.
+      CI: "false"
+    volumes:
+      - ./src/ui:/app
+      - ui_node_modules:/app/node_modules
+      - frontend_build:/app/build
+    # npm ci refuses to run at all if package-lock.json isn't byte-for-byte
+    # what this exact npm's resolver would produce, and node:20-alpine's
+    # bundled npm resolves peer/optional deps (like tailwindcss's yaml
+    # peer) slightly differently than the npm used to generate the lock
+    # file. npm install reconciles instead of hard-failing, which is the
+    # right tradeoff for a local dev compose file.
+    command: sh -c "npm install && npm run build"
+
+  # Builds and runs the Spring Boot app with a stock Maven image. The
+  # frontend_build volume is mounted straight into Spring Boot's static
+  # resources folder, so the compiled React app is picked up automatically -
+  # no copy step, nothing written back into src/main/resources/static on
+  # disk.
+  backend:
+    image: maven:3.9-eclipse-temurin-17
+    working_dir: /app
+    depends_on:
+      frontend:
+        condition: service_completed_successfully
+    volumes:
+      - .:/app
+      - maven_repo:/root/.m2
+      - frontend_build:/app/src/main/resources/static
+    ports:
+      - "8080:8080"
+    command: sh -c "mvn -B clean package -DskipTests && java -jar target/app.jar"
+
+volumes:
+  ui_node_modules:
+  frontend_build:
+  maven_repo:
