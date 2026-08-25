@@ -7,7 +7,7 @@ import QueryInput from './components/input/QueryInput';
 import EntailmentQueryCard from './components/input/EntailmentQueryCard';
 import { Button } from './components/ui/Buttons';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
-import { submitKnowledgeBase, submitQuery, submitPartitionQuery, BaseRankDTO, EntailmentDTO } from './api/api';
+import { submitKnowledgeBase, submitQuery, submitPartitionQuery, submitMinimalPartitionQuery, BaseRankDTO, EntailmentDTO } from './api/api';
 import RCStepThrough from './components/results/RCStepThrough';
 import BasicRelevantStepThrough from './components/results/basic relevant/BasicRelevantStepThrough';
 import BasicRelevantPartitionStepThrough from './components/results/basic relevant/BasicRelevantPartitionStepThrough';
@@ -50,7 +50,9 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
     try {
       const baseRank = await submitKnowledgeBase(formulas);
       const entailment = await submitQuery(algorithm, query);
-      const partition = await submitPartitionQuery(query);
+      const partition = algorithm === 'minimal relevant'
+        ? await submitMinimalPartitionQuery(query)
+        : await submitPartitionQuery(query);
       navigate('/baserank', {
         state: { baseRank, entailment, partition, query, algorithm }
       });

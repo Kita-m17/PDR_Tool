@@ -96,7 +96,7 @@ export const submitQuery = async (algorithm: string, query: string): Promise<Ent
 
 // POST /api/partition/relevant/basic/create
 export const submitPartitionQuery = async (query: string): Promise<PartitionDTO> => {
-    const response = await fetch(`${BASE_URL}/partition/relevant/basic/create`, {
+    const response = await fetch(`${BASE_URL}/partition/relevant/create/basic`, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: query,
@@ -104,5 +104,18 @@ export const submitPartitionQuery = async (query: string): Promise<PartitionDTO>
 
     if (!response.ok)
         throw new Error('Failed to submit partition query');
+    return response.json();
+};
+
+// POST /api/partition/relevant/create/minimal
+export const submitMinimalPartitionQuery = async (query: string): Promise<PartitionDTO> => {
+    const response = await fetch(`${BASE_URL}/partition/relevant/create/minimal`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: query,
+    });
+
+    if (!response.ok)
+        throw new Error('Failed to submit minimal partition query');
     return response.json();
 };

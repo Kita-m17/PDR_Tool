@@ -20,6 +20,9 @@ const BaseRankStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { baseRank, entailment,partition, query, algorithm } = location.state as ResultsState;
+    // 'basic relevant' and 'minimal relevant' both feed the same generic relevant-partition
+    // step-through - only which partition endpoint populated `partition` differs.
+    const isRelevantClosure = algorithm === 'basic relevant' || algorithm === 'minimal relevant';
 
     const steps = baseRankSteps(baseRank);
     const [currentStep, setCurrentStep] = useState(0);
@@ -342,12 +345,12 @@ const BaseRankStepThrough: React.FC = () => {
                                     <div className="flex justify-end">
                                         <Button variant="primary" size="lg"
                                             onClick={() =>
-                                                navigate(algorithm === 'basic relevant' ? '/results/relevant/basic/partition' : '/results/rational', {
+                                                navigate(isRelevantClosure ? '/results/relevant/basic/partition' : '/results/rational', {
                                                     state: { baseRank, entailment, partition, query, algorithm }
                                                 }
                                             )}
                                         >
-                                            {algorithm === 'basic relevant' ? 'Continue to Relevant Partition' : 'Continue to Rational Closure'}
+                                            {isRelevantClosure ? 'Continue to Relevant Partition' : 'Continue to Rational Closure'}
                                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                                         </Button>
                                     </div>
