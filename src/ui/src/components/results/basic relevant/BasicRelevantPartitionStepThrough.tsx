@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../../api/api';
 import Header from '../../layout/Header';
 import Footer from '../../layout/Footer';
 import { buildPartitionSteps, PartitionDebuggerStep } from './PartitionSteps';
-import PowersetView from './PowersetView';
+import PowersetView, { PartitionFilter } from './PowersetView';
 import JustificationVisualiser from './JustificationVisualiser';
 import StepControls from './BasicRelevantStepControls';
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
@@ -24,8 +24,29 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
     const { baseRank, entailment, partition, query, algorithm } = location.state as ResultsState;
 
     const steps = buildPartitionSteps(partition);
+    const [filter, setFilter] = useState<PartitionFilter>('all');
+
+    // Filtering only changes which subsets you page through - the underlying
+    // data (justificationsSoFar per step, and the completed relevantPartition/
+    // irrelevantPartition on `partition` itself) is unaffected, so the number
+    // of Next/Back clicks needed to reach the end matches whatever's filtered
+    // in, not the full unfiltered powerset.
+    const filteredSteps = useMemo(() => {
+        switch (filter) {
+            case 'entailed': return steps.filter(s => s.entailed);
+            case 'minimal': return steps.filter(s => s.entailed && s.minimal);
+            default: return steps;
+        }
+    }, [steps, filter]);
+
     const [currentStep, setCurrentStep] = useState(0);
-    const step: PartitionDebuggerStep | undefined = steps[currentStep];
+    const step: PartitionDebuggerStep | undefined = filteredSteps[currentStep];
+    const isLastInView = filteredSteps.length > 0 && currentStep === filteredSteps.length - 1;
+
+    const handleFilterChange = (next: PartitionFilter) => {
+        setFilter(next);
+        setCurrentStep(0);
+    };
 
     return (
         <div className="min-h-screen bg-accent flex flex-col">
@@ -68,70 +89,82 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
                     <span className="font-mono text-foreground">{query}</span>
                 </div>
 
-                {!step ? (
-                    <div className="bg-white border border-border rounded-xl p-6 text-sm text-muted-foreground italic">
-                        No partition trace data was returned for this query.
+                {/* Justification visualiser, full width - only meaningful once a step exists */}
+                {step && (
+                    <div className="bg-white border border-border rounded-xl p-6 mb-4">
+                        <JustificationVisualiser
+                            justificationsSoFar={step.justificationsSoFar}
+                            isFinalStep={isLastInView}
+                            relevantPartition={partition.relevantPartition}
+                            irrelevantPartition={partition.irrelevantPartition}
+                        />
                     </div>
-                ) : (
-                    <>
-                        {/* Justification visualiser, full width */}
-                        <div className="bg-white border border-border rounded-xl p-6 mb-4">
-                            <JustificationVisualiser
-                                justificationsSoFar={step.justificationsSoFar}
-                                isFinalStep={step.isFinalStep}
-                                relevantPartition={step.relevantPartition}
-                                irrelevantPartition={step.irrelevantPartition}
-                            />
-                        </div>
+                )}
 
-                        {/* Powerset + Explanation side by side */}
-                        <div className="flex gap-4 mb-4">
-                            <div className="bg-white border border-border rounded-xl p-6 flex-1">
-                                <PowersetView
-                                    currentSet={step.currentSet}
-                                    entailed={step.entailed}
-                                    minimal={step.minimal}
-                                    stepNumber={step.stepNumber}
-                                    totalSteps={step.totalSteps}
-                                />
-                            </div>
+                {/* Powerset (left, owns the subset filter so it's always reachable)
+                    + Explanation (right) side by side */}
+                <div className="flex gap-4 mb-4">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1">
+                        <PowersetView
+                            currentSet={step?.currentSet ?? []}
+                            entailed={step?.entailed ?? false}
+                            minimal={step?.minimal ?? false}
+                            stepNumber={step ? currentStep + 1 : 0}
+                            totalSteps={filteredSteps.length}
+                            filter={filter}
+                            onFilterChange={handleFilterChange}
+                        />
+                    </div>
 
-                            <div className="bg-white border border-border rounded-xl p-6 flex-1">
-                                <h3 className="text-primary font-semibold mb-4 flex items-center gap-2">
-                                    Explanation
-                                </h3>
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1">
+                        <h3 className="text-primary font-semibold mb-4 flex items-center gap-2">
+                            Explanation
+                        </h3>
 
+                        {step ? (
+                            <>
                                 <p className="text-sm text-foreground leading-relaxed whitespace-pre-line mb-4">
                                     {step.explanation}
                                 </p>
 
-                                {step.isFinalStep && (
+                                {isLastInView && (
                                     <div className="mt-4 rounded-lg p-4 border bg-green-50 border-green-200">
                                         <p className="font-bold text-green-700 mb-1">
                                             ✓ Partition Complete
                                         </p>
                                         <p className="text-sm text-green-600">
-                                            Every subset has been checked. The relevant and irrelevant partitions are shown above.
+                                            {filter === 'all'
+                                                ? 'Every subset has been checked. The relevant and irrelevant partitions are shown above.'
+                                                : "You've reached the end of this filtered view. The relevant and irrelevant partitions - computed from the full search, not just what's filtered in - are shown above."}
                                         </p>
                                     </div>
                                 )}
-                            </div>
-                        </div>
+                            </>
+                        ) : (
+                            <p className="text-sm text-muted-foreground italic">
+                                {steps.length === 0
+                                    ? 'No partition trace data was returned for this query.'
+                                    : 'No subsets match this filter - try a different option on the left.'}
+                            </p>
+                        )}
+                    </div>
+                </div>
 
-                        {/* Step controls */}
+                {/* Step controls + continue, only once a step exists */}
+                {step && (
+                    <>
                         <div className="bg-white border border-border rounded-xl p-4">
                             <StepControls
                                 current={currentStep}
-                                total={steps.length}
+                                total={filteredSteps.length}
                                 onStart={() => setCurrentStep(0)}
                                 onBack={() => setCurrentStep(prev => Math.max(0, prev - 1))}
-                                onNext={() => setCurrentStep(prev => Math.min(steps.length - 1, prev + 1))}
-                                onEnd={() => setCurrentStep(steps.length - 1)}
+                                onNext={() => setCurrentStep(prev => Math.min(filteredSteps.length - 1, prev + 1))}
+                                onEnd={() => setCurrentStep(filteredSteps.length - 1)}
                             />
                         </div>
 
-                        {/* Continue to Relevant Closure, only on final step */}
-                        {step.isFinalStep && (
+                        {isLastInView && (
                             <div className="flex justify-end mt-4">
                                 <Button variant="primary" size="lg"
                                     onClick={() => navigate('/results/relevant/basic', {

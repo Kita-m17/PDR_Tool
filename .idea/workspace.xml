@@ -5,14 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="47a1af81-9f9a-4eb7-b8f7-7edd1851beb9" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/MinimalRelevantReasonerImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/controllers/PartitionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/controllers/PartitionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/models/KnowledgeBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/models/KnowledgeBase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/BasicRelevantReasonerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/BasicRelevantReasonerImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionUsingPowersetImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionUsingPowersetImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/ReasonerFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/ReasonerFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/pdr/services/BasicRelevantReasonerImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/pdr/services/BasicRelevantReasonerImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/pdr/services/MinimalRelevantReasonerImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/pdr/services/MinimalRelevantReasonerImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/pdr/services/PartitionUsingPowersetImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/pdr/services/PartitionUsingPowersetImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantPartitionStepThrough.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantPartitionStepThrough.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +22,7 @@
       <list>
         <option value="Interface" />
         <option value="Class" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -53,25 +52,43 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.App.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Liam&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/liamd/Home/Academic/Honours/PDR Project/PDR_Tool/src/ui/src/components/results/basic relevant&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.App.executor": "Run",
+    "JUnit.BasicRelevantReasonerImplTest.getEntailmentExample1.executor": "Run",
+    "JUnit.BasicRelevantReasonerImplTest.getEntailmentExample2.executor": "Run",
+    "JUnit.BasicRelevantReasonerImplTest.getEntailmentExample3.executor": "Run",
+    "JUnit.MinimalRelevantReasonerImplTest.executor": "Run",
+    "JUnit.PartitionUsingPowersetImplTest.executor": "Run",
+    "JUnit.PartitionUsingPowersetImplTest.getBasicPartitionExample1.executor": "Run",
+    "JUnit.PartitionUsingPowersetImplTest.getBasicPartitionExample2.executor": "Run",
+    "JUnit.PartitionUsingPowersetImplTest.getMinimalPartition.executor": "Run",
+    "JUnit.PartitionUsingPowersetImplTest.getMinimalPartitionExample1.executor": "Run",
+    "JUnit.PartitionUsingPowersetImplTest.getMinimalPartitionExample2.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "git-widget-placeholder": "Liam",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/liamd/Home/Academic/Honours/PDR Project/PDR_Tool/src/ui/src/components/results/basic relevant",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\liamd\Home\Academic\Honours\PDR Project\PDR_Tool\src\ui\src\components\results\basic relevant" />
     </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="com.pdr.services" />
+    </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.App">
     <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.pdr.App" />
       <module name="pdr-tool" />
@@ -85,9 +102,75 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="BasicRelevantReasonerImplTest.getEntailmentExample3" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="pdr-tool" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.pdr.services.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.pdr.services" />
+      <option name="MAIN_CLASS_NAME" value="com.pdr.services.BasicRelevantReasonerImplTest" />
+      <option name="METHOD_NAME" value="getEntailmentExample3" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MinimalRelevantReasonerImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="pdr-tool" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.pdr.services.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.pdr.services" />
+      <option name="MAIN_CLASS_NAME" value="com.pdr.services.MinimalRelevantReasonerImplTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PartitionUsingPowersetImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="pdr-tool" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.pdr.services.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.pdr.services" />
+      <option name="MAIN_CLASS_NAME" value="com.pdr.services.PartitionUsingPowersetImplTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PartitionUsingPowersetImplTest.getMinimalPartitionExample1" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="pdr-tool" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.pdr.services.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.pdr.services" />
+      <option name="MAIN_CLASS_NAME" value="com.pdr.services.PartitionUsingPowersetImplTest" />
+      <option name="METHOD_NAME" value="getMinimalPartitionExample1" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.App" />
+        <item itemvalue="JUnit.PartitionUsingPowersetImplTest" />
+        <item itemvalue="JUnit.PartitionUsingPowersetImplTest.getMinimalPartitionExample1" />
+        <item itemvalue="JUnit.MinimalRelevantReasonerImplTest" />
+        <item itemvalue="JUnit.BasicRelevantReasonerImplTest.getEntailmentExample3" />
       </list>
     </recent_temporary>
   </component>

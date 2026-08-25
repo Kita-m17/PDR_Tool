@@ -101,12 +101,13 @@ public class PartitionUsingPowersetImpl implements PartitionService {
         KnowledgeBase irrelevantString = new KnowledgeBase(knowledgeBase);
         for(KnowledgeBase kb:resList){
             relevantString = relevantString.union(kb);
-            irrelevantString = irrelevantString.difference(kb);
+
         }
         relevantString = relevantString.difference(classicalKnowledgeBase);
-        irrelevantString = irrelevantString.difference(classicalKnowledgeBase);
+       // irrelevantString = irrelevantString.difference(classicalKnowledgeBase);
         result.setClassicalStatements(classicalKnowledgeBase);
         result.setRelevantPartition(relevantString);
+        irrelevantString = irrelevantString.difference(relevantString);
         result.setIrrelevantPartition(irrelevantString);
         result.setKnowledgeBase(knowledgeBase);
         return result;
