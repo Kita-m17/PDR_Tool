@@ -24,7 +24,6 @@ public class PartitionUsingPowersetImpl implements PartitionService {
         KnowledgeBase res = new KnowledgeBase();
         SatSolver.setDefaultSolver(new Sat4jSolver());
         SatReasoner reasoner = new SatReasoner();
-        System.out.println("query: "+query.toString());
         Partition result = new Partition();
         result.setTraceSteps(new ArrayList<>());
         int count =1;
@@ -46,24 +45,19 @@ public class PartitionUsingPowersetImpl implements PartitionService {
                 step.setJustificationsSoFar(new ArrayList<>());
             }
 
-            System.out.println("subset: "+combination+" entailemnt: "+reasoner.query(combination,new Negation(((Implication) query).getFirstFormula())));
-            //System.out.println(new Negation(((Implication) query).getFirstFormula()));
             if(reasoner.query(combination,new Negation(((Implication) query).getFirstFormula()))){
                 boolean minimal = true;
                 step.setEntailed(true);
                 for(int i =0;i<resList.size();i++){
                     if(combination.containsAll(resList.get(i)) ){
-                        // System.out.println("Relevant: "+combination +" i: "+i);
 
                         minimal = false;
                     }
                 }
 
-                //System.out.println("Relevant: "+combination);
 
                 if(minimal){
                     step.setMinimal(true);
-                    System.out.println("Relevant: "+combination);
                     resList.add(combination);
 
                 }
@@ -86,7 +80,6 @@ public class PartitionUsingPowersetImpl implements PartitionService {
 
 
 
-        System.out.println("Possible relevant sets: "+resList);
         KnowledgeBase relevantString = new KnowledgeBase();
         KnowledgeBase irrelevantString = new KnowledgeBase(knowledgeBase);
         for(KnowledgeBase kb:resList){

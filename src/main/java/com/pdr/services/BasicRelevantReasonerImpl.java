@@ -51,19 +51,14 @@ public class BasicRelevantReasonerImpl implements ReasonerService {
         int i =0;
         KnowledgeBase relevantPrime = new KnowledgeBase(relevantPartition);
 
-        System.out.println("Entailment check");
-        System.out.println("query negation: "+new Negation(((Implication)queryFormula).getFirstFormula()));
         while(reasoner.query((relevantInf).union(relevantPrime).union(irrelevantPartition),new Negation(((Implication)queryFormula).getFirstFormula())) && relevantPrime.size()!=0){
 
             //rt.setI(i);
             //rt.setBefore(relevantPrime.getStringFormulas());
-            System.out.println("before: "+relevantPrime);
             KnowledgeBase intersection = relevantPartition.intersection(baseRank.getRanking().getRank(i).getFormulas());
             //rt.setIntersection(intersection.getStringFormulas());
-            System.out.println("intersection: "+"at "+i+" set: "+intersection);
             relevantPrime = relevantPrime.difference(intersection);
             //rt.setCurrent(relevantPrime.getStringFormulas());
-            System.out.println("after: "+relevantPrime);
             //listRelevantTracer.add(rt);
             trace.add(new EntailmentStep(i,relevantPrime,true,"",intersection));
             i+=1;
@@ -72,7 +67,6 @@ public class BasicRelevantReasonerImpl implements ReasonerService {
 
 
 
-        System.out.println("final KB: "+(relevantInf).union(relevantPrime).union(irrelevantPartition));
         boolean entailment = reasoner.query((relevantInf).union(relevantPrime).union(irrelevantPartition),queryFormula);
 
         return new RelevantEntailment.RelevantEntailmentBuilder()
