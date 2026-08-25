@@ -6,5 +6,5 @@ import org.tweetyproject.logics.pl.syntax.PlFormula;
 
 public interface PartitionService {
 
-    public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query);
+    public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query,boolean isMinimalRelevantClosure);
 }

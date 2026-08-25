@@ -194,9 +194,13 @@ public class KnowledgeBase extends PlBeliefSet {
         return formula;
     }
 
-    @Override
-    public boolean contains(Object o) {
-        return super.contains(o);
+
+    public boolean contains(PlFormula pl) {
+        KnowledgeBase tmp = new KnowledgeBase();
+        tmp.add(pl);
+        return (this.union(tmp)).size() == this.size();
+
+
     }
     public List<String> getStringFormulas(){
         List<PlFormula> list= new ArrayList<PlFormula>(this);

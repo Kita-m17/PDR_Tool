@@ -11,17 +11,13 @@ import org.tweetyproject.logics.pl.syntax.PlFormula;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BasicRelevantReasonerImpl implements ReasonerService {
+public class MinimalRelevantReasonerImpl implements ReasonerService {
     private final PartitionService partitionService;
     private final KnowledgeBaseService knowledgeBaseService;
 
-
-
-    public BasicRelevantReasonerImpl(PartitionService partitionService, KnowledgeBaseService knowledgeBaseService) {
+    public MinimalRelevantReasonerImpl(PartitionService partitionService, KnowledgeBaseService knowledgeBaseService) {
         this.partitionService = partitionService;
         this.knowledgeBaseService = knowledgeBaseService;
-
-
     }
 
     @Override
@@ -35,7 +31,7 @@ public class BasicRelevantReasonerImpl implements ReasonerService {
         Ranking removedRanking = new Ranking();
 
         //specific input to relevant closure
-        Partition partition = partitionService.getPartition(knowledgeBaseService.getKnowledgeBase(), queryFormula,false);
+        Partition partition = partitionService.getPartition(knowledgeBaseService.getKnowledgeBase(), queryFormula,true);
         KnowledgeBase relevantPartition = partition.getRelevantPartition();
         KnowledgeBase irrelevantPartition = partition.getIrrelevantPartition();
         SatSolver.setDefaultSolver(new Sat4jSolver());
@@ -83,3 +79,5 @@ public class BasicRelevantReasonerImpl implements ReasonerService {
 
     }
 }
+
+

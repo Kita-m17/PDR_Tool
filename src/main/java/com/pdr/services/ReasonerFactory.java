@@ -29,7 +29,8 @@ public class ReasonerFactory {
         return switch (type) {
             case "rational" -> new RationalReasonerImpl();
             // case "lexical" -> new LexicalReasonerImpl();
-             case "basic relevant" -> new BasicRelevantReasonerImpl(partitionService,knowledgeBaseService);
+            case "basic relevant" -> new BasicRelevantReasonerImpl(partitionService,knowledgeBaseService);
+            case "minimal relevant" -> new MinimalRelevantReasonerImpl(partitionService,knowledgeBaseService);
             default -> throw new IllegalArgumentException("Unknown reasoner: " + type);
         };
     }

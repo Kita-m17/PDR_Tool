@@ -1,8 +1,6 @@
 package com.pdr.services;
 
-import com.pdr.models.Partition;
-import com.pdr.models.PartitionStep;
-import com.pdr.models.KnowledgeBase;
+import com.pdr.models.*;
 import org.springframework.stereotype.Service;
 import org.tweetyproject.logics.pl.reasoner.SatReasoner;
 import org.tweetyproject.logics.pl.sat.Sat4jSolver;
@@ -17,11 +15,10 @@ import java.util.List;
 public class PartitionUsingPowersetImpl implements PartitionService {
 
     @Override
-    public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query) {
+    public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query, boolean isMinimalRelevantClosure) {
+        BaseRank baseRank = (new BaseRankServiceImp()).constructBaseRank(knowledgeBase);
         List<KnowledgeBase> list = getPowerSets(knowledgeBase);
-        int min = Integer.MAX_VALUE;
         List<KnowledgeBase> resList = new ArrayList<>();
-        KnowledgeBase res = new KnowledgeBase();
         SatSolver.setDefaultSolver(new Sat4jSolver());
         SatReasoner reasoner = new SatReasoner();
         Partition result = new Partition();
@@ -58,7 +55,27 @@ public class PartitionUsingPowersetImpl implements PartitionService {
 
                 if(minimal){
                     step.setMinimal(true);
-                    resList.add(combination);
+                    if (isMinimalRelevantClosure){
+                        int lowestRank =Integer.MAX_VALUE;
+                        KnowledgeBase minimalJustificationStatement = new KnowledgeBase();
+                        for(Rank rank : baseRank.getRanking()){
+                            for(PlFormula pl : combination){
+
+                                if(rank.getFormulas().contains(pl) && rank.getRankNumber()<lowestRank){
+
+                                    lowestRank = rank.getRankNumber();
+                                    minimalJustificationStatement.add(pl);
+                                }
+                            }
+
+                        }
+                        resList.add(minimalJustificationStatement);
+                        step.setSet(minimalJustificationStatement);
+
+                    }else{
+                        resList.add(combination);
+
+                    }
 
                 }
 
