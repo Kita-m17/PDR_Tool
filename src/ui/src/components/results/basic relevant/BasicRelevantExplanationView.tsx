@@ -216,12 +216,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                         {step.entailed ? '✓ ENTAILED' : '✗ NOT ENTAILED'}
                     </p>
 
-                    <p className={`text-sm mt-1 ${step.entailed ? 'text-green-600' : 'text-red-600'}`}>
-                        {step.entailed ?
-                            'The query is in the Rational Closure of K'
-                            : 'The query is not in the Rational Closure of K'
-                        }
-                    </p>
+                    
                 </div>
             )}
 
