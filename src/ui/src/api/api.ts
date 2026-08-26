@@ -68,6 +68,39 @@ export interface PartitionDTO {
     traceSteps: PartitionStepDTO[];
 }
 
+export interface SubKnowledgeBaseCheckDTO {
+    rankNumber: number;      
+    rankSize: number;
+    subsetSize: number;
+    subset: string[];
+    subsetString: string;
+    subKnowledgeBase: string[];
+    testedFormula: string;
+    holds: boolean;
+}
+ 
+export interface LexicographicStepDTO {
+    iteration: number;
+    rankNumber: number;
+    originalRank: string[];
+    rankSize: number;
+    remainingRanks: string[];
+    subKBs: SubKnowledgeBaseCheckDTO[];
+    survivingSubKBs: SubKnowledgeBaseCheckDTO[];
+    finalSubsetSize: number;
+    combinedFormula: string | null;
+    rankRemoved: boolean;
+    remainingAfter: string[];
+    stepDetails: string;
+}
+ 
+export interface LexicographicEntailmentDTO extends EntailmentDTO {
+    weakenedRanking: RankDTO[];
+    lexicographicSteps: LexicographicStepDTO[];
+    finalChecks: SubKnowledgeBaseCheckDTO[];
+}
+
+
 // POST /api/knowledge-base/create-knowledge-base
 export const submitKnowledgeBase = async (formulas: string[]): Promise<BaseRankDTO> => {
     const response = await fetch(`${BASE_URL}/knowledge-base/create-knowledge-base`, {
