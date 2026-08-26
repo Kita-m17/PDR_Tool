@@ -168,11 +168,7 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
                                         <p className="font-bold text-green-700 mb-1">
                                             ✓ Partition Complete
                                         </p>
-                                        <p className="text-sm text-green-600">
-                                            {filter === 'all'
-                                                ? 'Every subset has been checked. The relevant and irrelevant partitions are shown above.'
-                                                : "You've reached the end of this filtered view. The relevant and irrelevant partitions - computed from the full search, not just what's filtered in - are shown above."}
-                                        </p>
+
                                     </div>
                                 )}
                             </>

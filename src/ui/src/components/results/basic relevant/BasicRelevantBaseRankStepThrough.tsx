@@ -319,9 +319,7 @@ const BaseRankStepThrough: React.FC = () => {
                                     ✓ BaseRank Construction Complete
                                 </p>
 
-                                <p className="text-sm text-green-600">
-                                    All statements have been ranked. The ranking is now ready for use in the Rational Closure entailment algorithm.
-                                </p>
+
                             </div>
                         )}
 
