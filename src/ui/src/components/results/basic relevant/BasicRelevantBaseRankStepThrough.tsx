@@ -344,13 +344,20 @@ const BaseRankStepThrough: React.FC = () => {
                 {step.isFinalStep && (
                                     <div className="flex justify-end">
                                         <Button variant="primary" size="lg"
-                                            onClick={() =>
-                                                navigate(isRelevantClosure ? '/results/relevant/basic/partition' : '/results/rational', {
-                                                    state: { baseRank, entailment, partition, query, algorithm }
-                                                }
-                                            )}
-                                        >
-                                            {isRelevantClosure ? 'Continue to Relevant Partition' : 'Continue to Rational Closure'}
+                                                                                    onClick={() => {
+                                                                                        const route =
+                                                                                            algorithm === 'basic relevant' ? '/results/relevant/basic/partition' :
+                                                                                            algorithm === 'lexicographic' ? '/results/lexicographic' :
+                                                                                            algorithm === 'minimal relevant' ? '/results/relevant/basic/partition' :
+                                                                                            algorithm === 'rational' ? '/results/rational' :
+                                                                                            '/results/rational';
+
+                                                                                        navigate(route, { state: { baseRank, entailment, partition, query, algorithm } });
+
+                                                                                    }}
+                                                                                >
+                                                                        {algorithm === 'basic relevant' ? 'Continue to Relevant Partition' :algorithm === 'minimal relevant' ? 'Continue to Relevant Partition' : algorithm === 'lexicographic' ? 'Continue to Lexicographical Closure': algorithm === 'rational' ? 'Continue to Rational Closure': 'Continue to Rational Closure'}
+
                                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                                         </Button>
                                     </div>

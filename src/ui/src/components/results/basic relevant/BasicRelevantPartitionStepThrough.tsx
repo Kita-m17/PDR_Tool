@@ -21,10 +21,21 @@ interface ResultsState {
 const BasicRelevantPartitionStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { baseRank, entailment, partition, query, algorithm } = location.state as ResultsState;
+    // location.state is only populated when this page is reached via
+    // navigate(path, { state }) - a refresh, pasted URL, or bookmark lands
+    // here with state === null, which used to crash buildPartitionSteps
+    // trying to read .traceSteps off undefined. Guarded below instead of
+    // crashing - but ALL hooks still have to run on every render regardless
+    // of resultsState, so the guard's early return comes after them, not
+    // before. Hooks conditionally called (only when resultsState exists)
+    // violate React's rules-of-hooks and break hook state across renders.
+    const resultsState = location.state as ResultsState | null;
 
-    const steps = buildPartitionSteps(partition);
     const [filter, setFilter] = useState<PartitionFilter>('all');
+    const [currentStep, setCurrentStep] = useState(0);
+
+    // Plain derived value, not a hook - fine to compute conditionally.
+    const steps = resultsState ? buildPartitionSteps(resultsState.partition) : [];
 
     // Filtering only changes which subsets you page through - the underlying
     // data (justificationsSoFar per step, and the completed relevantPartition/
@@ -39,7 +50,6 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
         }
     }, [steps, filter]);
 
-    const [currentStep, setCurrentStep] = useState(0);
     const step: PartitionDebuggerStep | undefined = filteredSteps[currentStep];
     const isLastInView = filteredSteps.length > 0 && currentStep === filteredSteps.length - 1;
 
@@ -47,6 +57,32 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
         setFilter(next);
         setCurrentStep(0);
     };
+
+    if (!resultsState) {
+        return (
+            <div className="min-h-screen bg-accent flex flex-col">
+                <Header />
+                <main className="flex-1 px-8 py-6 flex items-center justify-center">
+                    <div className="bg-white border border-border rounded-xl p-8 text-center max-w-md">
+                        <h2 className="text-lg font-semibold text-foreground mb-2">
+                            No query data found
+                        </h2>
+                        <p className="text-sm text-muted-foreground mb-6">
+                            This page needs data from a submitted query. It looks like it was reached
+                            directly - for example a page refresh, a pasted link, or a bookmark - which
+                            doesn't carry that data along. Start a new query instead.
+                        </p>
+                        <Button variant="primary" onClick={() => navigate('/')}>
+                            Back to start
+                        </Button>
+                    </div>
+                </main>
+                <Footer />
+            </div>
+        );
+    }
+
+    const { baseRank, entailment, partition, query, algorithm } = resultsState;
 
     return (
         <div className="min-h-screen bg-accent flex flex-col">
