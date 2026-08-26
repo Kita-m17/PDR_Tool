@@ -15,6 +15,7 @@ import com.pdr.dtos.PartitionStepDTO;
 public class PartitionStep {
     private Integer id;
     private KnowledgeBase set;
+    private KnowledgeBase minimalSet;
     private boolean isEntailed;
     private boolean isMinimal;
     private String reason;
@@ -28,6 +29,7 @@ public class PartitionStep {
         PartitionStepDTO dto = new PartitionStepDTO();
         dto.setID(this.id);
         dto.setSet(this.set != null ? this.set.getStringFormulas() : new ArrayList<>());
+        dto.setMinimalSet(this.minimalSet != null ? this.minimalSet.getStringFormulas() : new ArrayList<>());
         dto.setEntailed(this.isEntailed);
         dto.setMinimal(this.isMinimal);
         dto.setReason(this.reason);

@@ -13,6 +13,7 @@ import java.util.List;
 public class PartitionStepDTO {
     private Integer ID;
     private List<String> set;
+    private List<String> minimalSet;
     private boolean isEntailed;
     private boolean isMinimal;
     private String reason;

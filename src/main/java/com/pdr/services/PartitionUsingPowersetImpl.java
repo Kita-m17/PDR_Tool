@@ -70,7 +70,7 @@ public class PartitionUsingPowersetImpl implements PartitionService {
 
                         }
                         resList.add(minimalJustificationStatement);
-                        step.setSet(minimalJustificationStatement);
+                        step.setMinimalSet(minimalJustificationStatement);
 
                     }else{
                         resList.add(combination);
@@ -85,8 +85,13 @@ public class PartitionUsingPowersetImpl implements PartitionService {
 
 
 
+                if(isMinimalRelevantClosure){
+                    step.getJustificationsSoFar().add(step.getMinimalSet());
 
-                step.getJustificationsSoFar().add(step.getSet());
+                }else{
+                    step.getJustificationsSoFar().add(step.getSet());
+
+                }
 
 
             }
