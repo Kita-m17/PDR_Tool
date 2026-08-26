@@ -85606,3 +85606,15 @@ Unconditional classes:
 2026-08-26 02:09:51.266 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
 2026-08-26 02:09:51.266 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [PartitionDTO(relevantPartition=[(penguin~|!flies), (bird~|flies)], irrelevantPartition=[], classical (truncated)...]
 2026-08-26 02:09:51.267 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-08-26 02:11:10.134 [SpringApplicationShutdownHook] DEBUG o.s.b.a.ApplicationAvailabilityBean - Application availability state ReadinessState changed from ACCEPTING_TRAFFIC to REFUSING_TRAFFIC
+2026-08-26 02:11:10.135 [SpringApplicationShutdownHook] DEBUG o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Closing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@21ba0741, started on Wed Aug 26 01:41:07 SAST 2026
+2026-08-26 02:11:10.137 [SpringApplicationShutdownHook] DEBUG o.s.c.s.DefaultLifecycleProcessor - Stopping beans in phase 2147483647
+2026-08-26 02:11:10.138 [SpringApplicationShutdownHook] DEBUG o.s.c.s.DefaultLifecycleProcessor - Bean 'applicationTaskExecutor' completed its stop procedure
+2026-08-26 02:11:10.138 [SpringApplicationShutdownHook] DEBUG o.s.c.s.DefaultLifecycleProcessor - Stopping beans in phase 2147482623
+2026-08-26 02:11:10.138 [SpringApplicationShutdownHook] DEBUG o.s.c.s.DefaultLifecycleProcessor - Bean 'webServerGracefulShutdown' completed its stop procedure
+2026-08-26 02:11:10.138 [SpringApplicationShutdownHook] DEBUG o.s.c.s.DefaultLifecycleProcessor - Stopping beans in phase 2147481599
+2026-08-26 02:11:10.147 [SpringApplicationShutdownHook] DEBUG o.s.c.s.DefaultLifecycleProcessor - Bean 'webServerStartStop' completed its stop procedure
+2026-08-26 02:11:10.148 [SpringApplicationShutdownHook] DEBUG o.s.c.s.DefaultLifecycleProcessor - Stopping beans in phase -2147483647
+2026-08-26 02:11:10.148 [SpringApplicationShutdownHook] DEBUG o.s.c.s.DefaultLifecycleProcessor - Bean 'springBootLoggingLifecycle' completed its stop procedure
+2026-08-26 02:11:10.149 [SpringApplicationShutdownHook] DEBUG o.s.s.c.ThreadPoolTaskExecutor - Shutting down ExecutorService 'applicationTaskExecutor'
+2026-08-26 02:11:10.150 [SpringApplicationShutdownHook] DEBUG o.s.b.f.s.DisposableBeanAdapter - Custom destroy method 'close' on bean with name 'simpleMeterRegistry' completed
