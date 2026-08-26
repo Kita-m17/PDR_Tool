@@ -341,13 +341,19 @@ const BaseRankStepThrough: React.FC = () => {
                 {step.isFinalStep && (
                                     <div className="flex justify-end">
                                         <Button variant="primary" size="lg"
-                                            onClick={() =>
-                                                navigate(algorithm === 'basic relevant' ? '/results/relevant/basic/partition' : '/results/rational', {
-                                                    state: { baseRank, entailment, partition, query, algorithm }
-                                                }
-                                            )}
+                                            onClick={() => {
+                                                const route =
+                                                    algorithm === 'basic relevant' ? '/results/relevant/basic' :
+                                                    algorithm === 'lexicographic' ? '/results/lexicographic' :
+                                                    '/results/rational';
+
+                                                navigate(route, { state: { baseRank, entailment, query, algorithm } });
+            
+                                            }}
                                         >
-                                            {algorithm === 'basic relevant' ? 'Continue to Relevant Partition' : 'Continue to Rational Closure'}
+                                            {algorithm === 'basic relevant' ? 'Continue to Relevant Closure' :
+                                            algorithm === 'lexicographic' ? 'Continue to Lexicographic Closure' :
+                                            'Continue to Rational Closure'}
                                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                                         </Button>
                                     </div>

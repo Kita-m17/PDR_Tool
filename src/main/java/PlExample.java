@@ -16,7 +16,7 @@
  *
  *  Copyright 2020 The TweetyProject Team <http://tweetyproject.org/contact/>
  */
-package org.tweetyproject.logics.pl.examples;
+//package org.tweetyproject.logics.pl.examples;
 
 import java.io.IOException;
 import java.util.List;
