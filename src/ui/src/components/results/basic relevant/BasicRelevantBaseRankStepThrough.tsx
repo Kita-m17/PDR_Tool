@@ -346,7 +346,7 @@ const BaseRankStepThrough: React.FC = () => {
                                                                                         const route =
                                                                                             algorithm === 'basic relevant' ? '/results/relevant/basic/partition' :
                                                                                             algorithm === 'lexicographic' ? '/results/lexicographic' :
-                                                                                            algorithm === 'minimal relevant' ? '/results/relevant/basic/partition' :
+                                                                                            algorithm === 'minimal relevant' ? '/results/relevant/minimal/partition' :
                                                                                             algorithm === 'rational' ? '/results/rational' :
                                                                                             '/results/rational';
 

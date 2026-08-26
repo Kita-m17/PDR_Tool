@@ -54,6 +54,11 @@ export interface EntailmentDTO {
 export interface PartitionStepDTO {
     ID: number;
     set: string[];
+    // Only populated when this step's subset is entailed and minimal AND the
+    // partition was built for Minimal Relevant Closure - the single
+    // lowest-ranked statement from `set`, which is what actually gets added
+    // to justificationsSoFar for that closure (see PartitionUsingPowersetImpl).
+    minimalSet: string[];
     entailed: boolean;
     minimal: boolean;
     reason: string;

@@ -11,6 +11,7 @@ import { submitKnowledgeBase, submitQuery, submitPartitionQuery, submitMinimalPa
 import RCStepThrough from './components/results/RCStepThrough';
 import BasicRelevantStepThrough from './components/results/basic relevant/BasicRelevantStepThrough';
 import BasicRelevantPartitionStepThrough from './components/results/basic relevant/BasicRelevantPartitionStepThrough';
+import MinimalRelevantPartitionStepThrough from './components/results/minimal relevant/MinimalRelevantPartitionStepThrough';
 import BaseRankStepThrough from './components/results/BaseRankStepThrough';
 import BasicRelevantBaseRankStepThrough from './components/results/basic relevant/BasicRelevantBaseRankStepThrough';
 import LexicographicStepThrough from './components/results/lexicographic/LexicographicStepTrough';
@@ -151,6 +152,7 @@ function App(){
       <Route path="/results/relevant/basic" element = {<BasicRelevantStepThrough/>}/>
       <Route path="/results/lexicographic" element={<LexicographicStepThrough/>}/>
       <Route path="/results/relevant/basic/partition" element = {<BasicRelevantPartitionStepThrough/>}/>
+      <Route path="/results/relevant/minimal/partition" element = {<MinimalRelevantPartitionStepThrough/>}/>
     </Routes>
   )
 }
