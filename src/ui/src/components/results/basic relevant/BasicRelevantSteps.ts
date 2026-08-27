@@ -19,6 +19,13 @@ export interface DebuggerStep {
     removed: string[];
     currentRankIndex: number;
     currentRPrime: string[];
+    // Only set on the dedicated Result step at the very end - the smallest
+    // weak justification (proof) for the entailment, straight from the
+    // backend's RelevantEntailment.smallestWeakJustification.
+    weakJustification?: string[];
+    // Marks the dedicated final "Entailed? / Proof" page, distinct from the
+    // preceding final classical-entailment-check step.
+    isResultStep?: boolean;
 }
 
 // A single formula within a rank, with its own removal status - relevant
@@ -42,7 +49,7 @@ export interface RankState{
 
 export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
     const steps: DebuggerStep[] = [];
-    const { traceSteps, baseRanking, entailed, queryFormula } = entailment;
+    const { traceSteps, baseRanking, entailed, queryFormula, smallestWeakJustification } = entailment;
 
     // Get R_infinity
     const rInfinity = baseRanking.find(r => r.rankNumber === 2147483647)?.knowledgeBase || [];
@@ -187,7 +194,8 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 currentRPrime: traceStep.remaining.map(f => f.replace('~|', '=>')),
             });
 
-            // Final step - return
+            // Final classical entailment check - no longer the last page, the
+            // dedicated Result step below is.
             steps.push({
                 stepNumber: steps.length + 1,
                 totalSteps: 0,
@@ -196,10 +204,36 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 workingSet: traceStep.remaining.map(f => f.replace('~|', '=>')),
                 rInfinity,
                 rankingState: buildRankingState(baseRanking, removedFormulas, new Set(), -1),
-                isFinalStep: true,
+                isFinalStep: false,
                 entailed,
         removed:[],
 
+                queryAntecedent,
+                queryConsequent,
+                currentRankIndex: -1,
+                currentRPrime: traceStep.remaining.map(f => f.replace('~|', '=>')),
+            });
+
+            // Result step (dedicated last page) - states the verdict and,
+            // when entailed, the weak justification (proof) for it. Shared by
+            // Basic and Minimal Relevant Closure, since both algorithms
+            // navigate to this same step-through component and both populate
+            // smallestWeakJustification on their RelevantEntailment response.
+            steps.push({
+                stepNumber: steps.length + 1,
+                totalSteps: 0,
+                highlightedLines: [10],
+                explanation: entailed
+                    ? `The query IS entailed under Relevant Closure.\n\nR∞ U R- U R' classically entails the materialised query, so the defeasible entailment holds. The weak justification below is the smallest part of that surviving knowledge which causes it to be entailed.`
+                    : `The query is NOT entailed under Relevant Closure.\n\nR∞ U R- U R' does not classically entail the materialised query, so the defeasible entailment does not hold.`,
+                workingSet: traceStep.remaining.map(f => f.replace('~|', '=>')),
+                rInfinity,
+                rankingState: buildRankingState(baseRanking, removedFormulas, new Set(), -1),
+                isFinalStep: true,
+                isResultStep: true,
+                entailed,
+                weakJustification: smallestWeakJustification ?? [],
+                removed: [],
                 queryAntecedent,
                 queryConsequent,
                 currentRankIndex: -1,

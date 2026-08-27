@@ -66,7 +66,7 @@ public class BasicRelevantReasonerImpl implements ReasonerService {
         trace.add(new EntailmentStep(i,relevantPrime,false,"",new KnowledgeBase()));
 
 
-
+        KnowledgeBase smallestWeakJustification = ClassicJust.computeJustification(irrelevantPartition.union(relevantPrime),queryFormula);
         boolean entailment = reasoner.query((relevantInf).union(relevantPrime).union(irrelevantPartition),queryFormula);
 
         return new RelevantEntailment.RelevantEntailmentBuilder()
@@ -75,6 +75,7 @@ public class BasicRelevantReasonerImpl implements ReasonerService {
                 .withBaseRanking(baseRanking)
                 .withKnowledgeBase(knowledgeBase)
                 .withQueryFormula(queryFormula)
+                .withWeakJustification(smallestWeakJustification)
                 .build();
 
 

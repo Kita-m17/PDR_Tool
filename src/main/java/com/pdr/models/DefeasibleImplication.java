@@ -56,4 +56,9 @@ public class DefeasibleImplication extends Implication {
     public String toString() {
         return super.toString().replace(Symbols.IMPLICATION(), Symbols.DEFEASIBLE_IMPLICATION());
     }
+    public Pair<PlFormula, PlFormula> getFormula()
+    {
+        return this.getFormulas();
+    }
+
 }

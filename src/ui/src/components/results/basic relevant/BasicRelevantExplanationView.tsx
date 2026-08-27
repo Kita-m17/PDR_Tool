@@ -190,7 +190,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                 </div>
             )}
 
-            {!step.isWhileLoopIntersection && !step.isInitialStep &&!isWhileStep &&(<div className="mb-4">
+            {!step.isWhileLoopIntersection && !step.isInitialStep && !isWhileStep && !step.isResultStep && (<div className="mb-4">
 
 
 
@@ -216,7 +216,30 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                         {step.entailed ? '✓ ENTAILED' : '✗ NOT ENTAILED'}
                     </p>
 
-                    
+                    {/* Weak justification (proof) - only meaningful when the
+                        query is entailed, since there's nothing to justify
+                        otherwise. Shown on the dedicated Result step for both
+                        Basic and Minimal Relevant Closure. */}
+                    {step.isResultStep && step.entailed && (
+                        <div className="mt-3">
+                            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-green-800">
+                                Weak Justification
+                            </p>
+                            {step.weakJustification && step.weakJustification.length > 0 ? (
+                                <div className="flex flex-wrap gap-2">
+                                    {step.weakJustification.map((formula, i) => (
+                                        <span key={i} className="font-mono text-sm text-green-900 bg-white border border-green-200 rounded px-2 py-1">
+                                            {formula}
+                                        </span>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-sm text-muted-foreground italic">
+                                    No justification was returned for this entailment.
+                                </p>
+                            )}
+                        </div>
+                    )}
                 </div>
             )}
 

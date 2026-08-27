@@ -49,6 +49,10 @@ export interface EntailmentDTO {
     baseRanking: RankDTO[];
     removedRanking: RankDTO[];
     traceSteps: EntailmentStepDTO[];
+    // Only populated for Basic/Minimal Relevant Closure - the smallest weak
+    // justification (proof) for the entailment, per RelevantEntailment.java.
+    // Empty/undefined when not entailed, since there's nothing to justify.
+    smallestWeakJustification?: string[];
 }
 
 export interface PartitionStepDTO {

@@ -53,7 +53,8 @@ public class ReasonerController {
     public ResponseEntity<?> getEntailment(
             @PathVariable String reasoner, //chosen reasoner type (e.g., "rational")
             @RequestBody String queryFormula //the formula to be queried for entailment
-            ){ //KB provided in the request body
+            )
+    { //KB provided in the request body
 
         // 1) build the KB from the request body
         // KnowledgeBase kb;
