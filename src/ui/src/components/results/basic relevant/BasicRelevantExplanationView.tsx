@@ -30,9 +30,9 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
 
     });
 
-    const isWhileStep = step.highlightedLines.includes(3);
+    const isWhileStep = step.highlightedLines.includes(6);
 
-    // Shared partition box, used both on the "while" check (line 3, both
+    // Shared partition box, used both on the "while" check (line 6, both
     // partitions) and the removal step (line 7-8, relevant partition only).
     const renderPartitionBox = (items: string[], variant: 'relevant' | 'irrelevant') => {
         const isRelevant = variant === 'relevant';
@@ -56,7 +56,27 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
         );
     };
 
-    // Shared per-rank ranking table, used both on the "while" check (line 3)
+    // The running knowledge base R'∪R-∪R∞ - R- and R∞ never change across
+    // steps, only the R' passed in does. Used on the final "R'∪R-∪R∞"
+    // recap step and, now, on the removal step (line 7-8) too, so the
+    // knowledge base actually being reasoned over after a removal is
+    // visible right where the removal happened, not just later.
+    const renderRunningKnowledgeBase = (rPrime: string[]) => {
+        const infiniteRank = step.rankingState.find(r => r.rankNumber === 2147483647)?.statements.map(s => s.formula) ?? [];
+        const parts = [...irrelevantPartition, ...infiniteRank, ...rPrime];
+        return (
+            <>
+                <p className="text-sm font-medium text-foreground m-4">
+                    <TexFormula>{"\\mathcal{R}'\\cup\\mathcal{R}^-\\cup\\mathcal{R}_\\infty:"}</TexFormula>
+                </p>
+                <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
+                    {parts.length > 0 ? '{ ' + parts.join(', ') + ' }' : '∅'}
+                </div>
+            </>
+        );
+    };
+
+    // Shared per-rank ranking table, used both on the "while" check (line 6)
     // and the removal step (line 7-8).
     const renderRankingTable = (rankingState: RankState[]) => (
         <table className="w-full border-collapse">
@@ -113,13 +133,25 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                 {step.explanation}
             </p>
 
-            {/* Line 3 ("while" check) - show both partitions and the current
+            {/* Line 6 ("while" check) - show both partitions and the current
                 ranking, since the exceptionality check is evaluated against
-                all of it. */}
+                all of it. Fires on every iteration's check, not just the
+                first - both when the antecedent is still exceptional and
+                when it finally isn't and the loop exits. */}
             {isWhileStep && (
                 <div className="mb-4 space-y-3">
                     <div className="grid grid-cols-2 gap-3">
-                        {renderPartitionBox(relevantPartition, 'relevant')}
+                        {/* Was the static, full relevantPartition (R(K,alpha))
+                            - never shrinks, so on the 2nd+ time this check
+                            runs it still showed everything, including
+                            formulas earlier iterations already removed.
+                            step.currentRPrime is R' as of entering THIS
+                            check - it's only updated once per iteration,
+                            right after that iteration's removal step, so it
+                            correctly reflects every prior removal. The
+                            irrelevant partition (R-) is left as-is since it
+                            never changes across iterations. */}
+                        {renderPartitionBox(step.currentRPrime, 'relevant')}
                         {renderPartitionBox(irrelevantPartition, 'irrelevant')}
                     </div>
 
@@ -131,6 +163,14 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                     </div>
                 </div>
             )}
+
+        {step.highlightedLines.includes(3) && (
+            <div>
+                    {renderRankingTable(step.rankingState)}
+
+            </div>
+            )
+            }
 
             {/* show initial step */}
             {step.isInitialStep && step.workingSet && (
@@ -147,8 +187,11 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                 </div>
             )}
 
-            {/* show the working set */}
-            {step.isWhileLoopIntersection && !step.isInitialStep && step.workingSet.length > 0 && (
+            {/* show the working set - not gated on workingSet.length: an empty
+                R' after removal is a legitimate, meaningful outcome (it's
+                what happens on whichever iteration exhausts R', typically
+                the last one), not a reason to hide the panel. */}
+            {step.isWhileLoopIntersection && !step.isInitialStep && (
                 <div className="mb-4">
 
 
@@ -156,7 +199,16 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                         Relevant Partition:
                     </p>
 
-                    {renderPartitionBox(relevantPartition, 'relevant')}
+                    {/* Was the static, full relevantPartition (R(K,alpha)) -
+                        never changes, so it looked frozen next to the
+                        Ranking table and the R'(before)/R'(after) boxes
+                        below, which do shrink each iteration. Rewired to
+                        the current R' as of entering this step (before
+                        this iteration's removal), reconstructed the same
+                        way R'(before) is: workingSet is already
+                        post-removal, so union it back with what got
+                        removed this iteration. */}
+                    {renderPartitionBox([...step.workingSet, ...step.removed], 'relevant')}
 
                     <p className="text-sm font-medium text-foreground mb-2 mt-4">
                         Ranking:
@@ -169,7 +221,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                                                         </p>
 
                                                         <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                                            {'{ ' + step.workingSet.join(', ') +","+step.removed.join(', ')+ ' }'}
+                                                            {[...step.workingSet, ...step.removed].length > 0 ? '{ ' + [...step.workingSet, ...step.removed].join(', ') + ' }' : '∅'}
                                                         </div>
 
                                                   <p className="text-sm font-medium text-foreground m-4">
@@ -177,7 +229,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                                                                       </p>
 
                                                                       <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                                                          {'{ ' + step.removed + ' }'}
+                                                                          {step.removed.length > 0 ? '{ ' + step.removed.join(', ') + ' }' : '∅'}
                                                                       </div>
                                         <p className="text-sm font-medium text-foreground m-4">
                                                                                     <TexFormula>{"\\{\\mathcal{R}'\\text{(after)}\\}:"}</TexFormula>
@@ -185,24 +237,18 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                                         </p>
 
                                         <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                            {'{ ' + step.workingSet.join(', ') + ' }'}
+                                            {step.workingSet.length > 0 ? '{ ' + step.workingSet.join(', ') + ' }' : '∅'}
                                         </div>
+
                 </div>
             )}
 
-            {!step.isWhileLoopIntersection && !step.isInitialStep && !isWhileStep && !step.isResultStep && (<div className="mb-4">
+            {((!step.isWhileLoopIntersection && !step.isInitialStep && isWhileStep && !step.isResultStep)|| step.highlightedLines.includes(10)&& !step.isFinalStep) && (<div className="mb-4">
 
 
 
 
-                                 <p className="text-sm font-medium text-foreground m-4">
-                                                                         <TexFormula>{"\\mathcal{R}'\\cup\\mathcal{R}^-\\cup\\mathcal{R}_\\infty:"}</TexFormula>
-                                                                     </p>
-
-                                                                     <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                                                         {  irrelevantPartition.join(', ') +(irrelevantPartition.length>0 ? ", ":"")+(step.rankingState.find(r => r.rankNumber === 2147483647)?.statements.map(s => s.formula) ?? []).join(', ')+(step.currentRPrime.length>0?", ":"")+ step.currentRPrime.join(', ')}
-
-                                                                     </div>
+                                 {renderRunningKnowledgeBase(step.currentRPrime)}
 
 
                              </div>
