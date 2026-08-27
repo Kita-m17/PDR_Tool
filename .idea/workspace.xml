@@ -6,7 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="47a1af81-9f9a-4eb7-b8f7-7edd1851beb9" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantExplanationView.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantExplanationView.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/pdr/services/BasicRelevantReasonerImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/pdr/services/BasicRelevantReasonerImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/pdr/services/MinimalRelevantReasonerImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/pdr/services/MinimalRelevantReasonerImplTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,9 +53,15 @@
   "keyToString": {
     "Application.App.executor": "Run",
     "Application.WeakJustification.executor": "Run",
+    "JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample1.executor": "Run",
+    "JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample2.executor": "Run",
+    "JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample3.executor": "Run",
+    "JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample4.executor": "Run",
+    "JUnit.BasicRelevantReasonerImplTest.executor": "Run",
     "JUnit.BasicRelevantReasonerImplTest.getEntailmentExample1.executor": "Run",
     "JUnit.BasicRelevantReasonerImplTest.getEntailmentExample2.executor": "Run",
     "JUnit.BasicRelevantReasonerImplTest.getEntailmentExample3.executor": "Run",
+    "JUnit.MinimalRelevantReasonerImplTest.TestWeakJustificationExample4.executor": "Run",
     "JUnit.MinimalRelevantReasonerImplTest.executor": "Run",
     "JUnit.PartitionUsingPowersetImplTest.executor": "Run",
     "JUnit.PartitionUsingPowersetImplTest.getBasicPartitionExample1.executor": "Run",
@@ -90,29 +97,50 @@
       <recent name="com.pdr.utils" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.App">
-    <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.pdr.App" />
+  <component name="RunManager" selected="JUnit.BasicRelevantReasonerImplTest">
+    <configuration name="BasicRelevantReasonerImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="pdr-tool" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.pdr.*" />
+          <option name="PATTERN" value="com.pdr.services.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <option name="PACKAGE_NAME" value="com.pdr.services" />
+      <option name="MAIN_CLASS_NAME" value="com.pdr.services.BasicRelevantReasonerImplTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="WeakJustification" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.pdr.services.relevantClosure.WeakJustification" />
+    <configuration name="BasicRelevantReasonerImplTest.TestWeakJustificationExample4" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="pdr-tool" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.pdr.services.relevantClosure.*" />
+          <option name="PATTERN" value="com.pdr.services.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <option name="PACKAGE_NAME" value="com.pdr.services" />
+      <option name="MAIN_CLASS_NAME" value="com.pdr.services.BasicRelevantReasonerImplTest" />
+      <option name="METHOD_NAME" value="TestWeakJustificationExample4" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BasicRelevantReasonerImplTest.getEntailmentExample1" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="pdr-tool" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.pdr.services.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.pdr.services" />
+      <option name="MAIN_CLASS_NAME" value="com.pdr.services.BasicRelevantReasonerImplTest" />
+      <option name="METHOD_NAME" value="getEntailmentExample1" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -132,7 +160,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="PartitionUsingPowersetImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="MinimalRelevantReasonerImplTest.TestWeakJustificationExample4" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="pdr-tool" />
       <extension name="coverage">
         <pattern>
@@ -141,23 +169,8 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="com.pdr.services" />
-      <option name="MAIN_CLASS_NAME" value="com.pdr.services.PartitionUsingPowersetImplTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="PartitionUsingPowersetImplTest.getMinimalPartitionExample1" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="pdr-tool" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.pdr.services.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.pdr.services" />
-      <option name="MAIN_CLASS_NAME" value="com.pdr.services.PartitionUsingPowersetImplTest" />
-      <option name="METHOD_NAME" value="getMinimalPartitionExample1" />
+      <option name="MAIN_CLASS_NAME" value="com.pdr.services.MinimalRelevantReasonerImplTest" />
+      <option name="METHOD_NAME" value="TestWeakJustificationExample4" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -165,11 +178,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.App" />
-        <item itemvalue="Application.WeakJustification" />
-        <item itemvalue="JUnit.PartitionUsingPowersetImplTest" />
-        <item itemvalue="JUnit.PartitionUsingPowersetImplTest.getMinimalPartitionExample1" />
+        <item itemvalue="JUnit.BasicRelevantReasonerImplTest" />
         <item itemvalue="JUnit.MinimalRelevantReasonerImplTest" />
+        <item itemvalue="JUnit.BasicRelevantReasonerImplTest.getEntailmentExample1" />
+        <item itemvalue="JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample4" />
+        <item itemvalue="JUnit.MinimalRelevantReasonerImplTest.TestWeakJustificationExample4" />
       </list>
     </recent_temporary>
   </component>
