@@ -70,7 +70,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                     <TexFormula>{"\\mathcal{R}'\\cup\\mathcal{R}^-\\cup\\mathcal{R}_\\infty:"}</TexFormula>
                 </p>
                 <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                    {parts.length > 0 ? '{ ' + parts.join(', ') + ' }' : '∅'}
+                    {parts.length > 0 ?  parts.join(', ')  : '∅'}
                 </div>
             </>
         );
@@ -180,7 +180,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                     </p>
 
                     <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                        {'{ ' + step.workingSet.join(', ') + ' }'}
+                        { step.workingSet.join(', ') }
                     </div>
 
 
@@ -217,27 +217,27 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                     {renderRankingTable(step.rankingState)}
 
                     <p className="text-sm font-medium text-foreground m-4">
-                                                            <TexFormula>{"\\{\\mathcal{R}'\\text{(before)}\\}:"}</TexFormula>
+                                                            <TexFormula>{"\\\mathcal{R}'\\text{(before)}\:"}</TexFormula>
                                                         </p>
 
                                                         <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                                            {[...step.workingSet, ...step.removed].length > 0 ? '{ ' + [...step.workingSet, ...step.removed].join(', ') + ' }' : '∅'}
+                                                            {[...step.workingSet, ...step.removed].length > 0 ? [...step.workingSet, ...step.removed].join(', ') : '∅'}
                                                         </div>
 
                                                   <p className="text-sm font-medium text-foreground m-4">
-                                                                       <TexFormula>{"\\{\\mathcal{R}_i \\cap \\mathcal{R}'\\}(\\text{being removed}):"}</TexFormula>
+                                                                       <TexFormula>{"\\\mathcal{R}_i \\cap \\mathcal{R}'\(\\text{being removed}):"}</TexFormula>
                                                                       </p>
 
                                                                       <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                                                          {step.removed.length > 0 ? '{ ' + step.removed.join(', ') + ' }' : '∅'}
+                                                                          {step.removed.length > 0 ? step.removed.join(', ')  : '∅'}
                                                                       </div>
                                         <p className="text-sm font-medium text-foreground m-4">
-                                                                                    <TexFormula>{"\\{\\mathcal{R}'\\text{(after)}\\}:"}</TexFormula>
+                                                                                    <TexFormula>{"\\\mathcal{R}'\\text{(after)}\:"}</TexFormula>
 
                                         </p>
 
                                         <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                            {step.workingSet.length > 0 ? '{ ' + step.workingSet.join(', ') + ' }' : '∅'}
+                                            {step.workingSet.length > 0 ?  step.workingSet.join(', ')  : '∅'}
                                         </div>
 
                 </div>
