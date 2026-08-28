@@ -1,5 +1,10 @@
 package com.pdr.services;
-
+/*
+ * Original Author: Liam De Saldanha , Honours Project (2026), University of Cape Town
+ *
+ * Context: Used in PDR project for testing minimal relevant closure.
+ * Purpose: Educational use only.
+ */
 import com.pdr.models.BaseRank;
 import com.pdr.models.Entailment;
 import com.pdr.models.KnowledgeBase;

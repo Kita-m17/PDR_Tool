@@ -1,5 +1,10 @@
 package com.pdr.services;
-
+/*
+ * Original Author: Liam De Saldanha , Honours Project (2026), University of Cape Town
+ *
+ * Context: Used in PDR project for relevant closure reasoning.
+ * Purpose: Educational use only.
+ */
 import com.pdr.models.*;
 import org.springframework.stereotype.Service;
 import org.tweetyproject.logics.pl.reasoner.SatReasoner;

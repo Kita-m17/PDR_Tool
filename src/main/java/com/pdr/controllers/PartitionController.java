@@ -1,5 +1,10 @@
 package com.pdr.controllers;
-
+/*
+ * Original Author: Liam De Saldanha , Honours Project (2026), University of Cape Town
+ *
+ * Context: Used in PDR project for exposing partition services.
+ * Purpose: Educational use only.
+ */
 import com.pdr.models.ErrorResponse;
 import com.pdr.services.PartitionService;
 import com.pdr.services.KnowledgeBaseService;

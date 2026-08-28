@@ -1,5 +1,10 @@
 package com.pdr.models;
-
+/*
+ * Original Author: Liam De Saldanha , Honours Project (2026), University of Cape Town
+ *
+ * Context: Used in PDR project for relevant closure.
+ * Purpose: Educational use only.
+ */
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pdr.dtos.RankDTO;
