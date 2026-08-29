@@ -79,6 +79,8 @@ const RCStepThrough: React.FC = () => {
                     <PrimeVisualiser
                         currentRankIndex={step.currentRankIndex}
                         currentRPrime={step.currentRPrime}
+                        irrelevantPartition={partition?.irrelevantPartition ?? []}
+
                     />
 
                 </div>
