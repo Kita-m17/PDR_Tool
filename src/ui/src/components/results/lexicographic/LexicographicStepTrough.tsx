@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BaseRankDTO, LexicographicEntailmentDTO } from '../../../api/api';
 import Header from '../../layout/Header';
+import AlgorithmProgress from '../../layout/AlgorithmProgress';
 import Footer from '../../layout/Footer';
 import { buildLexicographicSteps, LexDebuggerStep } from './LexicographicStep';
 import LexicographicRankingVisualiser from './LexiRankingVis';
@@ -33,6 +34,8 @@ const LexicographicStepThrough: React.FC = () => {
 
             {/* Page Body */}
             <main className="flex-1 px-8 py-6">
+
+                <AlgorithmProgress currentPhase="closure" phases={['baserank', 'closure']} />
 
                 {/* Page header */}
                 <div className="flex items-start justify-between mb-4">

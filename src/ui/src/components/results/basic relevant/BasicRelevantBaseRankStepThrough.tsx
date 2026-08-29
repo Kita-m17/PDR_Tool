@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../../api/api';
 import Header from '../../layout/Header';
-import AlgorithmProgress from '../../layout/AlgorithmProgress';
+import AlgorithmProgress, { AlgorithmPhase } from '../../layout/AlgorithmProgress';
 import Footer from '../../layout/Footer';
 import { baseRankSteps, BaseRankDebuggerStep } from './BasicRelevantbaseRankSteps';
 import StepControls from './BasicRelevantStepControls';
@@ -24,6 +24,11 @@ const BaseRankStepThrough: React.FC = () => {
     // 'basic relevant' and 'minimal relevant' both feed the same generic relevant-partition
     // step-through - only which partition endpoint populated `partition` differs.
     const isRelevantClosure = algorithm === 'basic relevant' || algorithm === 'minimal relevant';
+    // Basic/Minimal Relevant Closure route through a Partition phase; Rational
+    // and Lexicographic Closure go straight from Base Rank to Closure.
+    const progressPhases: AlgorithmPhase[] = isRelevantClosure
+        ? ['baserank', 'partition', 'closure']
+        : ['baserank', 'closure'];
 
     const steps = baseRankSteps(baseRank);
     const [currentStep, setCurrentStep] = useState(0);
@@ -59,9 +64,7 @@ const BaseRankStepThrough: React.FC = () => {
             <Header />
             <main className = "flex-1 px-8 py-6">
 
-                {isRelevantClosure && (
-                    <AlgorithmProgress currentPhase="baserank" />
-                )}
+                <AlgorithmProgress currentPhase="baserank" phases={progressPhases} />
 
                 {/* page header */}
                 <div className="flex items-start justify-between mb-4">
