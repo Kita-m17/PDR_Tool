@@ -6,8 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="47a1af81-9f9a-4eb7-b8f7-7edd1851beb9" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantPrimeVisualiser.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantPrimeVisualiser.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantStepThrough.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/src/components/results/basic relevant/BasicRelevantStepThrough.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/BasicRelevantReasonerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/BasicRelevantReasonerImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/ClassicJust.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/ClassicJust.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/MinimalRelevantReasonerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/MinimalRelevantReasonerImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionUsingPowersetImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionUsingPowersetImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/relevantClosure/WeakJustification.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/pdr/services/PartitionUsingPowersetImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/pdr/services/PartitionUsingPowersetImplTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,7 +101,7 @@
       <recent name="com.pdr.utils" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.App">
+  <component name="RunManager" selected="JUnit.PartitionUsingPowersetImplTest">
     <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.pdr.App" />
       <module name="pdr-tool" />
@@ -122,22 +126,6 @@
       <option name="PACKAGE_NAME" value="com.pdr.services" />
       <option name="MAIN_CLASS_NAME" value="com.pdr.services.BasicRelevantReasonerImplTest" />
       <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="BasicRelevantReasonerImplTest.TestWeakJustificationExample4" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="pdr-tool" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.pdr.services.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.pdr.services" />
-      <option name="MAIN_CLASS_NAME" value="com.pdr.services.BasicRelevantReasonerImplTest" />
-      <option name="METHOD_NAME" value="TestWeakJustificationExample4" />
-      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -173,13 +161,28 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="PartitionUsingPowersetImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="pdr-tool" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.pdr.services.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.pdr.services" />
+      <option name="MAIN_CLASS_NAME" value="com.pdr.services.PartitionUsingPowersetImplTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.PartitionUsingPowersetImplTest" />
         <item itemvalue="Application.App" />
         <item itemvalue="JUnit.BasicRelevantReasonerImplTest" />
         <item itemvalue="JUnit.MinimalRelevantReasonerImplTest" />
         <item itemvalue="JUnit.BasicRelevantReasonerImplTest.getEntailmentExample1" />
-        <item itemvalue="JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample4" />
       </list>
     </recent_temporary>
   </component>

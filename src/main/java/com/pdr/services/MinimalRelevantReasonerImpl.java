@@ -6,6 +6,7 @@ package com.pdr.services;
  * Purpose: Educational use only.
  */
 import com.pdr.models.*;
+import com.pdr.utils.Utils;
 import org.tweetyproject.logics.pl.reasoner.SatReasoner;
 import org.tweetyproject.logics.pl.sat.Sat4jSolver;
 import org.tweetyproject.logics.pl.sat.SatSolver;
@@ -69,15 +70,25 @@ public class MinimalRelevantReasonerImpl implements ReasonerService {
 
 
         boolean entailment = reasoner.query((relevantInf).union(relevantPrime).union(irrelevantPartition),queryFormula);
-        KnowledgeBase smallestWeakJustification = ClassicJust.computeJustification(irrelevantPartition.union(relevantPrime),queryFormula);
 
+        List<KnowledgeBase> justifications = ClassicJust.computeJustification(irrelevantPartition.union(relevantPrime),queryFormula);
+        KnowledgeBase smallestJustification = new KnowledgeBase();
+        int smallestJustificationSize = Integer.MAX_VALUE;
+        for (KnowledgeBase justification : justifications) {
+
+            if (justification.size() < smallestJustificationSize) {
+                smallestJustification = new KnowledgeBase();
+                smallestJustification.addAll(justification);
+                smallestJustificationSize = justification.size();
+            }
+        }
         return new RelevantEntailment.RelevantEntailmentBuilder()
                 .withEntailed(entailment)
                 .withTraceSteps(trace)
                 .withBaseRanking(baseRanking)
                 .withKnowledgeBase(knowledgeBase)
                 .withQueryFormula(queryFormula)
-                .withWeakJustification(smallestWeakJustification)
+                .withWeakJustification(smallestJustification)
                 .build();
 
 

@@ -99,7 +99,5 @@ class PartitionUsingPowersetImplTest {
         );
     }
 
-    @Test
-    void getPowerSets() {
-    }
+
 }

@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class ClassicJust 
 {
-    public static KnowledgeBase computeJustification(PlBeliefSet knowledgeBase, PlFormula query)
+    public static List<KnowledgeBase> computeJustification(PlBeliefSet knowledgeBase, PlFormula query)
     {
         SatSolver.setDefaultSolver(new Sat4jSolver());
         SatReasoner reasoner = new SatReasoner();
@@ -58,18 +58,17 @@ public class ClassicJust
         
         System.out.println("<<ALL possible classical justifications>>");
         List<List<PlFormula>> justifications = rootNode.getAllJustifications();
-        KnowledgeBase smallestJustification = new KnowledgeBase();
-        int smallestJustificationSize = Integer.MAX_VALUE;
-        for (List<PlFormula> justification : justifications) {
 
-            if (justification.size() < smallestJustificationSize) {
-                smallestJustification = new KnowledgeBase();
-                smallestJustification.addAll(justification);
-                smallestJustificationSize = justification.size();
-            }
-            System.out.println(Utils.printJustificationAsCSV(justification));
+
+        List<KnowledgeBase> allJustifications = new ArrayList<>();
+        for (List<PlFormula> justification : justifications) {
+            KnowledgeBase just = new KnowledgeBase();
+            just.addAll(justification);
+            allJustifications.add(just);
+
+
         }
-        return smallestJustification;
+        return allJustifications;
     }
     
     private static List<PlFormula> computeSingleJustification(PlBeliefSet knowledgeBase, PlFormula query, SatReasoner reasoner)
