@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../../api/api';
 import Header from '../../layout/Header';
+import AlgorithmProgress from '../../layout/AlgorithmProgress';
 import Footer from '../../layout/Footer';
 import { buildMinimalPartitionSteps, MinimalPartitionDebuggerStep } from './MinimalRelevantPartitionSteps';
 import PowersetView, { PartitionFilter } from '../basic relevant/PowersetView';
@@ -91,6 +92,8 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
             <Header />
 
             <main className="flex-1 px-8 py-6">
+
+                <AlgorithmProgress currentPhase="partition" />
 
                 {/* Page header */}
                 <div className="flex items-start justify-between mb-4">

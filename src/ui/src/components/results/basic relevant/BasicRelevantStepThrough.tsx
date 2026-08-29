@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../../api/api';
 import Header from '../../layout/Header';
+import AlgorithmProgress from '../../layout/AlgorithmProgress';
 import Footer from '../../layout/Footer';
 import { buildDebuggerSteps, DebuggerStep } from './BasicRelevantSteps';
 import PrimeVisualiser from './BasicRelevantPrimeVisualiser';
@@ -35,6 +36,8 @@ const RCStepThrough: React.FC = () => {
 
             {/* Page Body */}
             <main className="flex-1 px-8 py-6">
+
+                <AlgorithmProgress currentPhase="closure" />
 
                 {/* Page header */}
                 <div className="flex items-start justify-between mb-4">

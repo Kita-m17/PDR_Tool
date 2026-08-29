@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../../api/api';
 import Header from '../../layout/Header';
+import AlgorithmProgress from '../../layout/AlgorithmProgress';
 import Footer from '../../layout/Footer';
 import { baseRankSteps, BaseRankDebuggerStep } from './BasicRelevantbaseRankSteps';
 import StepControls from './BasicRelevantStepControls';
@@ -57,6 +58,10 @@ const BaseRankStepThrough: React.FC = () => {
         <div className="min-h-screen bg-accent flex flex-col">
             <Header />
             <main className = "flex-1 px-8 py-6">
+
+                {isRelevantClosure && (
+                    <AlgorithmProgress currentPhase="baserank" />
+                )}
 
                 {/* page header */}
                 <div className="flex items-start justify-between mb-4">

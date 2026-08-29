@@ -37,9 +37,9 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
     const renderPartitionBox = (items: string[], variant: 'relevant' | 'irrelevant') => {
         const isRelevant = variant === 'relevant';
         return (
-            <div className={`rounded-lg border p-3 ${isRelevant ? 'border-sky-200 bg-sky-50' : 'border-border bg-gray-50'}`}>
+            <div className={`rounded-lg border p-3 border-border bg-gray-50`}>
                 <p className={`mb-1 text-xs font-semibold uppercase tracking-wide ${isRelevant ? 'text-sky-900' : 'text-muted-foreground'}`}>
-                    {isRelevant ? 'Relevant Partition' : 'Irrelevant Partition'}
+                    {isRelevant ? 'R\''  : 'Irrelevant Partition'}
                 </p>
                 <div className="flex flex-wrap gap-2">
                     {items.length === 0 ? (
@@ -140,7 +140,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                 when it finally isn't and the loop exits. */}
             {isWhileStep && (
                 <div className="mb-4 space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-rows-2 gap-3">
                         {/* Was the static, full relevantPartition (R(K,alpha))
                             - never shrinks, so on the 2nd+ time this check
                             runs it still showed everything, including
