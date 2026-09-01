@@ -48,12 +48,13 @@ public class ReasonerController {
         this.parser = parser;
     }
 
-    //Endpoint:POST /api/entailment/{reasoner}/{queryFormula}
+    //Endpoint:POST /api/entailment/{reasoner}
     @PostMapping("/{reasoner}")
     public ResponseEntity<?> getEntailment(
             @PathVariable String reasoner, //chosen reasoner type (e.g., "rational")
             @RequestBody String queryFormula //the formula to be queried for entailment
-            ){ //KB provided in the request body
+            )
+    { //KB provided in the request body
 
         // 1) build the KB from the request body
         // KnowledgeBase kb;

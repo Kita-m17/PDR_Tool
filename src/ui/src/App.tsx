@@ -7,9 +7,14 @@ import QueryInput from './components/input/QueryInput';
 import EntailmentQueryCard from './components/input/EntailmentQueryCard';
 import { Button } from './components/ui/Buttons';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
-import { submitKnowledgeBase, submitQuery, BaseRankDTO, EntailmentDTO } from './api/api';
+import { submitKnowledgeBase, submitQuery, submitPartitionQuery, submitMinimalPartitionQuery, BaseRankDTO, EntailmentDTO } from './api/api';
 import RCStepThrough from './components/results/RCStepThrough';
+import BasicRelevantStepThrough from './components/results/basic relevant/BasicRelevantStepThrough';
+import BasicRelevantPartitionStepThrough from './components/results/basic relevant/BasicRelevantPartitionStepThrough';
+import MinimalRelevantPartitionStepThrough from './components/results/minimal relevant/MinimalRelevantPartitionStepThrough';
 import BaseRankStepThrough from './components/results/BaseRankStepThrough';
+import BasicRelevantBaseRankStepThrough from './components/results/basic relevant/BasicRelevantBaseRankStepThrough';
+import LexicographicStepThrough from './components/results/lexicographic/LexicographicStepTrough';
 
 interface InputPageProps {
   formulas: string[];
@@ -27,7 +32,7 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
 
   // const [formulas, setFormulas] = useState<string[]>(['(bird~|flies)', '(penguin=>bird)', '(penguin~|!flies)']);
   // const [query, setQuery] = useState('penguin~|!flies');
-  // const [algorithm, setAlgorithm] = useState('rational');
+   //const [algorithm, setAlgorithm] = useState('rational');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,10 +53,13 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
     try {
       const baseRank = await submitKnowledgeBase(formulas);
       const entailment = await submitQuery(algorithm, query);
-      navigate('/baserank', { 
-        state: { baseRank, entailment, query, algorithm } 
+      const partition = algorithm === 'minimal relevant'
+        ? await submitMinimalPartitionQuery(query)
+        : await submitPartitionQuery(query);
+      navigate('/baserank', {
+        state: { baseRank, entailment, partition, query, algorithm }
       });
-      
+
     } catch (err) {
       setError('Something went wrong. Make sure the backend is running.');
     } finally {
@@ -139,8 +147,12 @@ function App(){
           setAlgorithm={setAlgorithm}
         />
       }/>
-      <Route path="/baserank" element={<BaseRankStepThrough />} />
-      <Route path="/results" element = {<RCStepThrough/>}/>
+      <Route path="/baserank" element={<BasicRelevantBaseRankStepThrough />} />
+      <Route path="/results/rational" element = {<RCStepThrough/>}/>
+      <Route path="/results/relevant/basic" element = {<BasicRelevantStepThrough/>}/>
+      <Route path="/results/lexicographic" element={<LexicographicStepThrough/>}/>
+      <Route path="/results/relevant/basic/partition" element = {<BasicRelevantPartitionStepThrough/>}/>
+      <Route path="/results/relevant/minimal/partition" element = {<MinimalRelevantPartitionStepThrough/>}/>
     </Routes>
   )
 }

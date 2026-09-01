@@ -3,7 +3,7 @@
  * Package: com.pdr.services
  *
  * Original Author: Thabo Vincent Moloi , Honours Project (2024), University of Cape Town
- * Adapted by: Nikita Martin (202 Honours Project, University of Cape Town)
+ * Adapted by: Nikita Martin, Liam De Saldanha (2026 Honours Project, University of Cape Town)
  *
  * Status: Modified – Springboot use.
  * Context: Used in PDR's project for closure algorithms.
@@ -16,11 +16,21 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ReasonerFactory {
-    public static ReasonerService createReasoner(String type) {
+    private final PartitionService partitionService;
+    private final KnowledgeBaseService knowledgeBaseService;
+
+    public ReasonerFactory(PartitionService partitionService, KnowledgeBaseService knowledgeBaseService) {
+        this.partitionService = partitionService;
+        this.knowledgeBaseService = knowledgeBaseService;
+    }
+
+    public ReasonerService createReasoner(String type) {
+
         return switch (type) {
             case "rational" -> new RationalReasonerImpl();
-            // case "lexical" -> new LexicalReasonerImpl();
-            // case "relevant" -> new RelevantReasonerImpl();
+            case "lexicographic" -> new LexicographicReasonerImpl();
+            case "basic relevant" -> new BasicRelevantReasonerImpl(partitionService,knowledgeBaseService);
+            case "minimal relevant" -> new MinimalRelevantReasonerImpl(partitionService,knowledgeBaseService);
             default -> throw new IllegalArgumentException("Unknown reasoner: " + type);
         };
     }

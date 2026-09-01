@@ -26,7 +26,7 @@ export interface RankState{
 
 export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
     const steps: DebuggerStep[] = [];
-    const { traceSteps, baseRanking, removedRanking, entailed, queryFormula } = entailment;
+    const { traceSteps, baseRanking, removedRanking = [], entailed, queryFormula } = entailment;
 
     // Get R_infinity
     const rInfinity = baseRanking.find(r => r.rankNumber === 2147483647)?.knowledgeBase || [];

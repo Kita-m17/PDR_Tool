@@ -12,7 +12,8 @@ const EntailmentQueryCard: React.FC<EntailmentQueryCardProps> = ({selected, onAl
     const algorithms = [
         {id: 'rational', label: 'Rational Closure'},
         {id: 'lexicographic', label: 'Lexicographic Closure'},
-        {id: 'relevant', label: 'Relevant Closure'},
+        {id: 'basic relevant', label: 'Basic Relevant Closure'},
+        {id: 'minimal relevant', label: 'Minimal Relevant Closure'},
     ];
 
     return (

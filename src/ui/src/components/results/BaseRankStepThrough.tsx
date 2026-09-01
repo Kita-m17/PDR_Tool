@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BaseRankDTO, EntailmentDTO } from '../../api/api';
+import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../api/api';
 import Header from '../layout/Header';
 import Footer from '../layout/Footer';
 import { baseRankSteps, BaseRankDebuggerStep } from './baseRankSteps';
@@ -11,6 +11,7 @@ import { Button } from '../ui/Buttons';
 interface ResultsState {
     baseRank: BaseRankDTO;
     entailment: EntailmentDTO;
+    partition: PartitionDTO;
     query: string;
     algorithm: string;
 }
@@ -18,7 +19,7 @@ interface ResultsState {
 const BaseRankStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { baseRank, entailment, query, algorithm } = location.state as ResultsState;
+    const { baseRank, entailment, partition, query, algorithm } = location.state as ResultsState;
 
     const steps = baseRankSteps(baseRank);
     const [currentStep, setCurrentStep] = useState(0);
@@ -296,17 +297,17 @@ const BaseRankStepThrough: React.FC = () => {
                     />
                 </div>
 
-                {/*continue to rc */}
+                {/*continue to the algorithm-specific step-through, based on what was actually selected */}
                 {step.isFinalStep && (
                     <div className="flex justify-end">
                         <Button variant="primary" size="lg"
-                            onClick={() => 
-                                navigate('/results', {
-                                    state: { baseRank, entailment, query, algorithm }
+                            onClick={() =>
+                                navigate(algorithm === 'basic relevant' ? '/results/relevant/basic/partition' : '/results/rational', {
+                                    state: { baseRank, entailment, partition, query, algorithm }
                                 }
                             )}
                         >
-                            Continue to Rational Closure
+                            {algorithm === 'basic relevant' ? 'Continue to Relevant Partition' : 'Continue to Rational Closure'}
                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                         </Button>
                     </div>
