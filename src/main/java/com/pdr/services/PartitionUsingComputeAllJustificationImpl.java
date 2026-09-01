@@ -16,13 +16,13 @@ import org.tweetyproject.logics.pl.syntax.PlFormula;
 
 import java.util.ArrayList;
 import java.util.List;
-@Service
-public class PartitionUsingPowersetImpl implements PartitionService {
+
+public class PartitionUsingComputeAllJustificationImpl implements PartitionService {
 
     @Override
     public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query, boolean isMinimalRelevantClosure) {
         BaseRank baseRank = (new BaseRankServiceImp()).constructBaseRank(knowledgeBase);
-        List<KnowledgeBase> list = getPowerSets(knowledgeBase);
+        List<KnowledgeBase> list = ClassicJust.computeJustification(knowledgeBase,new Negation(((Implication) query).getFirstFormula()));
         List<KnowledgeBase> resList = new ArrayList<>();
         SatSolver.setDefaultSolver(new Sat4jSolver());
         SatReasoner reasoner = new SatReasoner();
@@ -37,9 +37,7 @@ public class PartitionUsingPowersetImpl implements PartitionService {
             PartitionStep step = new PartitionStep();
             step.setId(count);
             step.setSet(combination);
-            for(PlFormula pl:classicalKnowledgeBase){
-                combination.add(pl);
-            }
+
             if(step.getId()!=1){
 
                 step.setJustificationsSoFar(new ArrayList<>((result.getTraceSteps().get(step.getId()-2)).getJustificationsSoFar()));
@@ -47,12 +45,10 @@ public class PartitionUsingPowersetImpl implements PartitionService {
                 step.setJustificationsSoFar(new ArrayList<>());
             }
 
-            if(reasoner.query(combination,new Negation(((Implication) query).getFirstFormula()))){
-                boolean minimal = true;
-                step.setEntailed(true);
-                for(int i =0;i<resList.size();i++){
-                    if(combination.containsAll(resList.get(i)) ){
-
+            boolean minimal = true;
+            step.setEntailed(true);
+                for(KnowledgeBase justification:list){
+                    if(justification.size() <combination.size() && combination.containsAll(justification)){
                         minimal = false;
                     }
                 }
@@ -85,7 +81,7 @@ public class PartitionUsingPowersetImpl implements PartitionService {
                 }
 
 
-            }
+
             if(step.isEntailed() && step.isMinimal()){
 
 
@@ -114,7 +110,7 @@ public class PartitionUsingPowersetImpl implements PartitionService {
 
         }
         relevantString = relevantString.difference(classicalKnowledgeBase);
-        // irrelevantString = irrelevantString.difference(classicalKnowledgeBase);
+       // irrelevantString = irrelevantString.difference(classicalKnowledgeBase);
         result.setClassicalStatements(classicalKnowledgeBase);
         result.setRelevantPartition(relevantString);
         irrelevantString = irrelevantString.difference(relevantString);
@@ -123,25 +119,7 @@ public class PartitionUsingPowersetImpl implements PartitionService {
         return result;
     }
 
-    public static List<KnowledgeBase> getPowerSets(KnowledgeBase kb){
 
-        List<KnowledgeBase> res = new ArrayList<>();
-        res.add(new KnowledgeBase());
-        kb = kb.separate()[0];
-        List<PlFormula> plFormulas = new ArrayList<>(kb);
-
-        for(PlFormula pl:plFormulas){
-            List<KnowledgeBase> snapshot = new ArrayList<>(res);
-            for(KnowledgeBase list: snapshot){
-                KnowledgeBase tmp = new KnowledgeBase(list);
-                tmp.add(pl);
-                res.add(tmp);
-            }
-        }
-
-        return res;
-
-    }
 
 
 }

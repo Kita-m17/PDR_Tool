@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="47a1af81-9f9a-4eb7-b8f7-7edd1851beb9" name="Changes" comment="" />
+    <list default="true" id="47a1af81-9f9a-4eb7-b8f7-7edd1851beb9" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionUsingComputeAllJustificationImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/config/ControllerConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/config/ControllerConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionUsingPowersetImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionUsingPowersetImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/pdr/services/BasicRelevantReasonerImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/pdr/services/BasicRelevantReasonerImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/pdr/services/MinimalRelevantReasonerImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/pdr/services/MinimalRelevantReasonerImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/pdr/services/PartitionUsingPowersetImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/pdr/services/PartitionUsingComputeAllJustificationImplTest.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,8 +22,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="Class" />
         <option value="JUnit5 Test Class" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -153,7 +161,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="PartitionUsingPowersetImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="PartitionUsingComputeAllJustificationImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="pdr-tool" />
       <extension name="coverage">
         <pattern>
@@ -162,7 +170,7 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="com.pdr.services" />
-      <option name="MAIN_CLASS_NAME" value="com.pdr.services.PartitionUsingPowersetImplTest" />
+      <option name="MAIN_CLASS_NAME" value="com.pdr.services.PartitionUsingComputeAllJustificationImplTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -172,7 +180,7 @@
       <list>
         <item itemvalue="Application.App" />
         <item itemvalue="JUnit.MinimalRelevantReasonerImplTest" />
-        <item itemvalue="JUnit.PartitionUsingPowersetImplTest" />
+        <item itemvalue="JUnit.PartitionUsingComputeAllJustificationImplTest" />
         <item itemvalue="JUnit.BasicRelevantReasonerImplTest" />
         <item itemvalue="JUnit.BasicRelevantReasonerImplTest.getEntailmentExample1" />
       </list>

@@ -15,8 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class BasicRelevantReasonerImplTest {
     private final DefeasibleParser parser = new DefeasibleParser();
 
@@ -31,7 +29,7 @@ class BasicRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl();
+        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
         ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
 
         Entailment result = reasoner.getEntailment(baseRank, parser.parseFormula("(kittens~|!wild)"));
@@ -49,7 +47,7 @@ class BasicRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl();
+        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
         ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
 
         Entailment result = reasoner.getEntailment(baseRank, parser.parseFormula("(penguin~|!flies)"));
@@ -66,7 +64,7 @@ class BasicRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl();
+        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
         ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
 
         Entailment result = reasoner.getEntailment(baseRank, parser.parseFormula("(penguin~|flies)"));
@@ -91,7 +89,7 @@ class BasicRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl();
+        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
         ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
 
         RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, parser.parseFormula("(robins~|wings)"));
@@ -119,7 +117,7 @@ class BasicRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl();
+        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
         ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
 
         RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, parser.parseFormula("(penguins~|wings)"));
@@ -147,7 +145,7 @@ class BasicRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl();
+        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
         ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
 
         RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, parser.parseFormula("(specialpenguins~>fly)"));
@@ -173,7 +171,7 @@ class BasicRelevantReasonerImplTest {
             }
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl();
+        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
         ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
 
         RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, parser.parseFormula("(kittens~|!wild)"));
