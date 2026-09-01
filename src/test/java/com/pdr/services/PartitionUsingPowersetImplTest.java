@@ -14,7 +14,7 @@ import org.tweetyproject.logics.pl.syntax.PlFormula;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-class PartitionUsingComputeAllJustificationImplTest {
+class PartitionUsingPowersetImplTest {
     private final DefeasibleParser parser = new DefeasibleParser();
     @Test
     @DisplayName("Relevant Partition for knowledge base {(bird~|flies),(bird~|wings),(penguin=>bird),(penguin~|!flies)} with query = {(penguin~|!flies)}")
@@ -23,7 +23,7 @@ class PartitionUsingComputeAllJustificationImplTest {
         KnowledgeBase knowledgeBase = parser.parseFormulas("(bird~|flies),(bird~|wings),(penguin=>bird),(penguin~|!flies)");
         PlFormula query = parser.parseFormula("(penguin~|!flies)");
         boolean isMinimalRelevantClosure = true;
-        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
+        PartitionService partitionService = new PartitionUsingPowersetImpl();
         Partition partition = partitionService.getPartition(knowledgeBase,query,isMinimalRelevantClosure);
         assertThat(partition.getRelevantPartition()).containsExactlyInAnyOrder(
                 parser.parseFormula("(bird~|flies)")
@@ -40,7 +40,7 @@ class PartitionUsingComputeAllJustificationImplTest {
         KnowledgeBase knowledgeBase = parser.parseFormulas("(bird~|flies),(bird~|wings),(penguin=>bird),(penguin~|!flies)");
         PlFormula query = parser.parseFormula("(penguin~|!flies)");
         boolean isMinimalRelevantClosure = false;
-        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
+        PartitionService partitionService = new PartitionUsingPowersetImpl();
         Partition partition = partitionService.getPartition(knowledgeBase,query,isMinimalRelevantClosure);
         assertThat(partition.getRelevantPartition()).containsExactlyInAnyOrder(
                 parser.parseFormula("(penguin~|!flies)"),
@@ -58,7 +58,7 @@ class PartitionUsingComputeAllJustificationImplTest {
         KnowledgeBase knowledgeBase = parser.parseFormulas("(pets=>animals),(kittens=>cats), (cats~|trainable), (kittens~|!trainable), (animals~|legs), (animals~|wild), (cats=>animals), (cats~|!wild)");
         PlFormula query = parser.parseFormula("(kittens~|!wild)");
         boolean isMinimalRelevantClosure = true;
-        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
+        PartitionService partitionService = new PartitionUsingPowersetImpl();
         Partition partition = partitionService.getPartition(knowledgeBase,query,isMinimalRelevantClosure);
         assertThat(partition.getRelevantPartition()).containsExactlyInAnyOrder(
                 parser.parseFormula("(animals~|wild)"),
@@ -80,7 +80,7 @@ class PartitionUsingComputeAllJustificationImplTest {
         KnowledgeBase knowledgeBase = parser.parseFormulas("(pets=>animals),(kittens=>cats), (cats~|trainable), (kittens~|!trainable), (animals~|legs), (animals~|wild), (cats=>animals), (cats~|!wild)");
         PlFormula query = parser.parseFormula("(kittens~|!wild)");
         boolean isMinimalRelevantClosure = false;
-        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
+        PartitionService partitionService = new PartitionUsingPowersetImpl();
         Partition partition = partitionService.getPartition(knowledgeBase,query,isMinimalRelevantClosure);
         assertThat(partition.getRelevantPartition()).containsExactlyInAnyOrder(
                 parser.parseFormula("(animals~|wild)"),

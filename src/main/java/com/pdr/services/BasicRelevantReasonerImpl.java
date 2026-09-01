@@ -49,8 +49,6 @@ public class BasicRelevantReasonerImpl implements ReasonerService {
         KnowledgeBase relevantInf = partition.getClassicalStatements();
         List<EntailmentStep> trace= new ArrayList<>();
 
-        // ModelRelevant mr = new ModelRelevant();
-        //List<RelevantTracer> listRelevantTracer = new ArrayList<>();
 
         // Relevant Closure Algorithm
         int i =0;
@@ -58,20 +56,15 @@ public class BasicRelevantReasonerImpl implements ReasonerService {
 
         while(reasoner.query((relevantInf).union(relevantPrime).union(irrelevantPartition),new Negation(((Implication)queryFormula).getFirstFormula())) && relevantPrime.size()!=0){
 
-            //rt.setI(i);
-            //rt.setBefore(relevantPrime.getStringFormulas());
             KnowledgeBase intersection = relevantPartition.intersection(baseRank.getRanking().getRank(i).getFormulas());
-            //rt.setIntersection(intersection.getStringFormulas());
             relevantPrime = relevantPrime.difference(intersection);
-            //rt.setCurrent(relevantPrime.getStringFormulas());
-            //listRelevantTracer.add(rt);
             trace.add(new EntailmentStep(i,relevantPrime,true,"",intersection));
             i+=1;
         }
         trace.add(new EntailmentStep(i,relevantPrime,false,"",new KnowledgeBase()));
 
 
-        List<KnowledgeBase> justifications = ClassicJust.computeJustification(irrelevantPartition.union(relevantPrime),queryFormula);
+        List<KnowledgeBase> justifications = DefeasibleJustificationService.getJustificationsForRelevantClosure(knowledgeBase,queryFormula);
         KnowledgeBase smallestJustification = new KnowledgeBase();
         int smallestJustificationSize = Integer.MAX_VALUE;
         for (KnowledgeBase justification : justifications) {

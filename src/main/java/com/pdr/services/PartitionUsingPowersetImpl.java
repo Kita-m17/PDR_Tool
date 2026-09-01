@@ -21,8 +21,11 @@ public class PartitionUsingPowersetImpl implements PartitionService {
 
     @Override
     public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query, boolean isMinimalRelevantClosure) {
+        long startTime = System.nanoTime();
         BaseRank baseRank = (new BaseRankServiceImp()).constructBaseRank(knowledgeBase);
+
         List<KnowledgeBase> list = getPowerSets(knowledgeBase);
+
         List<KnowledgeBase> resList = new ArrayList<>();
         SatSolver.setDefaultSolver(new Sat4jSolver());
         SatReasoner reasoner = new SatReasoner();
@@ -114,12 +117,20 @@ public class PartitionUsingPowersetImpl implements PartitionService {
 
         }
         relevantString = relevantString.difference(classicalKnowledgeBase);
-        // irrelevantString = irrelevantString.difference(classicalKnowledgeBase);
         result.setClassicalStatements(classicalKnowledgeBase);
         result.setRelevantPartition(relevantString);
         irrelevantString = irrelevantString.difference(relevantString);
         result.setIrrelevantPartition(irrelevantString);
         result.setKnowledgeBase(knowledgeBase);
+        long endTime = System.nanoTime();
+        long durationNs = endTime - startTime;
+
+        double durationSeconds = (double) durationNs / 1_000_000_000.0;
+
+
+        String formattedTime = String.format("%.5fs", durationSeconds);
+
+        System.out.println("Execution time: " + formattedTime);
         return result;
     }
 
@@ -131,8 +142,8 @@ public class PartitionUsingPowersetImpl implements PartitionService {
         List<PlFormula> plFormulas = new ArrayList<>(kb);
 
         for(PlFormula pl:plFormulas){
-            List<KnowledgeBase> snapshot = new ArrayList<>(res);
-            for(KnowledgeBase list: snapshot){
+            List<KnowledgeBase> temp = new ArrayList<>(res);
+            for(KnowledgeBase list: temp){
                 KnowledgeBase tmp = new KnowledgeBase(list);
                 tmp.add(pl);
                 res.add(tmp);

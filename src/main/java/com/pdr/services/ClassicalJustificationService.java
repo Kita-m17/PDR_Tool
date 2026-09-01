@@ -17,7 +17,7 @@ import java.util.*;
  *
  * @author stevewang
  */
-public class ClassicJust 
+public class ClassicalJustificationService
 {
     public static List<KnowledgeBase> computeJustification(PlBeliefSet knowledgeBase, PlFormula query)
     {

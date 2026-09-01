@@ -6,7 +6,6 @@ package com.pdr.services;
  * Purpose: Educational use only.
  */
 import com.pdr.models.*;
-import org.springframework.stereotype.Service;
 import org.tweetyproject.logics.pl.reasoner.SatReasoner;
 import org.tweetyproject.logics.pl.sat.Sat4jSolver;
 import org.tweetyproject.logics.pl.sat.SatSolver;
@@ -22,21 +21,20 @@ public class PartitionUsingComputeAllJustificationImpl implements PartitionServi
     @Override
     public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query, boolean isMinimalRelevantClosure) {
         BaseRank baseRank = (new BaseRankServiceImp()).constructBaseRank(knowledgeBase);
-        List<KnowledgeBase> list = ClassicJust.computeJustification(knowledgeBase,new Negation(((Implication) query).getFirstFormula()));
+        List<KnowledgeBase> list = DefeasibleJustificationService.getJustificationsForRelevantClosure(knowledgeBase,  query);
+        System.out.println("Justifications:"+list);
         List<KnowledgeBase> resList = new ArrayList<>();
-        SatSolver.setDefaultSolver(new Sat4jSolver());
-        SatReasoner reasoner = new SatReasoner();
         Partition result = new Partition();
         result.setTraceSteps(new ArrayList<>());
         int count =1;
 
         KnowledgeBase classicalKnowledgeBase = knowledgeBase.separate()[1];
 
-        for(KnowledgeBase combination:list){
+        for(KnowledgeBase justification:list){
 
             PartitionStep step = new PartitionStep();
             step.setId(count);
-            step.setSet(combination);
+            step.setSet(justification);
 
             if(step.getId()!=1){
 
@@ -47,11 +45,7 @@ public class PartitionUsingComputeAllJustificationImpl implements PartitionServi
 
             boolean minimal = true;
             step.setEntailed(true);
-                for(KnowledgeBase justification:list){
-                    if(justification.size() <combination.size() && combination.containsAll(justification)){
-                        minimal = false;
-                    }
-                }
+
 
 
                 if(minimal){
@@ -60,7 +54,7 @@ public class PartitionUsingComputeAllJustificationImpl implements PartitionServi
                         int lowestRank =Integer.MAX_VALUE;
                         KnowledgeBase minimalJustificationStatement = new KnowledgeBase();
                         for(Rank rank : baseRank.getRanking()){
-                            for(PlFormula pl : combination){
+                            for(PlFormula pl : justification){
 
                                 if(rank.getFormulas().contains(pl) && rank.getRankNumber()<lowestRank){
 
@@ -74,7 +68,7 @@ public class PartitionUsingComputeAllJustificationImpl implements PartitionServi
                         step.setMinimalSet(minimalJustificationStatement);
 
                     }else{
-                        resList.add(combination);
+                        resList.add(justification);
 
                     }
 
@@ -109,8 +103,8 @@ public class PartitionUsingComputeAllJustificationImpl implements PartitionServi
             relevantString = relevantString.union(kb);
 
         }
+        DefeasibleJustificationService.getJustificationsForRelevantClosure(knowledgeBase, query);
         relevantString = relevantString.difference(classicalKnowledgeBase);
-       // irrelevantString = irrelevantString.difference(classicalKnowledgeBase);
         result.setClassicalStatements(classicalKnowledgeBase);
         result.setRelevantPartition(relevantString);
         irrelevantString = irrelevantString.difference(relevantString);
@@ -118,6 +112,8 @@ public class PartitionUsingComputeAllJustificationImpl implements PartitionServi
         result.setKnowledgeBase(knowledgeBase);
         return result;
     }
+
+
 
 
 

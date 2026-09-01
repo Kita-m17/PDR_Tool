@@ -194,7 +194,9 @@ public class KnowledgeBase extends PlBeliefSet {
         return formula;
     }
 
-
+    /**
+     * @Author Liam De Saldanha
+     */
     public boolean contains(PlFormula pl) {
         KnowledgeBase tmp = new KnowledgeBase();
         tmp.add(pl);
@@ -202,6 +204,24 @@ public class KnowledgeBase extends PlBeliefSet {
 
 
     }
+
+    /**
+     * @Author Liam De Saldanha
+     */
+
+    public boolean contains(KnowledgeBase knowledgeBase) {
+        for(PlFormula formula: knowledgeBase){
+            if(!this.contains(formula)){
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    /**
+     * @Author Liam De Saldanha
+     */
     public List<String> getStringFormulas(){
         List<PlFormula> list= new ArrayList<PlFormula>(this);
         List<String> result = new ArrayList<>();
