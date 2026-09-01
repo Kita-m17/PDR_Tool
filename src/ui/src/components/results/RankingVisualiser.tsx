@@ -1,5 +1,5 @@
 import React from 'react';
-import { RankState } from './rcSteps';
+import { RankState } from './rational/rcSteps';
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
 
 interface RankingVisualiserProps {

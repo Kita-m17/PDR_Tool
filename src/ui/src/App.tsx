@@ -8,7 +8,7 @@ import EntailmentQueryCard from './components/input/EntailmentQueryCard';
 import { Button } from './components/ui/Buttons';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { submitKnowledgeBase, submitQuery, submitPartitionQuery, submitMinimalPartitionQuery, BaseRankDTO, EntailmentDTO } from './api/api';
-import RCStepThrough from './components/results/RCStepThrough';
+import RCStepThrough from './components/results/rational/RCStepThrough';
 import BasicRelevantStepThrough from './components/results/basic relevant/BasicRelevantStepThrough';
 import BasicRelevantPartitionStepThrough from './components/results/basic relevant/BasicRelevantPartitionStepThrough';
 import MinimalRelevantPartitionStepThrough from './components/results/minimal relevant/MinimalRelevantPartitionStepThrough';
