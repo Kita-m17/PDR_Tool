@@ -5,15 +5,40 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="47a1af81-9f9a-4eb7-b8f7-7edd1851beb9" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/DefeasibleJustificationService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/models/KnowledgeBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/models/KnowledgeBase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/BasicRelevantReasonerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/BasicRelevantReasonerImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/ClassicJust.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/ClassicalJustificationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/MinimalRelevantReasonerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/MinimalRelevantReasonerImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionUsingComputeAllJustificationImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionUsingComputeAllJustificationImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionUsingPowersetImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/services/PartitionUsingPowersetImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/pdr/services/PartitionUsingComputeAllJustificationImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/pdr/services/PartitionUsingPowersetImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/App.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/Demo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/Demo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/controllers/HomeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/controllers/HomeController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/controllers/KnowledgeBaseController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/controllers/KnowledgeBaseController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/controllers/ReasonerController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/controllers/ReasonerController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/BaseRankDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/BaseRankDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/BaseRankStepDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/BaseRankStepDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/EntailmentStepDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/EntailmentStepDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/ExceptionalityCheckDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/ExceptionalityCheckDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/KnowledgeBaseDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/KnowledgeBaseDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/QueryRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/QueryRequest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/RankDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/RankDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/DefeasibleImplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/DefeasibleImplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/Entailment$EntailmentBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/Entailment$EntailmentBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/Entailment.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/Entailment.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/EntailmentStep.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/EntailmentStep.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/ErrorResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/ErrorResponse.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/ExceptionalityCheck.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/ExceptionalityCheck.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/KnowledgeBase.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/KnowledgeBase.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/Rank.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/Rank.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/Ranking.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/Ranking.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/RationalEntailment$RationalEntailmentBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/RationalEntailment$RationalEntailmentBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/RationalEntailment.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/RationalEntailment.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/BaseRankService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/BaseRankService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/BaseRankServiceImp.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/BaseRankServiceImp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/KnowledgeBaseService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/KnowledgeBaseService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/KnowledgeBaseServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/KnowledgeBaseServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/RationalReasonerImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/RationalReasonerImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/ReasonerFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/ReasonerFactory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/ReasonerService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/ReasonerService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/utils/DefeasibleParser.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/utils/DefeasibleParser.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/utils/Symbols.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/utils/Symbols.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +111,7 @@
     "git-widget-placeholder": "Liam",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/liamd/Home/Academic/Honours/PDR Project/PDR_Tool/src/main/java/com/pdr/models",
+    "last_opened_file_path": "C:/Users/liamd/Home/Academic/Honours/Other honours Projects/cotterrell_dunn_gounden/source_code",
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
