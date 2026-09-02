@@ -22,6 +22,7 @@ public class PartitionDTO {
     public List<String> classicalStatements;
     public List<String> knowledgeBase;
     public List<PartitionStepDTO> traceSteps; // trace of the algorithm
+    public double executionTime;
 
 
 }

@@ -1,7 +1,7 @@
 /**
  * File: Entailment.java
  * Package: com.pdr.models
- * 
+ *
  * Original Author: Thabo Vincent Moloi (2024 Honours Project, University of Cape Town)
  * Modified by: Nikita Martin (2026 Honours Project, University of Cape Town)
  * Context: Used in PDR project for defeasible reasoning algorithms.
@@ -103,7 +103,7 @@ public abstract class Entailment {
         private List<EntailmentStep> traceSteps;
 
         /**
-         * @return 
+         * @return
          */
         public T withKnowledgeBase(KnowledgeBase knowledgeBase) {
             this.knowledgeBase = knowledgeBase;

@@ -66,6 +66,7 @@ public class BaseRankServiceImp implements BaseRankService{
      * @return The constructed base rank.
      */
     public BaseRank constructBaseRank(KnowledgeBase knowledgeBase) {
+        long startTime = System.nanoTime();
 
         // Initialize the SAT solver and reasoner
         SatSolver.setDefaultSolver(new Sat4jSolver());
@@ -108,7 +109,14 @@ public class BaseRankServiceImp implements BaseRankService{
             sequence.addRank(previousKB.equals(currentKB) ? Integer.MAX_VALUE : i, previousKB);
 
 
-            traceSteps.add(new BaseRankStep(i, previousKB, exceptionalityChecks, new KnowledgeBase(rank.getFormulas()), new KnowledgeBase(currentKB)));
+            traceSteps.add(BaseRankStep.builder()
+                            .withConsideredFormulas(previousKB)
+                            .withIteration(i)
+                            .withChecks(exceptionalityChecks)
+                            .withCarriedForward(new KnowledgeBase(currentKB))
+                            .withAssignedRank(new KnowledgeBase(rank.getFormulas()))
+
+                    .build());
 
             i++;
         }
@@ -119,8 +127,27 @@ public class BaseRankServiceImp implements BaseRankService{
         //the infinite rank - classical statements plus anything not placed in a finite rank
         KnowledgeBase rankInfinityFormulas = classicalKB.union(currentKB);
         ranking.addRank(Integer.MAX_VALUE, rankInfinityFormulas);
-        traceSteps.add(new BaseRankStep(Integer.MAX_VALUE, new KnowledgeBase(rankInfinityFormulas), new ArrayList<>(), new KnowledgeBase(rankInfinityFormulas), new KnowledgeBase()));
-        return new BaseRank(knowledgeBase, sequence, ranking, n, traceSteps);
+        traceSteps.add(BaseRankStep.builder()
+                        .withAssignedRank(new KnowledgeBase(rankInfinityFormulas))
+                        .withCarriedForward(new KnowledgeBase())
+                        .withChecks(new ArrayList<>())
+                        .withIteration(Integer.MAX_VALUE)
+                        .withConsideredFormulas(new KnowledgeBase(rankInfinityFormulas))
+                .build());
+
+        long endTime = System.nanoTime();
+        long durationNs = endTime - startTime;
+        double durationSeconds = (double) durationNs / 1_000_000_000.0;
+
+        String formattedTime = String.format("%.3f", durationSeconds);
+        return BaseRank.builder()
+                .withRanking(ranking)
+                .withN(n)
+                .withKnowledgeBase(knowledgeBase)
+                .withSequence(sequence)
+                .withExecutionTime(durationSeconds)
+                .withTraceSteps(traceSteps)
+                .build();
     }
 
     /**

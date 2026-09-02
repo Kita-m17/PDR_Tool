@@ -7,6 +7,7 @@
 package com.pdr.models;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,6 +19,7 @@ import com.pdr.dtos.PartitionStepDTO;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(setterPrefix = "with")
 public class PartitionStep {
     private Integer id;
     private KnowledgeBase set;

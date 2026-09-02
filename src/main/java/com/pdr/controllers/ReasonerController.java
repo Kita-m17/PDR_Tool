@@ -90,7 +90,6 @@ public class ReasonerController {
         // 4) get the entailment result from the reasoner service
         Entailment result = svc.getEntailment(baseRank, formula);
         System.out.println("Entailment result: " + result);
-
         // 5) return the result to the client
         return ResponseEntity.ok(result);
     }

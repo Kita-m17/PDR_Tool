@@ -28,6 +28,7 @@ public class MinimalRelevantReasonerImpl implements ReasonerService {
     @Override
     public Entailment getEntailment(BaseRank baseRank, PlFormula queryFormula) {
         // Get inputs
+        long startTime = System.nanoTime();
 
         PlFormula antecedent = ((Implication) queryFormula).getFirstFormula();
         PlFormula negation = new Negation(antecedent);
@@ -36,7 +37,7 @@ public class MinimalRelevantReasonerImpl implements ReasonerService {
         Ranking removedRanking = new Ranking();
 
         //specific input to relevant closure
-        Partition partition = partitionService.getPartition(knowledgeBaseService.getKnowledgeBase(), queryFormula,true);
+        Partition partition = partitionService.getInstance();
         KnowledgeBase relevantPartition = partition.getRelevantPartition();
         KnowledgeBase irrelevantPartition = partition.getIrrelevantPartition();
         SatSolver.setDefaultSolver(new Sat4jSolver());
@@ -74,12 +75,22 @@ public class MinimalRelevantReasonerImpl implements ReasonerService {
                 smallestJustificationSize = justification.size();
             }
         }
+        long endTime = System.nanoTime();
+        long durationNs = endTime - startTime;
+
+        double durationSeconds = (double) durationNs / 1_000_000_000.0;
+
+
+        String formattedTime = String.format("%.3fs", durationSeconds);
         return new RelevantEntailment.RelevantEntailmentBuilder()
                 .withEntailed(entailment)
                 .withTraceSteps(trace)
                 .withBaseRanking(baseRanking)
                 .withKnowledgeBase(knowledgeBase)
                 .withQueryFormula(queryFormula)
+                .withClosureExecutionTime(durationSeconds)
+                .withBaseRankExecutionTime(baseRank.getExecutionTime())
+                .withPartitionExecutionTime(partition.getExecutionTime())
                 .withWeakJustification(smallestJustification)
                 .build();
 

@@ -7,6 +7,7 @@
 package com.pdr.models;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,12 +20,14 @@ import com.pdr.dtos.PartitionStepDTO;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(setterPrefix = "with")
 public class Partition {
     private KnowledgeBase relevantPartition;
     private KnowledgeBase irrelevantPartition;
     private KnowledgeBase classicalStatements;
     private KnowledgeBase knowledgeBase;
     private List<PartitionStep> traceSteps = new ArrayList<>();
+    private double executionTime;
 
     /**
      * Converts this Partition instance to a PartitionDTO for endpoint
@@ -39,7 +42,8 @@ public class Partition {
                 this.irrelevantPartition != null ? this.irrelevantPartition.getStringFormulas() : new ArrayList<>(),
                 this.classicalStatements != null ? this.classicalStatements.getStringFormulas() : new ArrayList<>(),
                 this.knowledgeBase != null ? this.knowledgeBase.getStringFormulas() : new ArrayList<>(),
-                traceStepsDTO
+
+                traceStepsDTO,this.executionTime
         );
     }
 }

@@ -113,9 +113,10 @@ public class PartitionUsingComputeAllJustificationImpl implements PartitionServi
         return result;
     }
 
-
-
-
+    @Override
+    public Partition getInstance() {
+        return null;
+    }
 
 
 }

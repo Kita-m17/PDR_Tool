@@ -1,5 +1,12 @@
 package com.pdr.models;
-
+/**
+ * File: TraceStep.java
+ * Package: com.pdr.models
+ *
+ * Original Author: Nikita Martin, Liam De Saldanha (2026 Honours Project, University of Cape Town)
+ * Context: Used in PDR project for the BaseRank algorithm.
+ * Purpose: Used for educational purposes
+ */
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,7 +14,14 @@ import com.pdr.dtos.BaseRankDTO;
 import com.pdr.dtos.RankDTO;
 import com.pdr.dtos.BaseRankStepDTO;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@AllArgsConstructor
+@Builder(setterPrefix = "with")
 public class BaseRank {
     private final KnowledgeBase knowledgeBase;
 
@@ -20,66 +34,13 @@ public class BaseRank {
     private final int n; //number of finite ranks
     
     private List<BaseRankStep> traceSteps = new ArrayList<>(); //trace of the algorithm
+    private double executionTime;
 
-    // Constructor with explicit components
-    public BaseRank(KnowledgeBase knowledgeBase, Ranking sequence, Ranking ranking, int n, List<BaseRankStep> traceSteps) {
-        this.sequence = sequence;
-        this.ranking = ranking;
-        this.knowledgeBase = knowledgeBase;
-        this.n = n;
-        this.traceSteps = traceSteps;
-    }
 
-    /**
-     *  Copy constructor
-     */
-    public BaseRank(BaseRank baseRank) {
-        this(baseRank.getKnowledgeBase(), baseRank.getSequence(), baseRank.getRanking(), baseRank.getN(), baseRank.getTraceSteps());
-    }
-
-    /**
-     * @return Ranking The final ranking of the knowledge base.
-     */
-    public Ranking getRanking() {
-        return ranking;
-    }
-
-    /** 
-     * @return Ranking The sequence of ranks generated during the construction of the base rank.
-     */
-    public Ranking getSequence() {
-        return sequence;
-    }
-
-    /**
-     * @return int The number of finite ranks in the final ranking.
-     */
-    public int getN() {
-        return n;
-    }
-
-    /**
-     * @return KnowledgeBase The original knowledge base.
-     */
-    public KnowledgeBase getKnowledgeBase() {
-        return new KnowledgeBase(knowledgeBase);
-    }
-    
-    /**
-     * @return List<TraceStep> The trace of the algorithm, detailing each step of the base rank construction.
-     */
-    public List<BaseRankStep> getTraceSteps() {
-        return traceSteps;
-    }
-
-    /**
-     * Converts this BaseRank instance to a BaseRankDTO for data transfer.
-     * @return BaseRankDTO The DTO representation of this BaseRank
-     */
     public BaseRankDTO toDTO(){
         List<RankDTO> sequenceDTO = this.sequence.stream().map(Rank::toDTO).collect(Collectors.toList());
         List<RankDTO> rankingDTO = this.ranking.stream().map(Rank::toDTO).collect(Collectors.toList());
         List<BaseRankStepDTO> traceStepsDTO = this.traceSteps.stream().filter(step -> !step.getConsideredFormulas().isEmpty() || step.getIteration() == Integer.MAX_VALUE).map(BaseRankStep::toDTO).collect(Collectors.toList());
-        return new BaseRankDTO(this.knowledgeBase.toStringList(), sequenceDTO, rankingDTO, traceStepsDTO);
+        return new BaseRankDTO(this.knowledgeBase.toStringList(), sequenceDTO, rankingDTO, traceStepsDTO,this.executionTime);
     }   
 }

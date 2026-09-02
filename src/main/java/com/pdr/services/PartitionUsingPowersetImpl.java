@@ -19,6 +19,7 @@ import java.util.List;
 @Service
 public class PartitionUsingPowersetImpl implements PartitionService {
 
+    private Partition partition;
     @Override
     public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query, boolean isMinimalRelevantClosure) {
         long startTime = System.nanoTime();
@@ -29,30 +30,31 @@ public class PartitionUsingPowersetImpl implements PartitionService {
         List<KnowledgeBase> resList = new ArrayList<>();
         SatSolver.setDefaultSolver(new Sat4jSolver());
         SatReasoner reasoner = new SatReasoner();
-        Partition result = new Partition();
-        result.setTraceSteps(new ArrayList<>());
+        List<PartitionStep> traceSteps = new ArrayList<>();
         int count =1;
+        boolean isEntailed = false;
+        boolean isMinimal = false;
 
         KnowledgeBase classicalKnowledgeBase = knowledgeBase.separate()[1];
 
         for(KnowledgeBase combination:list){
 
-            PartitionStep step = new PartitionStep();
-            step.setId(count);
-            step.setSet(combination);
+            KnowledgeBase minimalJustificationStatement = new KnowledgeBase();
+            List<KnowledgeBase> justificationSoFar = new ArrayList<>();
             for(PlFormula pl:classicalKnowledgeBase){
                 combination.add(pl);
             }
-            if(step.getId()!=1){
+            if(count!=1){
 
-                step.setJustificationsSoFar(new ArrayList<>((result.getTraceSteps().get(step.getId()-2)).getJustificationsSoFar()));
+                justificationSoFar = new ArrayList<>((traceSteps.get(count-2)).getJustificationsSoFar());
             }else{
-                step.setJustificationsSoFar(new ArrayList<>());
+                justificationSoFar = new ArrayList<>();
             }
 
             if(reasoner.query(combination,new Negation(((Implication) query).getFirstFormula()))){
                 boolean minimal = true;
-                step.setEntailed(true);
+                isEntailed = true;
+
                 for(int i =0;i<resList.size();i++){
                     if(combination.containsAll(resList.get(i)) ){
 
@@ -62,10 +64,9 @@ public class PartitionUsingPowersetImpl implements PartitionService {
 
 
                 if(minimal){
-                    step.setMinimal(true);
+                    isMinimal = true;
                     if (isMinimalRelevantClosure){
                         int lowestRank =Integer.MAX_VALUE;
-                        KnowledgeBase minimalJustificationStatement = new KnowledgeBase();
                         for(Rank rank : baseRank.getRanking()){
                             for(PlFormula pl : combination){
 
@@ -78,7 +79,6 @@ public class PartitionUsingPowersetImpl implements PartitionService {
 
                         }
                         resList.add(minimalJustificationStatement);
-                        step.setMinimalSet(minimalJustificationStatement);
 
                     }else{
                         resList.add(combination);
@@ -89,21 +89,30 @@ public class PartitionUsingPowersetImpl implements PartitionService {
 
 
             }
-            if(step.isEntailed() && step.isMinimal()){
-
+            if(isEntailed && isMinimal){
 
 
                 if(isMinimalRelevantClosure){
-                    step.getJustificationsSoFar().add(step.getMinimalSet());
+                    justificationSoFar.add(minimalJustificationStatement);
 
                 }else{
-                    step.getJustificationsSoFar().add(step.getSet());
+                    justificationSoFar.add(combination);
 
                 }
 
 
             }
-            result.getTraceSteps().add(step);
+            traceSteps.add(PartitionStep.builder()
+                            .withId(count)
+                            .withIsEntailed(isEntailed)
+                            .withIsMinimal(isMinimal)
+                            .withJustificationsSoFar(justificationSoFar)
+                            .withMinimalSet(minimalJustificationStatement)
+                            .withReason("")
+                            .withSet(combination)
+                    .build()
+
+            );
             count++;
         }
 
@@ -117,21 +126,29 @@ public class PartitionUsingPowersetImpl implements PartitionService {
 
         }
         relevantString = relevantString.difference(classicalKnowledgeBase);
-        result.setClassicalStatements(classicalKnowledgeBase);
-        result.setRelevantPartition(relevantString);
         irrelevantString = irrelevantString.difference(relevantString);
-        result.setIrrelevantPartition(irrelevantString);
-        result.setKnowledgeBase(knowledgeBase);
         long endTime = System.nanoTime();
         long durationNs = endTime - startTime;
 
         double durationSeconds = (double) durationNs / 1_000_000_000.0;
 
 
-        String formattedTime = String.format("%.5fs", durationSeconds);
+        String formattedTime = String.format("%.3fs", durationSeconds);
+        //System.out.println("Execution time: " + formattedTime);
+        this.partition = Partition.builder()
+                .withIrrelevantPartition(irrelevantString)
+                .withRelevantPartition(relevantString)
+                .withTraceSteps(traceSteps)
+                .withExecutionTime(durationSeconds)
 
-        System.out.println("Execution time: " + formattedTime);
-        return result;
+
+                .withClassicalStatements(classicalKnowledgeBase)
+                .withKnowledgeBase(knowledgeBase)
+                .build();
+        return this.partition;
+    }
+    public Partition getInstance(){
+        return partition;
     }
 
     public static List<KnowledgeBase> getPowerSets(KnowledgeBase kb){
