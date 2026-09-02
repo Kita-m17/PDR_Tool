@@ -76,17 +76,17 @@ const RCStepThrough: React.FC = () => {
                 </div>
 
                 {/* Ranking visualiser, full width */}
-                <div className="bg-white border border-border rounded-xl p-6 mb-4">
+                <div className="bg-white border border-border rounded-xl p-6 mb-4 max-h-52 overflow-y-auto">
                     <RankingVisualiser rankingState={step.rankingState} />
                 </div>
 
                 {/* Algorithm + Explanation side by side */}
                 <div className="flex gap-4 mb-4">
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px] overflow-y-auto">
                         <AlgorithmView highlightedLines={step.highlightedLines} />
                     </div>
 
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px] overflow-y-auto">
                         <ExplanationView step={step}/>
                     </div>
                 </div>

@@ -49,7 +49,7 @@ const AlgorithmProgress: React.FC<AlgorithmProgressProps> = ({
     const fillPercent = phases.length > 1 ? (currentIndex / (phases.length - 1)) * 100 : 0;
 
     return (
-        <div className={`bg-white border border-border rounded-xl px-6 pt-9 pb-4 mb-4 ${className}`}>
+        <div className={` rounded-xl px-6 pt-9 pb-4 mb-4 ${className}`}>
             <div className="relative flex items-center justify-between px-12">
                 {/* base track - spans the full width, sits behind the checkpoints */}
                 <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[3px] bg-border rounded-full" />

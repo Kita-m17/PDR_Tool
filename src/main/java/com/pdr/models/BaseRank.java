@@ -79,7 +79,7 @@ public class BaseRank {
     public BaseRankDTO toDTO(){
         List<RankDTO> sequenceDTO = this.sequence.stream().map(Rank::toDTO).collect(Collectors.toList());
         List<RankDTO> rankingDTO = this.ranking.stream().map(Rank::toDTO).collect(Collectors.toList());
-        List<BaseRankStepDTO> traceStepsDTO = this.traceSteps.stream().filter(step -> !step.getConsideredFormulas().isEmpty()).map(BaseRankStep::toDTO).collect(Collectors.toList());
+        List<BaseRankStepDTO> traceStepsDTO = this.traceSteps.stream().filter(step -> !step.getConsideredFormulas().isEmpty() || step.getIteration() == Integer.MAX_VALUE).map(BaseRankStep::toDTO).collect(Collectors.toList());
         return new BaseRankDTO(this.knowledgeBase.toStringList(), sequenceDTO, rankingDTO, traceStepsDTO);
     }   
 }

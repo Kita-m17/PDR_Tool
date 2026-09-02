@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BaseRankDTO, EntailmentDTO } from '../../api/api';
+import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../api/api';
 import Header from '../layout/Header';
+import AlgorithmProgress, { AlgorithmPhase } from '../layout/AlgorithmProgress';
 import Footer from '../layout/Footer';
 import { baseRankSteps, BaseRankDebuggerStep } from './baseRankSteps';
 import StepControls from './StepControls';
@@ -12,18 +13,31 @@ import { TexFormula } from '../ui/TexFormula';
 interface ResultsState {
     baseRank: BaseRankDTO;
     entailment: EntailmentDTO;
+    partition: PartitionDTO;
     query: string;
     algorithm: string;
 }
-
 const BaseRankStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { baseRank, entailment, query, algorithm } = location.state as ResultsState;
+    const { baseRank, entailment,partition, query, algorithm } = location.state as ResultsState;
+    const isRelevantClosure = algorithm === 'basic relevant' || algorithm === 'minimal relevant';
+    // Basic/Minimal Relevant Closure route through a Partition phase; Rational
+    // and Lexicographic Closure go straight from Base Rank to Closure.
+    const progressPhases: AlgorithmPhase[] = isRelevantClosure
+        ? ['baserank', 'partition', 'closure']
+        : ['baserank', 'closure'];
+
     const steps = baseRankSteps(baseRank);
     const [currentStep, setCurrentStep] = useState(0);
     const step: BaseRankDebuggerStep = steps[currentStep];
 
+    // Authored as LaTeX and rendered through TexFormula, same convention as
+    // BasicRelevantAlgorithmView.tsx. NOTE: this is a more detailed 0-15
+    // line numbering than the 1-10 scheme BasicRelevantbaseRankSteps.ts's
+    // highlightedLines currently targets, so the highlighted line won't line
+    // up 1:1 with the old scheme until that file's highlightedLines values
+    // are remapped to match.
     const pseudocode: { num: number; tex: string; indent?: boolean }[] = [
         { num: 0, tex: "\\text{Input: A knowledge base } \\mathcal{K}" },
         { num: 1, tex: "\\text{Output: An ordered tuple } (\\mathcal{R}_0, \\dots, \\mathcal{R}_{n-1}, \\mathcal{R}_\\infty, n)" },
@@ -47,6 +61,8 @@ const BaseRankStepThrough: React.FC = () => {
         <div className="min-h-screen bg-accent flex flex-col">
             <Header />
             <main className = "flex-1 px-8 py-6">
+
+                <AlgorithmProgress currentPhase="baserank" phases={progressPhases} />
 
                 {/* page header */}
                 <div className="flex items-start justify-between mb-4">
@@ -135,7 +151,7 @@ const BaseRankStepThrough: React.FC = () => {
                             BaseRank (pseudocode)
                         </p>
 
-                        <div className="font-mono text-sm space-y-1">
+                        <div className="text-sm space-y-1">
 
                             {pseudocode.map((line) => {
                                 const isHighlighted = step.highlightedLines.includes(line.num);
@@ -145,7 +161,6 @@ const BaseRankStepThrough: React.FC = () => {
                                         className={`flex items-center gap-3 px-3 py-2 rounded-lg ${isHighlighted ? 'bg-amber-50 border border-amber-200' : ''} ${line.indent ? 'pl-8' : ''}`}
                                     >
                                         {isHighlighted
-
                                             ? <span className="text-amber-500"> <TriangleRightIcon/></span>
                                             : <span className="w-3" />
                                         }
@@ -179,6 +194,32 @@ const BaseRankStepThrough: React.FC = () => {
                         <p className="text-sm text-foreground leading-relaxed whitespace-pre-line mb-4">
                             {step.explanation}
                         </p>
+
+                        {step.isInitialStep &&(
+                            <div className="mb-4">
+                                                <p className="text-sm font-medium text-foreground mb-2">
+                                                    In this knowledge base:
+                                                </p>
+                                                   <p className="text-sm font-medium text-foreground m-4">
+                                                    Defeasible:
+                                                    </p>
+                                                <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
+                                                    { step.consideredFormulas.filter(f => f.includes('~|')).join(", ") }
+                                                </div>
+
+                                                   <p className="text-sm font-medium text-foreground m-4">
+                                                    Classical:
+                                                    </p>
+                                                <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
+                                                    {step.consideredFormulas.filter(f => !f.includes('~|')).join(", ") }
+                                                </div>
+
+                                            </div>
+
+                            )
+                            }
+
+
 
                         {/* Materialisation panel */}
                         {step.materialisedFormulas && step.originalFormulas && (
@@ -221,7 +262,7 @@ const BaseRankStepThrough: React.FC = () => {
                                 </p>
 
                                 <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                    {'{ ' + step.materialisedFormulas.join(', ') + ' }'}
+                                    { step.materialisedFormulas.join(', ') }
                                 </div>
 
                                 <p className="text-xs text-muted-foreground mt-1">
@@ -284,9 +325,7 @@ const BaseRankStepThrough: React.FC = () => {
                                     ✓ BaseRank Construction Complete
                                 </p>
 
-                                <p className="text-sm text-green-600">
-                                    All statements have been ranked. The ranking is now ready for use in the Rational Closure entailment algorithm.
-                                </p>
+
                             </div>
                         )}
 
@@ -305,25 +344,35 @@ const BaseRankStepThrough: React.FC = () => {
                     />
                 </div>
 
-                {/*continue to rc */}
+                {/*continue to algo */}
                 {step.isFinalStep && (
                     <div className="flex justify-end">
                         <Button variant="primary" size="lg"
-                            onClick={() => 
-                                navigate('/results', {
-                                    state: { baseRank, entailment, query, algorithm }
-                                }
-                            )}
+                            onClick={() => {
+                                const route =
+                                    algorithm === 'basic relevant' ? '/results/relevant/basic/partition' :
+                                    algorithm === 'lexicographic' ? '/results/lexicographic' :
+                                    algorithm === 'minimal relevant' ? '/results/relevant/minimal/partition' :
+                                    algorithm === 'rational' ? '/results/rational' :
+                                    '/results/rational';
+
+                                navigate(route, { state: { baseRank, entailment, partition, query, algorithm } });
+
+                            }}
                         >
-                            Continue to Rational Closure
+                            {algorithm === 'basic relevant' ? 'Continue to Relevant Partition' :algorithm === 'minimal relevant' ? 'Continue to Relevant Partition' : algorithm === 'lexicographic' ? 'Continue to Lexicographical Closure': algorithm === 'rational' ? 'Continue to Rational Closure': 'Continue to Rational Closure'}
+
                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                         </Button>
                     </div>
                 )}
+
             </main>
             <Footer/>
         </div>
+
     );
+
 };
 
 export default BaseRankStepThrough;

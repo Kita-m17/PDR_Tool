@@ -13,7 +13,6 @@ import BasicRelevantStepThrough from './components/results/basic relevant/BasicR
 import BasicRelevantPartitionStepThrough from './components/results/basic relevant/BasicRelevantPartitionStepThrough';
 import MinimalRelevantPartitionStepThrough from './components/results/minimal relevant/MinimalRelevantPartitionStepThrough';
 import BaseRankStepThrough from './components/results/BaseRankStepThrough';
-import BasicRelevantBaseRankStepThrough from './components/results/basic relevant/BasicRelevantBaseRankStepThrough';
 import LexicographicStepThrough from './components/results/lexicographic/LexicographicStepTrough';
 
 interface InputPageProps {
@@ -147,7 +146,7 @@ function App(){
           setAlgorithm={setAlgorithm}
         />
       }/>
-      <Route path="/baserank" element={<BasicRelevantBaseRankStepThrough />} />
+      <Route path="/baserank" element={<BaseRankStepThrough />} />
       <Route path="/results/rational" element = {<RCStepThrough/>}/>
       <Route path="/results/relevant/basic" element = {<BasicRelevantStepThrough/>}/>
       <Route path="/results/lexicographic" element={<LexicographicStepThrough/>}/>

@@ -7,7 +7,7 @@ import Footer from '../../layout/Footer';
 import { buildMinimalPartitionSteps, MinimalPartitionDebuggerStep } from './MinimalRelevantPartitionSteps';
 import PowersetView, { PartitionFilter } from '../basic relevant/PowersetView';
 import JustificationVisualiser from '../basic relevant/JustificationVisualiser';
-import StepControls from '../basic relevant/BasicRelevantStepControls';
+import StepControls from '../StepControls';
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import { Button } from '../../ui/Buttons';
 
