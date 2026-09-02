@@ -66,26 +66,32 @@ const PowersetView: React.FC<PowersetViewProps> = ({
 
             {hasMatch ? (
                 <>
-                    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 mb-3">
+                    <div className={`rounded-lg border p-4 mb-3 ${
+                        entailed && minimal
+                            ? 'border-gray-200 bg-gray-100'
+                            : entailed
+                            ? 'border-gray-200 bg-gray-100'
+                            : 'border-gray-200 bg-gray-100'
+                    }`}>
                         <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                             Current subset
                         </p>
                         <p className="font-mono text-sm text-foreground">
-                            {currentSet.length > 0 ? `{ ${currentSet.join(', ')} }` : '\u2205'}
+                            {currentSet.length > 0 ? ` ${currentSet.join(', ')} ` : '\u2205'}
                         </p>
                     </div>
 
                     <div className="flex items-center gap-2">
                         <span className={`inline-block rounded-md border px-2 py-0.5 text-xs font-semibold ${
                             entailed
-                                ? 'border-green-300 bg-green-50 text-green-700'
+                                ? 'border-amber-300 bg-amber-50 text-amber-700'
                                 : 'border-gray-300 bg-gray-50 text-muted-foreground'
                         }`}>
                             {entailed ? 'entailed' : 'not entailed'}
                         </span>
 
                         {minimal && (
-                            <span className="inline-block rounded-md border border-sky-300 bg-sky-50 px-2 py-0.5 text-xs font-semibold text-sky-900">
+                            <span className="inline-block rounded-md border border-emerald-300 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-sky-900">
                                 minimal
                             </span>
                         )}

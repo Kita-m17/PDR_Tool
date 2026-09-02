@@ -25,17 +25,15 @@ const JustificationVisualiser: React.FC<JustificationVisualiserProps> = ({
                 </span>
             </div>
 
-            <p className="text-xs text-muted-foreground mb-3">
-                Minimal subsets of the knowledge base that entail the query, accumulated as the powerset is searched.
-            </p>
+
 
             <div className="space-y-2 mb-2">
                 {justificationsSoFar.length === 0 ? (
                     <p className="text-sm text-muted-foreground italic">No justifications found yet.</p>
                 ) : (
                     justificationsSoFar.map((set, i) => (
-                        <div key={i} className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 font-mono text-sm text-sky-900">
-                            J{i + 1} = {`{ ${set.join(', ')} }`}
+                        <div key={i} className="rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 font-mono text-sm text-sky-900">
+                            J{i + 1} = {` ${set.join(', ')} `}
                         </div>
                     ))
                 )}
@@ -49,8 +47,8 @@ const JustificationVisualiser: React.FC<JustificationVisualiserProps> = ({
                         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
                             Relevant
                         </p>
-                        <div className="rounded-lg border border-border bg-accent p-3 font-mono text-sm text-foreground">
-                            {relevantPartition && relevantPartition.length > 0 ? `{ ${relevantPartition.join(', ')} }` : '∅'}
+                        <div className="rounded-lg border border-border border-emerald-200 bg-emerald-50 bg-accent p-3 font-mono text-sm text-foreground">
+                            {relevantPartition && relevantPartition.length > 0 ? ` ${relevantPartition.join(', ')} ` : '∅'}
                         </div>
                     </div>
 
@@ -58,8 +56,8 @@ const JustificationVisualiser: React.FC<JustificationVisualiserProps> = ({
                         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
                             Irrelevant
                         </p>
-                        <div className="rounded-lg border border-border bg-accent p-3 font-mono text-sm text-foreground">
-                            {irrelevantPartition && irrelevantPartition.length > 0 ? `{ ${irrelevantPartition.join(', ')} }` : '∅'}
+                        <div className="rounded-lg border border-border border-emerald-200 bg-emerald-50 bg-accent p-3 font-mono text-sm text-foreground">
+                            {irrelevantPartition && irrelevantPartition.length > 0 ? ` ${irrelevantPartition.join(', ')} ` : '∅'}
                         </div>
                     </div>
                 </div>

@@ -18,7 +18,10 @@ interface ResultsState {
     query: string;
     algorithm: string;
 }
-
+function getAntecedent(formula: string): string {
+    const stripped = formula.replace(/[()]/g, '');
+    return stripped.split(/\|~|~\|/)[0].trim();
+}
 const BasicRelevantPartitionStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -105,9 +108,11 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
                         </p>
 
                         <p className="text-sm text-foreground mt-2 max-w-2xl">
-                            Every subset of the knowledge base is checked for classical entailment of the query.
-                            Minimal entailing subsets become justifications; the statements that appear in at
-                            least one justification form the relevant partition, everything else is irrelevant.
+                            Every subset of the defeasible knowledge base unioned with the classical statements is checked for classical entailment of the negation of the query's antecedent in this case {"!"+getAntecedent(query)}.
+                             This is done to find the set of defeasible statements that us the knowledge base conclude no {getAntecedent(query)} exists.
+                            Minimal entailing subsets are called justifications. The statements that appear in at
+                            least one justification form part of the relevant partition, everything else forms part of the irrelevant partition. The relevant partition is used in addition to the base rank in the Relevant Closure Algorithm
+                            to provide a inferentially more powerful query check.
                         </p>
                     </div>
 
@@ -125,8 +130,8 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
 
                 {/* Query banner */}
                 <div className="bg-white border border-border rounded-xl p-4 mb-4 flex items-center gap-3">
-                    <span className="text-primary font-bold text-sm">Query</span>
-                    <span className="font-mono text-foreground">{query}</span>
+                    <span className="text-primary font-bold text-sm">Checking</span>
+                    <span className="font-mono text-foreground">{"!"+getAntecedent(query)}</span>
                 </div>
 
                 {/* Justification visualiser, full width - only meaningful once a step exists */}
@@ -164,7 +169,7 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
                         {step ? (
                             <>
                                 <p className="text-sm text-foreground leading-relaxed whitespace-pre-line mb-4">
-                                    {step.explanation}
+                                    {step.explanation }
                                 </p>
 
                                 {isLastInView && (

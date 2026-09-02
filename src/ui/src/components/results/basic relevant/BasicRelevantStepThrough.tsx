@@ -44,7 +44,7 @@ const RCStepThrough: React.FC = () => {
                     <div>
                         
                         <h1 className="text-2xl font-bold text-foreground">
-                            Basic Relevant Closure
+                            {algorithm === 'basic relevant' ?"Basic Relevant Closure":"Minimal Relevant Closure"}
                         </h1>
                         <p className="text-muted-foreground text-sm mt-1">
                             Step-by-step evaluation
@@ -53,9 +53,10 @@ const RCStepThrough: React.FC = () => {
                         {/* Brief explanation of the RC algorithm */}
                         <p className="text-sm text-foreground mt-2 max-w-2xl">
                             Relevant Closure evaluates whether a query is entailed by
-                            progressively removing relevant statements in exceptional ranks
-                            from the knowledge base until the query antecedent is no longer
-                            exceptional.
+                            progressively removing relevant statements rank by rank
+                            from the Running Knowledge Base until the query antecedent is no longer
+                            exceptional for the Running Knowledge Base. This process removes defeasible information
+                            for more specific information relating to the query.
                         </p>
                     </div>
 

@@ -217,7 +217,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                     {renderRankingTable(step.rankingState)}
 
                     <p className="text-sm font-medium text-foreground m-4">
-                                                            <TexFormula>{"\\\mathcal{R}'\\text{(before)}\:"}</TexFormula>
+                                                            <TexFormula>{"\\\mathcal{R}'\\text{ ( Current ) }\:"}</TexFormula>
                                                         </p>
 
                                                         <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
@@ -225,18 +225,18 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                                                         </div>
 
                                                   <p className="text-sm font-medium text-foreground m-4">
-                                                                       <TexFormula>{"\\\mathcal{R}_i \\cap \\mathcal{R}'\(\\text{being removed}):"}</TexFormula>
+                                                                       <TexFormula>{"\\\mathcal{R}_i \\cap \\mathcal{R}'\\text{ ( Removing ) }:"}</TexFormula>
                                                                       </p>
 
                                                                       <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
                                                                           {step.removed.length > 0 ? step.removed.join(', ')  : '∅'}
                                                                       </div>
-                                        <p className="text-sm font-medium text-foreground m-4">
-                                                                                    <TexFormula>{"\\\mathcal{R}'\\text{(after)}\:"}</TexFormula>
+                                        <p className="text-sm font-medium  text-foreground m-4">
+                                                                                    <TexFormula>{"\\\mathcal{R}'\\text{ ( Result ) }\:"}</TexFormula>
 
                                         </p>
 
-                                        <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
+                                        <div className="bg-accent border border-border border-emerald-200 bg-emerald-50 rounded-lg p-3 font-mono text-sm text-foreground">
                                             {step.workingSet.length > 0 ?  step.workingSet.join(', ')  : '∅'}
                                         </div>
 
@@ -257,7 +257,8 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
 
             {/* show the final step*/}
             {step.isFinalStep && (
-                <div className={`mt-4 rounded-lg p-4 border ${step.entailed ? 'bg-green-50 border-green-200': 'bg-red-50 border-red-200'}`}>
+                <>
+                <div className={`mt-4 rounded-lg p-4 border ${step.entailed ? 'bg-emerald-50 border-green-200': 'bg-rose-50 border-red-200'}`}>
                     <p className={`font-bold text-lg ${step.entailed ? 'text-green-700' : 'text-red-700'}`}>
                         {step.entailed ? '✓ ENTAILED' : '✗ NOT ENTAILED'}
                     </p>
@@ -269,7 +270,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                     {step.isResultStep && step.entailed && (
                         <div className="mt-3">
                             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-green-800">
-                                Weak Justification
+                                 Justification
                             </p>
                             {step.weakJustification && step.weakJustification.length > 0 ? (
                                 <div className="flex flex-wrap gap-2">
@@ -287,6 +288,23 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                         </div>
                     )}
                 </div>
+                <div className={`mt-4 rounded-lg p-4 border bg-amber-50 border-amber-200`}>
+                <p className={`font-bold text-lg text-yellow-700`}>
+                                       Final R'
+                                    </p>
+<span  className="font-mono text-sm text-green-900 bg-white border border-green-200 rounded px-2 py-1">
+                                            {step.currentRPrime}
+                                        </span>
+                                                </div>
+                <div className={`mt-4 rounded-lg p-4 border bg-amber-50 border-amber-200`}>
+<p className={`font-bold text-lg text-yellow-700`}>
+                       Final Base Rank Table
+                    </p>
+
+                                    {renderRankingTable(step.rankingState)}
+                                </div>
+
+                </>
             )}
 
 
