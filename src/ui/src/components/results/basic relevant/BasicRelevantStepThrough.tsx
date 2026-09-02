@@ -61,9 +61,10 @@ const RCStepThrough: React.FC = () => {
                     </div>
 
                     <Button className="text-sm text-muted-foreground border border-border rounded-lg px-4 py-2 hover:bg-white transition"
-                        onClick={() => navigate('/results/relevant/basic/partition', {
-                            state: { baseRank, entailment, partition, query, algorithm }
-                        })}
+                        onClick={() => navigate(
+                            algorithm === 'basic relevant' ? '/results/relevant/basic/partition' : '/results/relevant/minimal/partition',
+                            { state: { baseRank, entailment, partition, query, algorithm } }
+                        )}
                     >
                         <span className="flex items-center gap-1">
                             <ArrowLeftIcon className="h-3 w-3" />

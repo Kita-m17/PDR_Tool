@@ -42,17 +42,17 @@ export function buildMinimalPartitionSteps(partition: PartitionDTO): MinimalPart
         let explanation: string;
         if (step.minimal) {
             explanation =
-                `Checking subset ${setLabel}.\n\n` +
-                `This subset classically entails the query and is MINIMAL - no proper subset of it also entails the query.\n\n` +
-                `Minimal Relevant Closure doesn't keep every statement in this justification - only the one that matters most for the entailment. We look at the rank of each statement in ${setLabel} and take only the statement with the LOWEST rank.\n\n` +
-                `Lowest ranked statement = ${minimalSetLabel}\n\n` +
-                `It is this lowest ranked statement - not the full subset ${setLabel} - that gets added to the justification result.`;
+
+                `This DOES subset classically entails the negation of the query's antecedent and is IS minimal making it a justification. No proper subset of it also entails the query. ` +
+                `Minimal Justification doesn't keep every statement in this justification, only the one that matters most for the entailment. We look at the rank of each statement  and take only the statement with the LOWEST rank.`
+
+
         } else if (step.entailed) {
             explanation =
-                `Checking subset ${setLabel}.\n\n` +
-                `This subset classically entails the query, but it is NOT minimal - a proper subset of it already entails the query. It is not a justification, so no minimalSet is taken from it.`;
+
+                `This subset DOES classically entails the negation of the query's antecedent, but it is NOT minimal therefore it is not a justification. A proper subset of it already entails the query, so it is not added ot the set of justification`;
         } else {
-            explanation = `Checking subset ${setLabel}.\n\nThis subset does NOT classically entail the query.`;
+            explanation = `This subset does NOT classically entail the negation of the query's antecedent.`;
         }
 
         /** if (isFinalStep) {

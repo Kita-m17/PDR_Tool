@@ -293,7 +293,8 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step, relevantPartiti
                                        Final R'
                                     </p>
 <span  className="font-mono text-sm text-green-900 bg-white border border-green-200 rounded px-2 py-1">
-                                            {step.currentRPrime}
+
+                                            {step.currentRPrime.length > 0 ?  step.currentRPrime.join(', ')  : '∅'}
                                         </span>
                                                 </div>
                 <div className={`mt-4 rounded-lg p-4 border bg-amber-50 border-amber-200`}>

@@ -10,6 +10,7 @@ import JustificationVisualiser from '../basic relevant/JustificationVisualiser';
 import StepControls from '../StepControls';
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import { Button } from '../../ui/Buttons';
+import { baseRankSteps, BaseRankDebuggerStep } from '../baseRankSteps';
 
 interface ResultsState {
     baseRank: BaseRankDTO;
@@ -18,7 +19,10 @@ interface ResultsState {
     query: string;
     algorithm: string;
 }
-
+function getAntecedent(formula: string): string {
+    const stripped = formula.replace(/[()]/g, '');
+    return stripped.split(/\|~|~\|/)[0].trim();
+}
 // Mirrors BasicRelevantPartitionStepThrough.tsx's structure exactly - same
 // Powerset + Explanation + Justifications layout - but for Minimal Relevant
 // Closure. The powerset view is fed the same full subset the backend
@@ -38,7 +42,7 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
 
     const [filter, setFilter] = useState<PartitionFilter>('all');
     const [currentStep, setCurrentStep] = useState(0);
-
+    //const steps = baseRankSteps(baseRank);
     // Plain derived value, not a hook - fine to compute conditionally.
     const steps = resultsState ? buildMinimalPartitionSteps(resultsState.partition) : [];
 
@@ -105,12 +109,15 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                             Step-by-step justification search
                         </p>
 
-                        <p className="text-sm text-foreground mt-2 max-w-2xl">
-                            Every subset of the knowledge base is checked for classical entailment of the query,
-                            same as Basic Relevant Closure. But once a subset is found to be a minimal
-                            justification, Minimal Relevant Closure keeps only its lowest-ranked statement -
-                            the minimalSet - rather than the whole subset. The relevant partition is built from
-                            these minimalSets, not the full justifications.
+                        <p className="text-sm text-foreground mt-2 max-w-4xl">
+                        Every subset of the defeasible knowledge base unioned with the classical statements is checked for classical entailment of the negation of the query's antecedent in this case {"!"+getAntecedent(query)}.
+                                                     This is done to find the set of defeasible statements that us the knowledge base conclude no {getAntecedent(query)} exists.
+                                                    Minimal entailing subsets are called justifications. Unlike Basic Justifications, Minimal Justifications keeps only its lowest-ranked statement
+                                                    in the justification. Statements that appear in at
+                                                    least one Minimal Justification form part of the relevant partition, everything else forms part of the irrelevant partition. The relevant partition is used in addition to the base rank in the Relevant Closure Algorithm
+                                                    to provide a inferentially more powerful query check. The Minimal Justifications lead us to perform Minimal Relevant Closure which is inferentially stronger than Basic Relevant Closure.
+
+
                         </p>
                     </div>
 
@@ -128,8 +135,8 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
 
                 {/* Query banner */}
                 <div className="bg-white border border-border rounded-xl p-4 mb-4 flex items-center gap-3">
-                    <span className="text-primary font-bold text-sm">Query</span>
-                    <span className="font-mono text-foreground">{query}</span>
+                   <span className="text-primary font-bold text-sm">Checking</span>
+                                       <span className="font-mono text-foreground">{"!"+getAntecedent(query)}</span>
                 </div>
 
                 {/* Justification visualiser, full width - only meaningful once a step exists.
@@ -176,6 +183,48 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                                     {step.explanation}
                                 </p>
 
+                                {/* Final base rank - only shown once this subset is both
+                                    entailed and minimal, i.e. it's a genuine minimal
+                                    justification, so the finished ranking is meaningful
+                                    context right above it. */}
+                                {step.entailed && step.minimal && (
+                                    <div className="mb-4">
+                                        <h3 className="text-primary font-semibold mb-3">
+                                            Final Base Rank Table
+                                        </h3>
+
+                                        <table className="w-full border-collapse">
+                                            <tbody>
+                                                {baseRank.ranking.map((rank) => (
+                                                    <tr key={rank.rankNumber} className="border-b border-border">
+                                                        <td className="py-3 px-4 font-semibold text-sm w-24 text-primary">
+                                                            Rank {rank.rankName}
+                                                        </td>
+
+                                                        <td className="py-3 px-4">
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {rank.knowledgeBase.map((f, i) => (
+                                                                    <span key={i} className={`font-mono text-sm ${step.currentSet.includes(f) ? 'text-amber-600 font-semibold' : 'text-foreground'}`}>
+                                                                        {f}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+
+                                                {baseRank.ranking.length === 0 && (
+                                                    <tr>
+                                                        <td colSpan={2} className="py-4 text-center text-xs text-muted-foreground italic">
+                                                            No ranks in the base rank
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
+
                                 {/* Only meaningful once a subset has actually been reduced
                                     to a minimalSet - not shown for non-minimal or
                                     non-entailed subsets. */}
@@ -185,13 +234,13 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                                             Minimal Justification
                                         </p>
                                         <p className="font-mono text-sm text-sky-900">
-                                            {`{ ${step.minimalSet.join(', ')} }`}
+                                            {` ${step.minimalSet.join(', ')} `}
                                         </p>
                                     </div>
                                 )}
 
                                 {isLastInView && (
-                                    <div className="mt-4 rounded-lg p-4 border bg-green-50 border-green-200">
+                                    <div className="mt-4 rounded-lg p-4 border bg-emerald-50 border-green-200">
                                         <p className="font-bold text-green-700 mb-1">
                                             ✓ Partition Complete
                                         </p>
