@@ -94,54 +94,56 @@ const BaseRankStepThrough: React.FC = () => {
                         Current Ranking
                     </h3>
 
-                    <table className="w-full border-collapse">
-                        <tbody>
+                    <div className="h-32 overflow-y-auto">
+                        <table className="w-full border-collapse">
+                            <tbody>
 
-                            {step.rankingState.filter(rank => rank.isAssigned || rank.isCurrentlyBeingAssigned).map((rank) => (
+                                {step.rankingState.filter(rank => rank.isAssigned || rank.isCurrentlyBeingAssigned).map((rank) => (
 
-                                <tr key={rank.rankNumber} className={`border-b border-border ${rank.isCurrentlyBeingAssigned ? 'bg-amber-50' : ''}`}>
-                                    <td className={`py-3 px-4 font-semibold text-sm w-24 text-primary ${rank.isAssigned ? 'opacity-40' : ''}`}>
-                                        Rank {rank.rankName}
-                                    </td>
-
-                                    <td className="py-3 px-4">
-                                        <div className="flex flex-wrap gap-2">
-                                            {rank.formulas.map((f, i) => (
-                                                <span key={i} className={`font-mono text-sm ${rank.isCurrentlyBeingAssigned ? 'text-amber-600 font-medium': 'text-foreground'}`}>
-                                                    {f}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </td>
-
-                                    {rank.isCurrentlyBeingAssigned && (
-                                        <td className="py-3 px-4 text-xs text-amber-600 font-medium">
-                                            <span className="flex items-center gap-1">
-                                                <ArrowLeftIcon className="h-3 w-3" />
-                                                being assigned
-                                            </span>
+                                    <tr key={rank.rankNumber} className={`border-b border-border ${rank.isCurrentlyBeingAssigned ? 'bg-amber-50' : ''}`}>
+                                        <td className={`py-3 px-4 font-semibold text-sm w-24 text-primary ${rank.isAssigned ? 'opacity-40' : ''}`}>
+                                            Rank {rank.rankName}
                                         </td>
-                                    )}
-                                </tr>
-                            ))}
 
-                            {step.rankingState.filter(r => r.isAssigned || r.isCurrentlyBeingAssigned).length === 0 && (
-                                <tr>
-                                    <td colSpan={3} className="py-4 text-center text-xs text-muted-foreground italic">
-                                        No ranks assigned yet
-                                    </td>
-                                </tr>
-                            )}
+                                        <td className="py-3 px-4">
+                                            <div className="flex flex-wrap gap-2">
+                                                {rank.formulas.map((f, i) => (
+                                                    <span key={i} className={`font-mono text-sm ${rank.isCurrentlyBeingAssigned ? 'text-amber-600 font-medium': 'text-foreground'}`}>
+                                                        {f}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </td>
 
-                        </tbody>
-                    </table>
+                                        {rank.isCurrentlyBeingAssigned && (
+                                            <td className="py-3 px-4 text-xs text-amber-600 font-medium">
+                                                <span className="flex items-center gap-1">
+                                                    <ArrowLeftIcon className="h-3 w-3" />
+                                                    being assigned
+                                                </span>
+                                            </td>
+                                        )}
+                                    </tr>
+                                ))}
+
+                                {step.rankingState.filter(r => r.isAssigned || r.isCurrentlyBeingAssigned).length === 0 && (
+                                    <tr>
+                                        <td colSpan={3} className="py-4 text-center text-xs text-muted-foreground italic">
+                                            No ranks assigned yet
+                                        </td>
+                                    </tr>
+                                )}
+
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 {/* algorithm + explanation side by side */}
                 <div className="flex gap-4 mb-4">
 
                     {/* algorithm */}
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px] overflow-y-auto">
 
                         <h3 className="text-primary font-semibold mb-1">
                             Algorithm
@@ -186,7 +188,7 @@ const BaseRankStepThrough: React.FC = () => {
                     </div>
 
                     {/* Explanation */}
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px] overflow-y-auto">
                         <h3 className="text-primary font-semibold mb-4">
                             Explanation
                         </h3>
