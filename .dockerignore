@@ -1,0 +1,20 @@
+# Version control / IDE
+.git
+.github
+.idea
+.vscode
+
+# Backend build output - rebuilt inside the image
+target
+
+# Frontend - node_modules and any local build are rebuilt inside the image
+src/ui/node_modules
+src/ui/build
+
+# Local runtime artifacts, not needed to build the image
+data
+logs
+
+# Docs not needed inside the image
+README.md
+README.pdf

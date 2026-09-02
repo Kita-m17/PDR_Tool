@@ -1,0 +1,20 @@
+# Maven build output
+target/
+
+# Java compiled files
+*.class
+*.jar
+
+# JDK - never commit this
+lib/oracleJdk-26/
+
+# Tweety jar - too large for GitHub
+lib/*.jar
+
+# React Node modules & Build
+src/ui/node_modules/
+src/ui/build/
+# Accidentally created root level npm files
+node_modules/
+
+package-lock.json
