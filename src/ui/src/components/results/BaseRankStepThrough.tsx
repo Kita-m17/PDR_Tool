@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../api/api';
 import Header from '../layout/Header';
+import AlgorithmProgress, { AlgorithmPhase } from '../layout/AlgorithmProgress';
 import Footer from '../layout/Footer';
 import { baseRankSteps, BaseRankDebuggerStep } from './baseRankSteps';
 import StepControls from './StepControls';
 import { ArrowRightIcon, ArrowLeftIcon, TriangleRightIcon } from '@radix-ui/react-icons';
 import { Button } from '../ui/Buttons';
+import { TexFormula } from '../ui/TexFormula';
 
 interface ResultsState {
     baseRank: BaseRankDTO;
@@ -15,33 +17,52 @@ interface ResultsState {
     query: string;
     algorithm: string;
 }
-
 const BaseRankStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { baseRank, entailment, partition, query, algorithm } = location.state as ResultsState;
+    const { baseRank, entailment,partition, query, algorithm } = location.state as ResultsState;
+    const isRelevantClosure = algorithm === 'basic relevant' || algorithm === 'minimal relevant';
+    // Basic/Minimal Relevant Closure route through a Partition phase; Rational
+    // and Lexicographic Closure go straight from Base Rank to Closure.
+    const progressPhases: AlgorithmPhase[] = isRelevantClosure
+        ? ['baserank', 'partition', 'closure']
+        : ['baserank', 'closure'];
 
     const steps = baseRankSteps(baseRank);
     const [currentStep, setCurrentStep] = useState(0);
     const step: BaseRankDebuggerStep = steps[currentStep];
 
-    const pseudocode = [
-        { num: 1, code: 'i := 0' },
-        { num: 2, code: 'E₀ := K→  (materialise K)' },
-        { num: 3, code: 'while Eᵢ₋₁ ≠ Eᵢ:' },
-        { num: 4, code: '    Eᵢ₊₁ := { α→β ∈ Eᵢ | Eᵢ |= ¬α }', indent: true },
-        { num: 5, code: '    Rᵢ := Eᵢ \\ Eᵢ₊₁', indent: true },
-        { num: 6, code: '    i := i + 1', indent: true },
-        { num: 7, code: 'R∞ := Eᵢ₋₁' },
-        { num: 8, code: 'if Eᵢ₋₁ = ∅ then n := i − 1' },
-        { num: 9, code: 'else n := i' },
-        { num: 10, code: 'return (R₀, ..., Rₙ₋₁, R∞, n)' },
+    // Authored as LaTeX and rendered through TexFormula, same convention as
+    // BasicRelevantAlgorithmView.tsx. NOTE: this is a more detailed 0-15
+    // line numbering than the 1-10 scheme BasicRelevantbaseRankSteps.ts's
+    // highlightedLines currently targets, so the highlighted line won't line
+    // up 1:1 with the old scheme until that file's highlightedLines values
+    // are remapped to match.
+    const pseudocode: { num: number; tex: string; indent?: boolean }[] = [
+        { num: 0, tex: "\\text{Input: A knowledge base } \\mathcal{K}" },
+        { num: 1, tex: "\\text{Output: An ordered tuple } (\\mathcal{R}_0, \\dots, \\mathcal{R}_{n-1}, \\mathcal{R}_\\infty, n)" },
+        { num: 2, tex: "i := 0" },
+        { num: 3, tex: "\\mathcal{E}_0 := \\mathcal{\\overrightarrow{K}}" },
+        { num: 4, tex: "\\textbf{while}\\ \\mathcal{E}_{i-1} \\neq \\mathcal{E}_i\\ \\textbf{do}" },
+        { num: 5, tex: "\\mathcal{E}_{i+1} := \\{\\alpha \\to \\beta \\in \\mathcal{E}_i \\mid \\mathcal{E}_i \\models \\neg\\alpha\\}", indent: true },
+        { num: 6, tex: "\\mathcal{R}_i := \\mathcal{E}_i \\setminus \\mathcal{E}_{i+1}", indent: true },
+        { num: 7, tex: "i := i + 1", indent: true },
+        { num: 8, tex: "\\textbf{end while}" },
+        { num: 9, tex: "\\mathcal{R}_\\infty := \\mathcal{E}_{i-1}" },
+        { num: 10, tex: "\\textbf{if}\\ \\mathcal{E}_{i-1} = \\varnothing\\ \\textbf{then}" },
+        { num: 11, tex: "n := i - 1", indent: true },
+        { num: 12, tex: "\\textbf{else}" },
+        { num: 13, tex: "n := i", indent: true },
+        { num: 14, tex: "\\textbf{end if}" },
+        { num: 15, tex: "\\textbf{return}\\ (\\mathcal{R}_0, \\dots, \\mathcal{R}_{n-1}, \\mathcal{R}_\\infty, n)" },
     ];
 
     return (
         <div className="min-h-screen bg-accent flex flex-col">
             <Header />
             <main className = "flex-1 px-8 py-6">
+
+                <AlgorithmProgress currentPhase="baserank" phases={progressPhases} />
 
                 {/* page header */}
                 <div className="flex items-start justify-between mb-4">
@@ -73,54 +94,56 @@ const BaseRankStepThrough: React.FC = () => {
                         Current Ranking
                     </h3>
 
-                    <table className="w-full border-collapse">
-                        <tbody>
+                    <div className="h-32 overflow-y-auto">
+                        <table className="w-full border-collapse">
+                            <tbody>
 
-                            {step.rankingState.filter(rank => rank.isAssigned || rank.isCurrentlyBeingAssigned).map((rank) => (
+                                {step.rankingState.filter(rank => rank.isAssigned || rank.isCurrentlyBeingAssigned).map((rank) => (
 
-                                <tr key={rank.rankNumber} className={`border-b border-border ${rank.isCurrentlyBeingAssigned ? 'bg-amber-50' : ''}`}>
-                                    <td className={`py-3 px-4 font-semibold text-sm w-24 text-primary ${rank.isAssigned ? 'opacity-40' : ''}`}>
-                                        Rank {rank.rankName}
-                                    </td>
-
-                                    <td className="py-3 px-4">
-                                        <div className="flex flex-wrap gap-2">
-                                            {rank.formulas.map((f, i) => (
-                                                <span key={i} className={`font-mono text-sm ${rank.isCurrentlyBeingAssigned ? 'text-amber-600 font-medium': 'text-foreground'}`}>
-                                                    {f}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </td>
-
-                                    {rank.isCurrentlyBeingAssigned && (
-                                        <td className="py-3 px-4 text-xs text-amber-600 font-medium">
-                                            <span className="flex items-center gap-1">
-                                                <ArrowLeftIcon className="h-3 w-3" />
-                                                being assigned
-                                            </span>
+                                    <tr key={rank.rankNumber} className={`border-b border-border ${rank.isCurrentlyBeingAssigned ? 'bg-amber-50' : ''}`}>
+                                        <td className={`py-3 px-4 font-semibold text-sm w-24 text-primary ${rank.isAssigned ? 'opacity-40' : ''}`}>
+                                            Rank {rank.rankName}
                                         </td>
-                                    )}
-                                </tr>
-                            ))}
 
-                            {step.rankingState.filter(r => r.isAssigned || r.isCurrentlyBeingAssigned).length === 0 && (
-                                <tr>
-                                    <td colSpan={3} className="py-4 text-center text-xs text-muted-foreground italic">
-                                        No ranks assigned yet
-                                    </td>
-                                </tr>
-                            )}
+                                        <td className="py-3 px-4">
+                                            <div className="flex flex-wrap gap-2">
+                                                {rank.formulas.map((f, i) => (
+                                                    <span key={i} className={`font-mono text-sm ${rank.isCurrentlyBeingAssigned ? 'text-amber-600 font-medium': 'text-foreground'}`}>
+                                                        {f}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </td>
 
-                        </tbody>
-                    </table>
+                                        {rank.isCurrentlyBeingAssigned && (
+                                            <td className="py-3 px-4 text-xs text-amber-600 font-medium">
+                                                <span className="flex items-center gap-1">
+                                                    <ArrowLeftIcon className="h-3 w-3" />
+                                                    being assigned
+                                                </span>
+                                            </td>
+                                        )}
+                                    </tr>
+                                ))}
+
+                                {step.rankingState.filter(r => r.isAssigned || r.isCurrentlyBeingAssigned).length === 0 && (
+                                    <tr>
+                                        <td colSpan={3} className="py-4 text-center text-xs text-muted-foreground italic">
+                                            No ranks assigned yet
+                                        </td>
+                                    </tr>
+                                )}
+
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 {/* algorithm + explanation side by side */}
                 <div className="flex gap-4 mb-4">
 
                     {/* algorithm */}
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px] overflow-y-auto">
 
                         <h3 className="text-primary font-semibold mb-1">
                             Algorithm
@@ -130,14 +153,16 @@ const BaseRankStepThrough: React.FC = () => {
                             BaseRank (pseudocode)
                         </p>
 
-                        <div className="font-mono text-sm space-y-1">
+                        <div className="text-sm space-y-1">
 
                             {pseudocode.map((line) => {
                                 const isHighlighted = step.highlightedLines.includes(line.num);
                                 return (
-                                    <div key={line.num} className={`flex items-center gap-3 px-3 py-2 rounded-lg ${isHighlighted ? 'bg-amber-50 border border-amber-200' : ''}`}>
+                                    <div
+                                        key={line.num}
+                                        className={`flex items-center gap-3 px-3 py-2 rounded-lg ${isHighlighted ? 'bg-amber-50 border border-amber-200' : ''} ${line.indent ? 'pl-8' : ''}`}
+                                    >
                                         {isHighlighted
-
                                             ? <span className="text-amber-500"> <TriangleRightIcon/></span>
                                             : <span className="w-3" />
                                         }
@@ -154,7 +179,7 @@ const BaseRankStepThrough: React.FC = () => {
                                             ? 'text-foreground font-medium'
                                             : 'text-muted-foreground'
                                         }>
-                                            {line.code}
+                                            <TexFormula>{line.tex}</TexFormula>
                                         </span>
                                     </div>
                                 );
@@ -163,7 +188,7 @@ const BaseRankStepThrough: React.FC = () => {
                     </div>
 
                     {/* Explanation */}
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px] overflow-y-auto">
                         <h3 className="text-primary font-semibold mb-4">
                             Explanation
                         </h3>
@@ -171,6 +196,32 @@ const BaseRankStepThrough: React.FC = () => {
                         <p className="text-sm text-foreground leading-relaxed whitespace-pre-line mb-4">
                             {step.explanation}
                         </p>
+
+                        {step.isInitialStep &&(
+                            <div className="mb-4">
+                                                <p className="text-sm font-medium text-foreground mb-2">
+                                                    In this knowledge base:
+                                                </p>
+                                                   <p className="text-sm font-medium text-foreground m-4">
+                                                    Defeasible:
+                                                    </p>
+                                                <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
+                                                    { step.consideredFormulas.filter(f => f.includes('~|')).join(", ") }
+                                                </div>
+
+                                                   <p className="text-sm font-medium text-foreground m-4">
+                                                    Classical:
+                                                    </p>
+                                                <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
+                                                    {step.consideredFormulas.filter(f => !f.includes('~|')).join(", ") }
+                                                </div>
+
+                                            </div>
+
+                            )
+                            }
+
+
 
                         {/* Materialisation panel */}
                         {step.materialisedFormulas && step.originalFormulas && (
@@ -213,7 +264,7 @@ const BaseRankStepThrough: React.FC = () => {
                                 </p>
 
                                 <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                    {'{ ' + step.materialisedFormulas.join(', ') + ' }'}
+                                    { step.materialisedFormulas.join(', ') }
                                 </div>
 
                                 <p className="text-xs text-muted-foreground mt-1">
@@ -276,9 +327,7 @@ const BaseRankStepThrough: React.FC = () => {
                                     ✓ BaseRank Construction Complete
                                 </p>
 
-                                <p className="text-sm text-green-600">
-                                    All statements have been ranked. The ranking is now ready for use in the Rational Closure entailment algorithm.
-                                </p>
+
                             </div>
                         )}
 
@@ -297,17 +346,24 @@ const BaseRankStepThrough: React.FC = () => {
                     />
                 </div>
 
-                {/*continue to the algorithm-specific step-through, based on what was actually selected */}
+                {/*continue to algo */}
                 {step.isFinalStep && (
                     <div className="flex justify-end">
                         <Button variant="primary" size="lg"
-                            onClick={() =>
-                                navigate(algorithm === 'basic relevant' ? '/results/relevant/basic/partition' : '/results/rational', {
-                                    state: { baseRank, entailment, partition, query, algorithm }
-                                }
-                            )}
+                            onClick={() => {
+                                const route =
+                                    algorithm === 'basic relevant' ? '/results/relevant/basic/partition' :
+                                    algorithm === 'lexicographic' ? '/results/lexicographic' :
+                                    algorithm === 'minimal relevant' ? '/results/relevant/minimal/partition' :
+                                    algorithm === 'rational' ? '/results/rational' :
+                                    '/results/rational';
+
+                                navigate(route, { state: { baseRank, entailment, partition, query, algorithm } });
+
+                            }}
                         >
-                            {algorithm === 'basic relevant' ? 'Continue to Relevant Partition' : 'Continue to Rational Closure'}
+                            {algorithm === 'basic relevant' ? 'Continue to Relevant Partition' :algorithm === 'minimal relevant' ? 'Continue to Relevant Partition' : algorithm === 'lexicographic' ? 'Continue to Lexicographical Closure': algorithm === 'rational' ? 'Continue to Rational Closure': 'Continue to Rational Closure'}
+
                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                         </Button>
                     </div>

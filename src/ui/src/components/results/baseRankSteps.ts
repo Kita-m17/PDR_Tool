@@ -12,6 +12,7 @@ export interface BaseRankDebuggerStep {
     rankingState: BaseRankState[];
     isFinalStep: boolean;
     isInfinityStep: boolean;
+    isInitialStep?: boolean;
     materialisedFormulas?: string[]; //for materialisation step
     originalFormulas?: string[]; //for materialisation step
 }
@@ -37,7 +38,7 @@ export function baseRankSteps(baseRank: BaseRankDTO): BaseRankDebuggerStep[]{
     const {traceSteps, ranking, knowledgeBase} = baseRank;
 
     //filter out the empty steps
-    const validSteps = traceSteps.filter(s => s.consideredFormulas.length > 0);
+    const validSteps = traceSteps.filter(s => s.consideredFormulas.length > 0 || s.assignedRanks.length > 0 || s.iteration === 2147483647);
 
     //track which ranks have been assigned so far
     const assignedSoFar = new Set<number>();
@@ -50,11 +51,12 @@ export function baseRankSteps(baseRank: BaseRankDTO): BaseRankDebuggerStep[]{
     steps.push({
         stepNumber: 1,
         totalSteps: 0,
-        highlightedLines: [1],
-        explanation: `We start with the knowledge base K, which contains both defeasible and classical statements.\n\nDefeasible statements (α ~| β) express typical cases that can have exceptions.\nClassical statements (α => β) are strict rules that always hold.\n\nDefeasible statements: ${defeasible.join(', ') || 'none'}\nClassical statements: ${classical.join(', ') || 'none'}`,
+        highlightedLines: [0],
+        explanation: `We start with the knowledge base K, which contains both defeasible and classical statements.\n\nDefeasible statements (α ~| β) express typical cases that can have exceptions.\nClassical statements (α => β) are strict rules that always hold. `,
         consideredFormulas: knowledgeBase,
         checks: [],
         assignedToRank: [],
+        isInitialStep:true,
         carriedForward: knowledgeBase,
         rankingState: buildBaseRankState(ranking, assignedSoFar, -1),
         isFinalStep: false,
@@ -67,7 +69,7 @@ export function baseRankSteps(baseRank: BaseRankDTO): BaseRankDebuggerStep[]{
     steps.push({
         stepNumber: 2,
         totalSteps: 0,
-        highlightedLines: [2],
+        highlightedLines: [2,3],
         explanation: `We materialise the knowledge base by converting all defeasible statements α ~| β into classical implications α → β.\n\nThis gives us E₀: the starting point for the BaseRank algorithm.\n\nClassical entailment checking (via a SAT solver) can now be used to determine which statements are exceptional.`,
         consideredFormulas: validSteps[0]?.consideredFormulas || [],
         checks: [],
@@ -91,7 +93,7 @@ export function baseRankSteps(baseRank: BaseRankDTO): BaseRankDebuggerStep[]{
             steps.push({
                 stepNumber: steps.length + 1,
                 totalSteps: 0,
-                highlightedLines: [7, 8, 9, 10],
+                highlightedLines: [ 8, 9],
                 explanation: `The loop has terminated, as no more exceptional statements remain.\n\nAll classical statements are assigned to Rank ∞. These statements are never exceptional, as they hold true in all worlds and are never removed during the Rational Closure entailment process.\n\nR∞ = { ${traceStep.assignedRanks.join(', ')} }`,
                 consideredFormulas: traceStep.consideredFormulas,
                 checks: [],
@@ -106,7 +108,7 @@ export function baseRankSteps(baseRank: BaseRankDTO): BaseRankDebuggerStep[]{
             steps.push({
                 stepNumber: steps.length + 1,
                 totalSteps: 0,
-                highlightedLines: [10],
+                highlightedLines: [10,11,12,13,14,15],
                 explanation: `BaseRank construction is complete.\n\nThe knowledge base has been partitioned into ranked sets based on exceptionality. Lower ranks contain more general defaults, higher ranks contain more specific exceptions, and Rank ∞ contains classical facts that always hold.`,
                 consideredFormulas: [],
                 checks: [],
@@ -123,7 +125,7 @@ export function baseRankSteps(baseRank: BaseRankDTO): BaseRankDebuggerStep[]{
         steps.push({
             stepNumber: steps.length + 1,
             totalSteps: 0,
-            highlightedLines: [3, 4],
+            highlightedLines: [5],
             explanation: `Iteration ${traceStep.iteration}: Checking exceptionality.\n\nFor each antecedent α in the current set, we ask: does the materialised KB classically entail ¬α?\n\nIf yes, assuming α is true leads to a contradiction, α is exceptional and its rules carry forward to the next iteration.\nIf no, α is not exceptional and its rules are assigned to Rank ${traceStep.iteration}.`,
             consideredFormulas: traceStep.consideredFormulas,
             checks: traceStep.checks.map(c => ({
@@ -148,7 +150,7 @@ export function baseRankSteps(baseRank: BaseRankDTO): BaseRankDebuggerStep[]{
         steps.push({
             stepNumber: steps.length + 1,
             totalSteps: 0,
-            highlightedLines: [5, 6],
+            highlightedLines: [ 6],
             explanation: `Assigning Rank ${traceStep.iteration}.\n\nNon-exceptional statements are assigned to Rank ${traceStep.iteration}:\n${traceStep.assignedRanks.join(', ') || 'none'}\n\nExceptional statements carry forward to the next iteration:\n${traceStep.carriedForward.join(', ') || 'none, loop will terminate'}`,
             consideredFormulas: traceStep.consideredFormulas,
             checks: [],

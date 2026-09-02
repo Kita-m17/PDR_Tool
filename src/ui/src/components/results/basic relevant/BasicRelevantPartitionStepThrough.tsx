@@ -7,7 +7,7 @@ import Footer from '../../layout/Footer';
 import { buildPartitionSteps, PartitionDebuggerStep } from './PartitionSteps';
 import PowersetView, { PartitionFilter } from './PowersetView';
 import JustificationVisualiser from './JustificationVisualiser';
-import StepControls from './BasicRelevantStepControls';
+import StepControls from '../StepControls';
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import { Button } from '../../ui/Buttons';
 
@@ -22,6 +22,7 @@ interface ResultsState {
 const BasicRelevantPartitionStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    
     // location.state is only populated when this page is reached via
     // navigate(path, { state }) - a refresh, pasted URL, or bookmark lands
     // here with state === null, which used to crash buildPartitionSteps

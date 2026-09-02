@@ -8,7 +8,7 @@ import { buildDebuggerSteps, DebuggerStep } from './BasicRelevantSteps';
 import PrimeVisualiser from './BasicRelevantPrimeVisualiser';
 import AlgorithmView from './BasicRelevantAlgorithmView';
 import ExplanationView from './BasicRelevantExplanationView';
-import StepControls from './BasicRelevantStepControls';
+import StepControls from '../StepControls';
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import { Button } from '../../ui/Buttons';
 

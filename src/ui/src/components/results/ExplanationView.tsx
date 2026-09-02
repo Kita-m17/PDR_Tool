@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { DebuggerStep } from './rcSteps';
+import { DebuggerStep } from './rational/rcSteps';
 import { InfoCircledIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import {Button} from '../ui/Buttons'
 
@@ -27,10 +27,10 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
         
     });
 
-    const isWhileStep = step.highlightedLines.includes(3);
+    const isWhileStep = step.highlightedLines.includes(5) && !step.isInitialStep;
 
     return(
-        <div>
+        <div> 
             <h3 className="text-primary font-semibold mb-4 flex items-center gap-2">
                 Explanation
             </h3>
