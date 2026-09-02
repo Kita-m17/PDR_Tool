@@ -5,40 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="47a1af81-9f9a-4eb7-b8f7-7edd1851beb9" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/App.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/Demo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/Demo.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/controllers/HomeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/controllers/HomeController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/controllers/KnowledgeBaseController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/controllers/KnowledgeBaseController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/controllers/ReasonerController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/controllers/ReasonerController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/BaseRankDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/BaseRankDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/BaseRankStepDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/BaseRankStepDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/EntailmentStepDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/EntailmentStepDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/ExceptionalityCheckDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/ExceptionalityCheckDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/KnowledgeBaseDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/KnowledgeBaseDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/QueryRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/QueryRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/dtos/RankDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/dtos/RankDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/DefeasibleImplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/DefeasibleImplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/Entailment$EntailmentBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/Entailment$EntailmentBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/Entailment.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/Entailment.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/EntailmentStep.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/EntailmentStep.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/ErrorResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/ErrorResponse.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/ExceptionalityCheck.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/ExceptionalityCheck.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/KnowledgeBase.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/KnowledgeBase.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/Rank.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/Rank.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/Ranking.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/Ranking.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/RationalEntailment$RationalEntailmentBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/RationalEntailment$RationalEntailmentBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/models/RationalEntailment.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/models/RationalEntailment.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/BaseRankService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/BaseRankService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/BaseRankServiceImp.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/BaseRankServiceImp.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/KnowledgeBaseService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/KnowledgeBaseService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/KnowledgeBaseServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/KnowledgeBaseServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/RationalReasonerImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/RationalReasonerImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/ReasonerFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/ReasonerFactory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/services/ReasonerService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/services/ReasonerService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/utils/DefeasibleParser.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/utils/DefeasibleParser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/pdr/utils/Symbols.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/pdr/utils/Symbols.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pdr/controllers/PartitionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pdr/controllers/PartitionController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,41 +50,41 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.App.executor": "Run",
-    "Application.WeakJustification.executor": "Run",
-    "JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample1.executor": "Run",
-    "JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample2.executor": "Run",
-    "JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample3.executor": "Run",
-    "JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample4.executor": "Run",
-    "JUnit.BasicRelevantReasonerImplTest.executor": "Run",
-    "JUnit.BasicRelevantReasonerImplTest.getEntailmentExample1.executor": "Run",
-    "JUnit.BasicRelevantReasonerImplTest.getEntailmentExample2.executor": "Run",
-    "JUnit.BasicRelevantReasonerImplTest.getEntailmentExample3.executor": "Run",
-    "JUnit.MinimalRelevantReasonerImplTest.TestWeakJustificationExample4.executor": "Run",
-    "JUnit.MinimalRelevantReasonerImplTest.executor": "Run",
-    "JUnit.PartitionUsingComputeAllJustificationImplTest.getBasicPartitionExample1.executor": "Run",
-    "JUnit.PartitionUsingComputeAllJustificationImplTest.getBasicPartitionExample2.executor": "Run",
-    "JUnit.PartitionUsingComputeAllJustificationImplTest.getMinimalPartitionExample1.executor": "Run",
-    "JUnit.PartitionUsingPowersetImplTest.executor": "Run",
-    "JUnit.PartitionUsingPowersetImplTest.getBasicPartitionExample1.executor": "Run",
-    "JUnit.PartitionUsingPowersetImplTest.getBasicPartitionExample2.executor": "Run",
-    "JUnit.PartitionUsingPowersetImplTest.getMinimalPartition.executor": "Run",
-    "JUnit.PartitionUsingPowersetImplTest.getMinimalPartitionExample1.executor": "Run",
-    "JUnit.PartitionUsingPowersetImplTest.getMinimalPartitionExample2.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
-    "git-widget-placeholder": "Liam",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/liamd/Home/Academic/Honours/Other honours Projects/cotterrell_dunn_gounden/source_code",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.App.executor&quot;: &quot;Run&quot;,
+    &quot;Application.WeakJustification.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample1.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample2.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample3.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.BasicRelevantReasonerImplTest.TestWeakJustificationExample4.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.BasicRelevantReasonerImplTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.BasicRelevantReasonerImplTest.getEntailmentExample1.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.BasicRelevantReasonerImplTest.getEntailmentExample2.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.BasicRelevantReasonerImplTest.getEntailmentExample3.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.MinimalRelevantReasonerImplTest.TestWeakJustificationExample4.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.MinimalRelevantReasonerImplTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.PartitionUsingComputeAllJustificationImplTest.getBasicPartitionExample1.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.PartitionUsingComputeAllJustificationImplTest.getBasicPartitionExample2.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.PartitionUsingComputeAllJustificationImplTest.getMinimalPartitionExample1.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.PartitionUsingPowersetImplTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.PartitionUsingPowersetImplTest.getBasicPartitionExample1.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.PartitionUsingPowersetImplTest.getBasicPartitionExample2.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.PartitionUsingPowersetImplTest.getMinimalPartition.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.PartitionUsingPowersetImplTest.getMinimalPartitionExample1.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.PartitionUsingPowersetImplTest.getMinimalPartitionExample2.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Liam&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/liamd/Home/Academic/Honours/Other honours Projects/cotterrell_dunn_gounden/source_code&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\liamd\Home\Academic\Honours\PDR Project\PDR_Tool\src\main\java\com\pdr\models" />
@@ -131,7 +101,7 @@
       <recent name="com.pdr.utils" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.PartitionUsingPowersetImplTest.getMinimalPartitionExample1">
+  <component name="RunManager" selected="Application.App">
     <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.pdr.App" />
       <module name="pdr-tool" />
@@ -210,11 +180,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.App" />
         <item itemvalue="JUnit.PartitionUsingPowersetImplTest.getMinimalPartitionExample1" />
         <item itemvalue="JUnit.PartitionUsingPowersetImplTest" />
         <item itemvalue="JUnit.PartitionUsingPowersetImplTest.getBasicPartitionExample1" />
         <item itemvalue="JUnit.PartitionUsingPowersetImplTest.getBasicPartitionExample2" />
-        <item itemvalue="Application.App" />
       </list>
     </recent_temporary>
   </component>
