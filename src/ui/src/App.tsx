@@ -152,6 +152,7 @@ function App(){
       <Route path="/results/lexicographic" element={<LexicographicStepThrough/>}/>
       <Route path="/results/relevant/basic/partition" element = {<BasicRelevantPartitionStepThrough/>}/>
       <Route path="/results/relevant/minimal/partition" element = {<MinimalRelevantPartitionStepThrough/>}/>
+      <Route path="/results/comparison" element />
     </Routes>
   )
 }

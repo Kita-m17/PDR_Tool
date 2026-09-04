@@ -16,11 +16,12 @@ interface ResultsState {
     partition: PartitionDTO;
     query: string;
     algorithm: string;
+    fromComparison?: boolean;
 }
 const BaseRankStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { baseRank, entailment,partition, query, algorithm } = location.state as ResultsState;
+    const { baseRank, entailment,partition, query, algorithm, fromComparison } = location.state as ResultsState;
     const isRelevantClosure = algorithm === 'basic relevant' || algorithm === 'minimal relevant';
     // Basic/Minimal Relevant Closure route through a Partition phase; Rational
     // and Lexicographic Closure go straight from Base Rank to Closure.
@@ -351,6 +352,11 @@ const BaseRankStepThrough: React.FC = () => {
                     <div className="flex justify-end">
                         <Button variant="primary" size="lg"
                             onClick={() => {
+                                if(fromComparison){
+                                    navigate('/results/comparison', { state: { baseRank, entailment, partition, query, algorithm } });
+                                    return;
+                                }
+
                                 const route =
                                     algorithm === 'basic relevant' ? '/results/relevant/basic/partition' :
                                     algorithm === 'lexicographic' ? '/results/lexicographic' :
@@ -362,7 +368,7 @@ const BaseRankStepThrough: React.FC = () => {
 
                             }}
                         >
-                            {algorithm === 'basic relevant' ? 'Continue to Relevant Partition' :algorithm === 'minimal relevant' ? 'Continue to Relevant Partition' : algorithm === 'lexicographic' ? 'Continue to Lexicographical Closure': algorithm === 'rational' ? 'Continue to Rational Closure': 'Continue to Rational Closure'}
+                            {fromComparison ? 'Back to Comparison' : algorithm === 'basic relevant' ? 'Continue to Relevant Partition' : algorithm === 'minimal relevant' ? 'Continue to Relevant Partition' : algorithm === 'lexicographic' ? 'Continue to Lexicographical Closure' : algorithm === 'rational' ? 'Continue to Rational Closure' : 'Continue to Rational Closure'}
 
                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                         </Button>
