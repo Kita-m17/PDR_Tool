@@ -51,10 +51,11 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
 
     try {
       const baseRank = await submitKnowledgeBase(formulas);
-      const entailment = await submitQuery(algorithm, query);
       const partition = algorithm === 'minimal relevant'
         ? await submitMinimalPartitionQuery(query)
         : await submitPartitionQuery(query);
+      const entailment = await submitQuery(algorithm, query);
+
       navigate('/baserank', {
         state: { baseRank, entailment, partition, query, algorithm }
       });

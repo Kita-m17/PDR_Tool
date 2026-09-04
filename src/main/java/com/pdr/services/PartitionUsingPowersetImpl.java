@@ -38,6 +38,8 @@ public class PartitionUsingPowersetImpl implements PartitionService {
         KnowledgeBase classicalKnowledgeBase = knowledgeBase.separate()[1];
 
         for(KnowledgeBase combination:list){
+            isEntailed = false;
+            isMinimal = false;
 
             KnowledgeBase minimalJustificationStatement = new KnowledgeBase();
             List<KnowledgeBase> justificationSoFar = new ArrayList<>();
@@ -102,17 +104,19 @@ public class PartitionUsingPowersetImpl implements PartitionService {
 
 
             }
+
             traceSteps.add(PartitionStep.builder()
-                            .withId(count)
-                            .withIsEntailed(isEntailed)
-                            .withIsMinimal(isMinimal)
-                            .withJustificationsSoFar(justificationSoFar)
-                            .withMinimalSet(minimalJustificationStatement)
-                            .withReason("")
-                            .withSet(combination)
+                    .withId(count)
+                    .withIsEntailed(isEntailed)
+                    .withIsMinimal(isMinimal)
+                    .withJustificationsSoFar(justificationSoFar)
+                    .withMinimalSet(minimalJustificationStatement)
+                    .withReason("")
+                    .withSet(combination)
                     .build()
 
             );
+
             count++;
         }
 
