@@ -27,5 +27,12 @@ export const EXAMPLES: Example[] = [
         formulas: ['(cat|~active)','(cat|~likesMondays)','(garfield=>cat)','(garfield|~!active)','(garfield|~hatesMondays)'],
         query: 'garfield|~!active',
         algorithm: 'rational'
+    },
+    {
+        label: 'Kittens (Chipo Hamayobe)',
+        description: 'Weak justification example: are kittens typically wild, given cats and animals typically are not?',
+        formulas: ['(pets=>animals)','(kittens=>cats)','(cats|~trainable)','(kittens|~!trainable)','(animals|~legs)','(animals|~wild)','(cats=>animals)','(cats|~!wild)'],
+        query: 'kittens|~!wild',
+        algorithm: 'minimal relevant'
     }
 ]
