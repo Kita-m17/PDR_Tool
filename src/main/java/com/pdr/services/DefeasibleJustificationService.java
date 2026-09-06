@@ -17,11 +17,13 @@ public class DefeasibleJustificationService {
     public static List<KnowledgeBase> getJustificationsForRelevantClosure(KnowledgeBase knowledgeBase, PlFormula query){
         SatSolver.setDefaultSolver(new Sat4jSolver());
         SatReasoner reasoner = new SatReasoner();
-        KnowledgeBase materialisedKnowledgeBase = knowledgeBase.materialise();
+        KnowledgeBase materialisedKnowledgeBase = knowledgeBase.materialisedKnowledgeBase();
         List<KnowledgeBase> justifications = ClassicalJustificationService.computeJustification(materialisedKnowledgeBase,query);
         KnowledgeBase relevantPartition = new KnowledgeBase();
+        KnowledgeBase classicalStatements = knowledgeBase.separate()[1];
+
         for(KnowledgeBase justification:justifications){
-            relevantPartition = relevantPartition.union(justification);
+            relevantPartition = relevantPartition.union((justification.difference(classicalStatements)));
         }
         KnowledgeBase irrelaventPartition = knowledgeBase.difference(relevantPartition);
         BaseRank baseRank = (new BaseRankServiceImp()).constructBaseRank(knowledgeBase);
@@ -29,7 +31,6 @@ public class DefeasibleJustificationService {
         for(Rank rank : baseRank.getRanking()){
             R = R.union(rank.getFormulas());
         }
-        KnowledgeBase classicalStatements = knowledgeBase.separate()[1];
         int i=0;
         while( reasoner.query(classicalStatements.union(R),new Negation(((Implication) query).getFirstFormula()))&& R.size()>0 ){
             KnowledgeBase rankToRemove = baseRank.getRanking().get(i).getFormulas();

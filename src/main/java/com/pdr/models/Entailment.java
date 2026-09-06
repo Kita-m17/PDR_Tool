@@ -29,6 +29,11 @@ public abstract class Entailment {
     protected final Ranking baseRanking; // The ranking of the knowledge base used for defeasible reasoning
     protected final boolean entailed; // Whether the query is entailed
     protected final List<EntailmentStep> traceSteps; // Trace of the algorithm
+    // Shared by every algorithm - how long the (already-cached) base rank took to
+    // build, and how long this algorithm's own closure computation took. Relevant
+    // closure additionally reports a partitionExecutionTime (see RelevantEntailment).
+    protected final double baseRankExecutionTime;
+    protected final double closureExecutionTime;
 
 
     /**
@@ -40,6 +45,8 @@ public abstract class Entailment {
         this.baseRanking = builder.baseRanking;
         this.entailed = builder.entailed;
         this.traceSteps = builder.traceSteps;
+        this.baseRankExecutionTime = builder.baseRankExecutionTime;
+        this.closureExecutionTime = builder.closureExecutionTime;
     }
 
     // --- Getters ---
@@ -94,6 +101,16 @@ public abstract class Entailment {
         return baseRanking != null ? baseRanking.stream().map(Rank::toDTO).collect(Collectors.toList()) : null;
     }
 
+    @JsonProperty("baseRankExecutionTime")
+    public double getBaseRankExecutionTime() {
+        return this.baseRankExecutionTime;
+    }
+
+    @JsonProperty("closureExecutionTime")
+    public double getClosureExecutionTime() {
+        return this.closureExecutionTime;
+    }
+
     // Builder for Entailment
     public static abstract class EntailmentBuilder<T extends EntailmentBuilder<T>> {
         private KnowledgeBase knowledgeBase;
@@ -101,6 +118,8 @@ public abstract class Entailment {
         private Ranking baseRanking;
         private boolean entailed;
         private List<EntailmentStep> traceSteps;
+        private double baseRankExecutionTime;
+        private double closureExecutionTime;
 
         /**
          * @return
@@ -127,6 +146,16 @@ public abstract class Entailment {
 
         public T withTraceSteps(List<EntailmentStep> traceSteps) {
             this.traceSteps = traceSteps;
+            return self();
+        }
+
+        public T withBaseRankExecutionTime(double baseRankExecutionTime) {
+            this.baseRankExecutionTime = baseRankExecutionTime;
+            return self();
+        }
+
+        public T withClosureExecutionTime(double closureExecutionTime) {
+            this.closureExecutionTime = closureExecutionTime;
             return self();
         }
 

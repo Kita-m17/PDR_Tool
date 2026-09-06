@@ -32,6 +32,7 @@ export interface BaseRankDTO {
     sequence: RankDTO[];
     ranking: RankDTO[];
     traceSteps: BaseRankStepDTO[];
+    executionTime: number;
 }
 
 export interface EntailmentStepDTO {
@@ -53,6 +54,10 @@ export interface EntailmentDTO {
     // justification (proof) for the entailment, per RelevantEntailment.java.
     // Empty/undefined when not entailed, since there's nothing to justify.
     smallestWeakJustification?: string[];
+    baseRankExecutionTime: number;
+    closureExecutionTime: number;
+    // Only populated for Basic/Minimal Relevant Closure.
+    partitionExecutionTime?: number;
 }
 
 export interface PartitionStepDTO {
@@ -75,6 +80,7 @@ export interface PartitionDTO {
     classicalStatements: string[];
     knowledgeBase: string[];
     traceSteps: PartitionStepDTO[];
+    executionTime: number;
 }
 
 export interface SubKnowledgeBaseCheckDTO {
@@ -109,6 +115,22 @@ export interface LexicographicEntailmentDTO extends EntailmentDTO {
     finalChecks: SubKnowledgeBaseCheckDTO[];
 }
 
+
+export interface AlgorithmEvaluationDTO {
+    algorithm: string;
+    entailment: EntailmentDTO;
+    partition: PartitionDTO | null;
+}
+
+export interface EvaluateAllRequestDTO {
+    query: string;
+    algorithms: string[];
+}
+
+export interface EvaluateAllResponseDTO {
+    baseRank: BaseRankDTO;
+    results: AlgorithmEvaluationDTO[];
+}
 
 // POST /api/knowledge-base/create-knowledge-base
 export const submitKnowledgeBase = async (formulas: string[]): Promise<BaseRankDTO> => {
@@ -159,5 +181,18 @@ export const submitMinimalPartitionQuery = async (query: string): Promise<Partit
 
     if (!response.ok)
         throw new Error('Failed to submit minimal partition query');
+    return response.json();
+};
+
+// POST /api/entailment/evaluate-all
+export const submitEvaluateAll = async (query: string, algorithms: string[]): Promise<EvaluateAllResponseDTO> => {
+    const response = await fetch(`${BASE_URL}/entailment/evaluate-all`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, algorithms }),
+    });
+
+    if (!response.ok)
+        throw new Error('Failed to evaluate selected algorithms');
     return response.json();
 };

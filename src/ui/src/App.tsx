@@ -7,7 +7,7 @@ import QueryInput from './components/input/QueryInput';
 import EntailmentQueryCard from './components/input/EntailmentQueryCard';
 import { Button } from './components/ui/Buttons';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
-import { submitKnowledgeBase, submitQuery, submitPartitionQuery, submitMinimalPartitionQuery, BaseRankDTO, EntailmentDTO } from './api/api';
+import { submitKnowledgeBase, submitEvaluateAll, EvaluateAllResponseDTO } from './api/api';
 import RCStepThrough from './components/results/rational/RCStepThrough';
 import BasicRelevantStepThrough from './components/results/basic relevant/BasicRelevantStepThrough';
 import BasicRelevantPartitionStepThrough from './components/results/basic relevant/BasicRelevantPartitionStepThrough';
@@ -15,51 +15,56 @@ import MinimalRelevantPartitionStepThrough from './components/results/minimal re
 import BaseRankStepThrough from './components/results/BaseRankStepThrough';
 import LexicographicStepThrough from './components/results/lexicographic/LexicographicStepTrough';
 
+const ALGORITHM_LABELS: Record<string, string> = {
+  'rational': 'Rational Closure',
+  'lexicographic': 'Lexicographic Closure',
+  'basic relevant': 'Basic Relevant Closure',
+  'minimal relevant': 'Minimal Relevant Closure',
+};
+
 interface InputPageProps {
   formulas: string[];
   setFormulas: (f: string[]) => void;
   query: string;
   setQuery: (q: string) => void;
-  algorithm: string;
-  setAlgorithm: (a: string) => void;
+  selectedAlgorithms: string[];
+  setSelectedAlgorithms: (a: string[]) => void;
+  evaluation: EvaluateAllResponseDTO | null;
+  setEvaluation: (e: EvaluateAllResponseDTO | null) => void;
 }
 
-function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgorithm }: InputPageProps) {
+function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, setSelectedAlgorithms, evaluation, setEvaluation }: InputPageProps) {
   const navigate = useNavigate();
   const DEFAULT_FORMULAS = ['(bird~|flies)', '(penguin=>bird)', '(penguin~|!flies)'];
   const DEFAULT_QUERY = 'penguin~|!flies';
+  const DEFAULT_ALGORITHMS = ['rational'];
 
-  // const [formulas, setFormulas] = useState<string[]>(['(bird~|flies)', '(penguin=>bird)', '(penguin~|!flies)']);
-  // const [query, setQuery] = useState('penguin~|!flies');
-   //const [algorithm, setAlgorithm] = useState('rational');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleEvaluate = async () => {
-    if (formulas.length === 0) { 
-      setError('Please enter a knowledge base'); 
-      return; 
+    if (formulas.length === 0) {
+      setError('Please enter a knowledge base');
+      return;
     }
 
-    if (!query) { 
-      setError('Please enter a query'); 
-      return; 
+    if (!query) {
+      setError('Please enter a query');
+      return;
+    }
+
+    if (selectedAlgorithms.length === 0) {
+      setError('Please select at least one algorithm');
+      return;
     }
 
     setLoading(true);
     setError(null);
 
     try {
-      const baseRank = await submitKnowledgeBase(formulas);
-      const partition = algorithm === 'minimal relevant'
-        ? await submitMinimalPartitionQuery(query)
-        : await submitPartitionQuery(query);
-      const entailment = await submitQuery(algorithm, query);
-
-      navigate('/baserank', {
-        state: { baseRank, entailment, partition, query, algorithm }
-      });
-
+      await submitKnowledgeBase(formulas);
+      const result = await submitEvaluateAll(query, selectedAlgorithms);
+      setEvaluation(result);
     } catch (err) {
       setError('Something went wrong. Make sure the backend is running.');
     } finally {
@@ -70,7 +75,24 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
   const handleReset = () => {
     setFormulas(DEFAULT_FORMULAS);
     setQuery(DEFAULT_QUERY);
-    setAlgorithm('rational');
+    setSelectedAlgorithms(DEFAULT_ALGORITHMS);
+    setEvaluation(null);
+  };
+
+  const goToAlgorithm = (algorithm: string) => {
+    if (!evaluation) return;
+    const result = evaluation.results.find((r) => r.algorithm === algorithm);
+    if (!result) return;
+
+    navigate('/baserank', {
+      state: {
+        baseRank: evaluation.baseRank,
+        entailment: result.entailment,
+        partition: result.partition,
+        query,
+        algorithm: result.algorithm,
+      }
+    });
   };
 
   return (
@@ -88,7 +110,8 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
                 onLoadExample={(exampleFormulas, exampleQuery, exampleAlgorithm) => {
                     setFormulas(exampleFormulas);
                     setQuery(exampleQuery);
-                    setAlgorithm(exampleAlgorithm);
+                    setSelectedAlgorithms([exampleAlgorithm]);
+                    setEvaluation(null);
                 }}
             />
           </div>
@@ -101,7 +124,7 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
         
         {/* Algorithm selection */}
         <div className="bg-white rounded-xl border border-border shadow-sm p-6 mt-2"> 
-          <EntailmentQueryCard selected={algorithm} onAlgorithmChange={setAlgorithm}/> 
+          <EntailmentQueryCard selected={selectedAlgorithms} onAlgorithmChange={setSelectedAlgorithms}/> 
         </div>
 
         {/* Error message */}
@@ -109,6 +132,54 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
           <p className="text-red-500 text-sm mt-4 text-right">
             {error}
           </p>
+        )}
+
+        {/* Result buttons — one per evaluated algorithm */}
+        {evaluation && evaluation.results.length > 0 && (
+          <div className="bg-white rounded-xl border border-border shadow-sm p-6 mt-6">
+            <h2 className="text-primary font-semibold mb-1">
+              Results
+            </h2>
+            <p className="text-muted-foreground text-sm mb-4">
+              Select an algorithm below to step through its evaluation.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {evaluation.results.map((result) => {
+                const hasPartition = result.partition !== null && result.partition !== undefined
+                  && result.entailment.partitionExecutionTime !== undefined;
+
+                return (
+                  <button
+                    key={result.algorithm}
+                    onClick={() => goToAlgorithm(result.algorithm)}
+                    className="flex flex-col items-start text-left bg-secondary/20 hover:bg-secondary/40 border border-border rounded-lg px-4 py-3 transition-colors"
+                  >
+                    <span className="font-semibold text-sm text-foreground mb-2">
+                      {ALGORITHM_LABELS[result.algorithm] ?? result.algorithm}
+                    </span>
+
+                    <span className="flex flex-col gap-1 text-xs text-muted-foreground w-full">
+                      <span className="flex justify-between gap-2">
+                        <span>Base rank</span>
+                        <span>{result.entailment.baseRankExecutionTime.toFixed(3)}s</span>
+                      </span>
+                      <span className="flex justify-between gap-2">
+                        <span>Closure</span>
+                        <span>{result.entailment.closureExecutionTime.toFixed(3)}s</span>
+                      </span>
+                      {hasPartition && (
+                        <span className="flex justify-between gap-2">
+                          <span>Partition</span>
+                          <span>{result.entailment.partitionExecutionTime?.toFixed(3)}s</span>
+                        </span>
+                      )}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         )}
 
         {/* Evaluate button */}
@@ -133,7 +204,8 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
 function App(){
   const [formulas, setFormulas] = useState<string[]>(['(bird~|flies)', '(penguin=>bird)', '(penguin~|!flies)']);
   const [query, setQuery] = useState('penguin~|!flies');
-  const [algorithm, setAlgorithm] = useState('rational');
+  const [selectedAlgorithms, setSelectedAlgorithms] = useState<string[]>(['rational']);
+  const [evaluation, setEvaluation] = useState<EvaluateAllResponseDTO | null>(null);
 
   return(
     <Routes>
@@ -143,8 +215,10 @@ function App(){
           setFormulas={setFormulas}
           query={query}
           setQuery={setQuery}
-          algorithm={algorithm}
-          setAlgorithm={setAlgorithm}
+          selectedAlgorithms={selectedAlgorithms}
+          setSelectedAlgorithms={setSelectedAlgorithms}
+          evaluation={evaluation}
+          setEvaluation={setEvaluation}
         />
       }/>
       <Route path="/baserank" element={<BaseRankStepThrough />} />

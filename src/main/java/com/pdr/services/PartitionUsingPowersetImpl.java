@@ -20,10 +20,24 @@ import java.util.List;
 public class PartitionUsingPowersetImpl implements PartitionService {
 
     private Partition partition;
+    private final KnowledgeBaseService knowledgeBaseService;
+
+    // Constructor injection - Spring wires this in automatically since it's the
+    // only constructor. Lets us reuse the base rank the app already computed
+    // once (via KnowledgeBaseService) instead of reconstructing it from scratch
+    // on every partition request.
+    public PartitionUsingPowersetImpl(KnowledgeBaseService knowledgeBaseService) {
+        this.knowledgeBaseService = knowledgeBaseService;
+    }
+
     @Override
     public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query, boolean isMinimalRelevantClosure) {
         long startTime = System.nanoTime();
-        BaseRank baseRank = (new BaseRankServiceImp()).constructBaseRank(knowledgeBase);
+        // Was: (new BaseRankServiceImp()).constructBaseRank(knowledgeBase) - recomputed
+        // the base rank from scratch on every call. The caller always passes the
+        // current knowledgeBaseService.getKnowledgeBase() here anyway, so its
+        // already-cached base rank is exactly the right one to reuse.
+        BaseRank baseRank = knowledgeBaseService.getBaseRank();
 
         List<KnowledgeBase> list = getPowerSets(knowledgeBase);
 

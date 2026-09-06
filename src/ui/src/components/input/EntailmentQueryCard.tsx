@@ -1,20 +1,25 @@
-import React, {useState} from "react";
-import {Button} from "../ui/Buttons";
-import { ArrowRightIcon } from "@radix-ui/react-icons";
+import React from "react";
 
 interface EntailmentQueryCardProps{
-    selected: string;
-    onAlgorithmChange: (algorithm: string) => void;
+    selected: string[];
+    onAlgorithmChange: (algorithms: string[]) => void;
 }
 
 const EntailmentQueryCard: React.FC<EntailmentQueryCardProps> = ({selected, onAlgorithmChange}) => {
-    // const [selected, setSelected] = useState('rational');
     const algorithms = [
         {id: 'rational', label: 'Rational Closure'},
         {id: 'lexicographic', label: 'Lexicographic Closure'},
         {id: 'basic relevant', label: 'Basic Relevant Closure'},
         {id: 'minimal relevant', label: 'Minimal Relevant Closure'},
     ];
+
+    const toggleAlgorithm = (id: string) => {
+        if (selected.includes(id)) {
+            onAlgorithmChange(selected.filter((a) => a !== id));
+        } else {
+            onAlgorithmChange([...selected, id]);
+        }
+    };
 
     return (
         <div className="mb-8">
@@ -23,7 +28,7 @@ const EntailmentQueryCard: React.FC<EntailmentQueryCardProps> = ({selected, onAl
             </h2>
             
             <p className="text-muted-foreground text-sm mb-10">
-                Choose the algorithm you want to use to evaluate the query.
+                Choose one or more algorithms you want to use to evaluate the query.
             </p>
 
             {/* Algorithm selector */}
@@ -34,11 +39,11 @@ const EntailmentQueryCard: React.FC<EntailmentQueryCardProps> = ({selected, onAl
                         className="flex items-center gap-2 cursor-pointer"
                     >
                         <input
-                            type="radio"
+                            type="checkbox"
                             name="algorithm"
                             value={algo.id}
-                            checked={selected === algo.id}
-                            onChange={() => onAlgorithmChange(algo.id)}
+                            checked={selected.includes(algo.id)}
+                            onChange={() => toggleAlgorithm(algo.id)}
                             className="accent-primary w-4 h-4"
                         />
 
@@ -48,22 +53,6 @@ const EntailmentQueryCard: React.FC<EntailmentQueryCardProps> = ({selected, onAl
                     </label>
                 ))}
             </div>
-
-            {/* Evaluate button */}
-            {/* <div className="flex justify-end flex-col items-end mt-6">
-                <Button
-                    variant="primary"
-                    size="lg"
-                    onClick={() => onEvaluate(selected)}
-                >
-                    Evaluate
-                    <ArrowRightIcon className="ml-2 h-4 w-4" />
-                </Button>
-
-                <p className="text-xs text-gray-400 mt-1">
-                    Proceed to step-by-step evaluation.
-                </p>
-            </div> */}
 
         </div>
     );

@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 public class RelevantEntailment extends Entailment {
     @JsonIgnore
     private final KnowledgeBase weakJustification;
-    private double closureExecutionTime;
-    private double baseRankExecutionTime;
+    // The one timing specific to relevant closure - baseRankExecutionTime and
+    // closureExecutionTime are shared by every algorithm and live on Entailment.
     private double partitionExecutionTime;
 
     /**
@@ -27,8 +27,6 @@ public class RelevantEntailment extends Entailment {
     protected RelevantEntailment(RelevantEntailmentBuilder builder) {
         super(builder);
         this.weakJustification = builder.weakJustification;
-        this.closureExecutionTime = builder.closureExecutionTime;
-        this.baseRankExecutionTime = builder.baseRankExecutionTime;
         this.partitionExecutionTime = builder.partitionExecutionTime;
     }
 @JsonProperty("smallestWeakJustification")
@@ -36,14 +34,6 @@ public class RelevantEntailment extends Entailment {
         return weakJustification.toStringList();
     }
 
-    @JsonProperty("closureExecutionTime")
-    public double getClosureExecutionTime() {
-        return this.closureExecutionTime;
-    }
-    @JsonProperty("baseRankExecutionTime")
-    public double getBaseRankExecutionTime() {
-        return this.baseRankExecutionTime;
-    }
     @JsonProperty("partitionExecutionTime")
     public double getPartitionExecutionTime() {
         return this.partitionExecutionTime;
@@ -51,8 +41,6 @@ public class RelevantEntailment extends Entailment {
 
     // builder class for relevant entailment
     public static class RelevantEntailmentBuilder extends EntailmentBuilder<RelevantEntailmentBuilder> {
-        public double closureExecutionTime;
-        public double baseRankExecutionTime;
         public double partitionExecutionTime;
 
         private Ranking removedRanking;
@@ -60,16 +48,6 @@ public class RelevantEntailment extends Entailment {
 
         public RelevantEntailmentBuilder withWeakJustification(KnowledgeBase weakJustification) {
             this.weakJustification = weakJustification;
-            return self();
-        }
-
-        public RelevantEntailmentBuilder withClosureExecutionTime(double closureExecutionTime) {
-            this.closureExecutionTime = closureExecutionTime;
-            return self();
-        }
-
-        public RelevantEntailmentBuilder withBaseRankExecutionTime(double baseRankExecutionTime) {
-            this.baseRankExecutionTime = baseRankExecutionTime;
             return self();
         }
 

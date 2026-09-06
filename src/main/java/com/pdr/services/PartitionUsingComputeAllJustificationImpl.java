@@ -18,6 +18,8 @@ import java.util.List;
 
 public class PartitionUsingComputeAllJustificationImpl implements PartitionService {
 
+    private Partition partition;
+
     @Override
     public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query, boolean isMinimalRelevantClosure) {
         BaseRank baseRank = (new BaseRankServiceImp()).constructBaseRank(knowledgeBase);
@@ -110,12 +112,13 @@ public class PartitionUsingComputeAllJustificationImpl implements PartitionServi
         irrelevantString = irrelevantString.difference(relevantString);
         result.setIrrelevantPartition(irrelevantString);
         result.setKnowledgeBase(knowledgeBase);
+        this.partition = result;
         return result;
     }
 
     @Override
     public Partition getInstance() {
-        return null;
+        return partition;
     }
 
 

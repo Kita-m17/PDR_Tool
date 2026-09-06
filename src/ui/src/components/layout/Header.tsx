@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import {QuestionMarkCircledIcon} from "@radix-ui/react-icons";
 
@@ -23,9 +24,9 @@ const Header: React.FC = () => {
 
                 {/* Navigation Links */}
                 <nav className="flex items-center gap-8">
-                    <a href="/" className="text-white font-medium border-b-2 border-white pb-1">
+                    <Link to="/" className="text-white font-medium border-b-2 border-white pb-1">
                         Home
-                    </a>
+                    </Link>
 
                     <a href="/examples" className="text-blue-200 hover:text-white transition-colors">
                         Examples

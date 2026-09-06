@@ -122,6 +122,17 @@ public class KnowledgeBase extends PlBeliefSet {
         });
         return result;
     }
+    public KnowledgeBase materialisedKnowledgeBase() {
+        KnowledgeBase result = new KnowledgeBase();
+        this.forEach(formula -> {
+            if (formula instanceof DefeasibleImplication defeasibleImplication) {
+                result.add(new Implication(defeasibleImplication.getFormulas()));
+            } else {
+                result.add(formula);
+            }
+        });
+        return result;
+    }
 
     /** 
         * Convert classical implications (=>) to defeasible implications (~>)

@@ -10,6 +10,7 @@ import com.pdr.models.Entailment;
 import com.pdr.models.KnowledgeBase;
 import com.pdr.models.RelevantEntailment;
 import com.pdr.utils.DefeasibleParser;
+import org.tweetyproject.logics.pl.syntax.PlFormula;
 import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,10 +31,12 @@ class MinimalRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
+        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PlFormula query = parser.parseFormula("(kittens~|!wild)");
+        partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
 
-        Entailment result = reasoner.getEntailment(baseRank, parser.parseFormula("(kittens~|!wild)"));
+        Entailment result = reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isTrue();
     }
 
@@ -48,10 +51,12 @@ class MinimalRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
+        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PlFormula query = parser.parseFormula("(penguin~|!flies)");
+        partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
 
-        Entailment result = reasoner.getEntailment(baseRank, parser.parseFormula("(penguin~|!flies)"));
+        Entailment result = reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isTrue();
     }
     @Test
@@ -65,10 +70,12 @@ class MinimalRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
+        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PlFormula query = parser.parseFormula("(penguin~|flies)");
+        partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
 
-        Entailment result = reasoner.getEntailment(baseRank, parser.parseFormula("(penguin~|flies)"));
+        Entailment result = reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isFalse();
     }
     @Test
@@ -89,10 +96,12 @@ class MinimalRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
+        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PlFormula query = parser.parseFormula("(robins~|wings)");
+        partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
 
-        RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, parser.parseFormula("(robins~|wings)"));
+        RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isTrue();
         AssertionsForInterfaceTypes.assertThat(result.getWeakJustification()).containsExactly("(birds~|wings)","(robins=>birds)");
 
@@ -117,10 +126,12 @@ class MinimalRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
+        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PlFormula query = parser.parseFormula("(penguins~|wings)");
+        partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
 
-        RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, parser.parseFormula("(penguins~|wings)"));
+        RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, query);
 
         assertThat(result.getEntailed()).isTrue();
         AssertionsForInterfaceTypes.assertThat(result.getWeakJustification()).containsExactly("(penguins=>birds)","(birds~|wings)");
@@ -145,10 +156,12 @@ class MinimalRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
+        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PlFormula query = parser.parseFormula("(specialpenguins~>fly)");
+        partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
 
-        RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, parser.parseFormula("(specialpenguins~>fly)"));
+        RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isTrue();
         AssertionsForInterfaceTypes.assertThat(result.getWeakJustification()).containsExactly("(specialpenguins~|fly)");
     }
@@ -172,10 +185,12 @@ class MinimalRelevantReasonerImplTest {
             }
         };
 
-        PartitionService partitionService = new PartitionUsingComputeAllJustificationImpl();
+        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PlFormula query = parser.parseFormula("(kittens~|!wild)");
+        partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
 
-        RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, parser.parseFormula("(kittens~|!wild)"));
+        RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isTrue();
         AssertionsForInterfaceTypes.assertThat(result.getWeakJustification()).containsExactly("(cats~|!wild)","(kittens=>cats)");
     }

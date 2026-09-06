@@ -76,7 +76,11 @@ public class BasicRelevantReasonerImpl implements ReasonerService {
                 smallestJustificationSize = justification.size();
             }
         }
+
         boolean entailment = reasoner.query((relevantInf).union(relevantPrime).union(irrelevantPartition),queryFormula);
+        if(!entailment){
+            smallestJustification = new KnowledgeBase();
+        }
         long endTime = System.nanoTime();
         long durationNs = endTime - startTime;
 
