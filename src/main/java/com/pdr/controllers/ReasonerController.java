@@ -150,10 +150,7 @@ public class ReasonerController {
 
             PartitionDTO partitionDTO = null;
             if (algorithm.equals("basic relevant") || algorithm.equals("minimal relevant")) {
-                // Partition must be computed immediately before its matching
-                // entailment call - BasicRelevantReasonerImpl/MinimalRelevantReasonerImpl
-                // read it back via partitionService.getInstance(), which only
-                // holds the most recently computed partition.
+
                 boolean isMinimalRelevantClosure = algorithm.equals("minimal relevant");
                 Partition partition = partitionService.getPartition(knowledgeBase, formula, isMinimalRelevantClosure);
                 partitionDTO = partition.toDTO();
