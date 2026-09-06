@@ -22,7 +22,7 @@ import com.pdr.utils.Symbols;
 /**
     * Represents a defeasible implication in propositional logic.
     * 
-    * Example: a ~| b
+    * Example: a |~ b
     * 
     * Extends Tweety's {@link Implication} but overrides the string output
     * to display the custom defeasible implication symbol.
@@ -30,7 +30,7 @@ import com.pdr.utils.Symbols;
 public class DefeasibleImplication extends Implication {
 
     /**
-        * Create a new defeasible implication a ~| b with two given formulas.
+        * Create a new defeasible implication a |~ b with two given formulas.
         *
         * @param a left-hand formula
         * @param b right-hand formula
@@ -50,7 +50,7 @@ public class DefeasibleImplication extends Implication {
 
     /**
         * Convert this implication into a string,
-        * replacing the standard symbol with the custom defeasible one (~|).
+        * replacing the standard symbol with the custom defeasible one (|~).
     */
     @Override
     public String toString() {

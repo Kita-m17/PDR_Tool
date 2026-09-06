@@ -1,7 +1,7 @@
 package com.pdr.dtos;
 
 public class QueryRequest {
-    private String formula; //eg. "penguin ~| !flies"
+    private String formula; //eg. "penguin |~ !flies"
     private String algorithm; //eg. "rational"
 
     public QueryRequest(){}

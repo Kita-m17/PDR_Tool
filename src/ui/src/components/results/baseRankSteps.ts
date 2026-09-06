@@ -44,15 +44,15 @@ export function baseRankSteps(baseRank: BaseRankDTO): BaseRankDebuggerStep[]{
     const assignedSoFar = new Set<number>();
 
     //separate classical and defeasible from KB
-    const defeasible = knowledgeBase.filter(f => f.includes('~|'));
-    const classical = knowledgeBase.filter(f => !f.includes('~|'));
+    const defeasible = knowledgeBase.filter(f => f.includes('|~'));
+    const classical = knowledgeBase.filter(f => !f.includes('|~'));
 
     //step 1: show original KB
     steps.push({
         stepNumber: 1,
         totalSteps: 0,
         highlightedLines: [0],
-        explanation: `We start with the knowledge base K, which contains both defeasible and classical statements.\n\nDefeasible statements (α ~| β) express typical cases that can have exceptions.\nClassical statements (α => β) are strict rules that always hold. `,
+        explanation: `We start with the knowledge base K, which contains both defeasible and classical statements.\n\nDefeasible statements (α |~ β) express typical cases that can have exceptions.\nClassical statements (α => β) are strict rules that always hold. `,
         consideredFormulas: knowledgeBase,
         checks: [],
         assignedToRank: [],
@@ -65,12 +65,12 @@ export function baseRankSteps(baseRank: BaseRankDTO): BaseRankDebuggerStep[]{
     });
 
     //step 2: materialise the KB
-    const materialisedFormulas = knowledgeBase.map(f => f.replace('~|', '=>'));
+    const materialisedFormulas = knowledgeBase.map(f => f.replace('|~', '=>'));
     steps.push({
         stepNumber: 2,
         totalSteps: 0,
         highlightedLines: [2,3],
-        explanation: `We materialise the knowledge base by converting all defeasible statements α ~| β into classical implications α → β.\n\nThis gives us E₀: the starting point for the BaseRank algorithm.\n\nClassical entailment checking (via a SAT solver) can now be used to determine which statements are exceptional.`,
+        explanation: `We materialise the knowledge base by converting all defeasible statements α |~ β into classical implications α → β.\n\nThis gives us E₀: the starting point for the BaseRank algorithm.\n\nClassical entailment checking (via a SAT solver) can now be used to determine which statements are exceptional.`,
         consideredFormulas: validSteps[0]?.consideredFormulas || [],
         checks: [],
         assignedToRank: [],

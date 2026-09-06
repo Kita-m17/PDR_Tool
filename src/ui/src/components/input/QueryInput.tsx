@@ -11,9 +11,9 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue }) => {
     //parse defaultValue back into parts
     const parseDefault = (val?: string) => {
         if (!val) 
-            return { antecedent: 'penguin', relation: '~|', consequent: 'flies', negate: true };
+            return { antecedent: 'penguin', relation: '|~', consequent: 'flies', negate: true };
 
-        const relation = val.includes('~|') ? '~|' : '=>';
+        const relation = val.includes('|~') ? '|~' : '=>';
         const parts = val.split(relation);
 
         const antecedent = parts[0]?.trim() || 'penguin';
@@ -88,7 +88,7 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue }) => {
                         value={relation}
                         onChange={(e) => setRelation(e.target.value)}
                     >
-                        <option value="~|">~| (defeasible)</option>
+                        <option value="|~">|~ (defeasible)</option>
                         <option value="=>">=&gt; (classical)</option>
                     </select>
                 </div>

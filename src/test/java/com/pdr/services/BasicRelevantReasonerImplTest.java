@@ -22,7 +22,7 @@ class BasicRelevantReasonerImplTest {
 
     @Test
     void getEntailmentExample1() throws Exception {
-        KnowledgeBase kb = parser.parseFormulas("(pets=>animals),(kittens=>cats), (cats~|trainable), (kittens~|!trainable), (animals~|legs), (animals~|wild), (cats=>animals), (cats~|!wild)");
+        KnowledgeBase kb = parser.parseFormulas("(pets=>animals),(kittens=>cats), (cats|~trainable), (kittens|~!trainable), (animals|~legs), (animals|~wild), (cats=>animals), (cats|~!wild)");
         BaseRank baseRank = new BaseRankServiceImp().constructBaseRank(kb);
 
         KnowledgeBaseService fixedKbService = new KnowledgeBaseService() {
@@ -32,7 +32,7 @@ class BasicRelevantReasonerImplTest {
         };
 
         PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
-        PlFormula query = parser.parseFormula("(kittens~|!wild)");
+        PlFormula query = parser.parseFormula("(kittens|~!wild)");
         partitionService.getPartition(kb,query,false);
         ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
 
@@ -42,7 +42,7 @@ class BasicRelevantReasonerImplTest {
 
     @Test
     void getEntailmentExample2() throws Exception {
-        KnowledgeBase kb = parser.parseFormulas("(bird~|flies),(penguin=>bird),(penguin~|!flies),(bird~|wings)");
+        KnowledgeBase kb = parser.parseFormulas("(bird|~flies),(penguin=>bird),(penguin|~!flies),(bird|~wings)");
         BaseRank baseRank = new BaseRankServiceImp().constructBaseRank(kb);
 
         KnowledgeBaseService fixedKbService = new KnowledgeBaseService() {
@@ -52,7 +52,7 @@ class BasicRelevantReasonerImplTest {
         };
 
         PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
-        PlFormula query = parser.parseFormula("(penguin~|!flies)");
+        PlFormula query = parser.parseFormula("(penguin|~!flies)");
         partitionService.getPartition(kb, query, false);
         ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
 
@@ -61,7 +61,7 @@ class BasicRelevantReasonerImplTest {
     }
     @Test
     void getEntailmentExample3() throws Exception {
-        KnowledgeBase kb = parser.parseFormulas("(bird~|flies),(penguin=>bird),(penguin~|!flies),(bird~|wings)");
+        KnowledgeBase kb = parser.parseFormulas("(bird|~flies),(penguin=>bird),(penguin|~!flies),(bird|~wings)");
         BaseRank baseRank = new BaseRankServiceImp().constructBaseRank(kb);
 
         KnowledgeBaseService fixedKbService = new KnowledgeBaseService() {
@@ -71,7 +71,7 @@ class BasicRelevantReasonerImplTest {
         };
 
         PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
-        PlFormula query = parser.parseFormula("(penguin~|flies)");
+        PlFormula query = parser.parseFormula("(penguin|~flies)");
         partitionService.getPartition(kb, query, false);
         ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
 
@@ -98,13 +98,13 @@ class BasicRelevantReasonerImplTest {
         };
 
         PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
-        PlFormula query = parser.parseFormula("(robins~|wings)");
+        PlFormula query = parser.parseFormula("(robins|~wings)");
         partitionService.getPartition(kb, query, false);
         ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
 
         RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isTrue();
-        assertThat(result.getWeakJustification()).containsExactly("(birds~|wings)","(robins=>birds)");
+        assertThat(result.getWeakJustification()).containsExactly("(birds|~wings)","(robins=>birds)");
 
     }
 
@@ -128,14 +128,14 @@ class BasicRelevantReasonerImplTest {
         };
 
         PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
-        PlFormula query = parser.parseFormula("(penguins~|wings)");
+        PlFormula query = parser.parseFormula("(penguins|~wings)");
         partitionService.getPartition(kb, query, false);
         ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
 
         RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, query);
 
         assertThat(result.getEntailed()).isTrue();
-        assertThat(result.getWeakJustification()).containsExactly("(penguins=>birds)","(birds~|wings)");
+        assertThat(result.getWeakJustification()).containsExactly("(penguins=>birds)","(birds|~wings)");
 
     }
 
@@ -164,12 +164,12 @@ class BasicRelevantReasonerImplTest {
 
         RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isTrue();
-        assertThat(result.getWeakJustification()).containsExactly("(specialpenguins~|fly)");
+        assertThat(result.getWeakJustification()).containsExactly("(specialpenguins|~fly)");
     }
     @Test
-    @DisplayName("Chipo Hamayobe Example (kittens~|!wild)")
+    @DisplayName("Chipo Hamayobe Example (kittens|~!wild)")
     void TestWeakJustificationExample4() throws Exception {
-        KnowledgeBase kb = parser.parseFormulas("(pets=>animals),(kittens=>cats), (cats~|trainable), (kittens~|!trainable), (animals~|legs), (animals~|wild), (cats=>animals), (cats~|!wild)");
+        KnowledgeBase kb = parser.parseFormulas("(pets=>animals),(kittens=>cats), (cats|~trainable), (kittens|~!trainable), (animals|~legs), (animals|~wild), (cats=>animals), (cats|~!wild)");
         BaseRank baseRank = new BaseRankServiceImp().constructBaseRank(kb);
 
         KnowledgeBaseService fixedKbService = new KnowledgeBaseService() {
@@ -186,7 +186,7 @@ class BasicRelevantReasonerImplTest {
         };
 
         PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
-        PlFormula query = parser.parseFormula("(kittens~|!wild)");
+        PlFormula query = parser.parseFormula("(kittens|~!wild)");
         partitionService.getPartition(kb, query, false);
         ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
 

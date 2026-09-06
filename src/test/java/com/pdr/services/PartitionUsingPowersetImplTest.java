@@ -21,11 +21,11 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 class PartitionUsingPowersetImplTest {
     private final DefeasibleParser parser = new DefeasibleParser();
     @Test
-    @DisplayName("Relevant Partition for knowledge base {(bird~|flies),(bird~|wings),(penguin=>bird),(penguin~|!flies)} with query = {(penguin~|!flies)}")
+    @DisplayName("Relevant Partition for knowledge base {(bird|~flies),(bird|~wings),(penguin=>bird),(penguin|~!flies)} with query = {(penguin|~!flies)}")
     void getMinimalPartitionExample1() throws Exception {
 
-        KnowledgeBase knowledgeBase = parser.parseFormulas("(bird~|flies),(bird~|wings),(penguin=>bird),(penguin~|!flies)");
-        PlFormula query = parser.parseFormula("(penguin~|!flies)");
+        KnowledgeBase knowledgeBase = parser.parseFormulas("(bird|~flies),(bird|~wings),(penguin=>bird),(penguin|~!flies)");
+        PlFormula query = parser.parseFormula("(penguin|~!flies)");
         boolean isMinimalRelevantClosure = true;
         BaseRank __baseRankForPartitionService = new BaseRankServiceImp().constructBaseRank(knowledgeBase);
         KnowledgeBaseService __fixedKbService = new KnowledgeBaseService() {
@@ -38,11 +38,11 @@ class PartitionUsingPowersetImplTest {
 
         Partition partition = partitionService.getPartition(knowledgeBase,query,isMinimalRelevantClosure);
         assertThat(partition.getRelevantPartition()).containsExactlyInAnyOrder(
-                parser.parseFormula("(bird~|flies)")
+                parser.parseFormula("(bird|~flies)")
         );
         assertThat(partition.getIrrelevantPartition()).containsExactlyInAnyOrder(
-                parser.parseFormula("(penguin~|!flies)"),
-                parser.parseFormula("(bird~|wings)"),
+                parser.parseFormula("(penguin|~!flies)"),
+                parser.parseFormula("(bird|~wings)"),
                 parser.parseFormula("(penguin=>bird)")
         );
 
@@ -65,28 +65,28 @@ class PartitionUsingPowersetImplTest {
         assertThat(step1.getMinimalSet()).isEmpty();
         assertThat(step1.getJustificationsSoFar()).isEmpty();
 
-        // Step 6: {(bird~|flies),(penguin~|!flies)} plus the classical statement -
+        // Step 6: {(bird|~flies),(penguin|~!flies)} plus the classical statement -
         // the first combination that's both entailed and minimal. For minimal
-        // relevant closure, only its lowest-ranked statement, (bird~|flies)
-        // (rank 0, vs. (penguin~|!flies) at rank 1), is kept as the justification.
+        // relevant closure, only its lowest-ranked statement, (bird|~flies)
+        // (rank 0, vs. (penguin|~!flies) at rank 1), is kept as the justification.
         PartitionStep step6 = traceSteps.get(5);
         assertThat(step6.getSet()).containsExactlyInAnyOrder(
-                parser.parseFormula("(bird~|flies)"),
-                parser.parseFormula("(penguin~|!flies)"),
+                parser.parseFormula("(bird|~flies)"),
+                parser.parseFormula("(penguin|~!flies)"),
                 parser.parseFormula("(penguin=>bird)")
         );
         assertThat(step6.isEntailed()).isTrue();
         assertThat(step6.isMinimal()).isTrue();
         assertThat(step6.getMinimalSet()).containsExactlyInAnyOrder(
-                parser.parseFormula("(bird~|flies)")
+                parser.parseFormula("(bird|~flies)")
         );
         assertThat(step6.getJustificationsSoFar()).hasSize(1);
         assertThat(step6.getJustificationsSoFar().get(0)).containsExactlyInAnyOrder(
-                parser.parseFormula("(bird~|flies)")
+                parser.parseFormula("(bird|~flies)")
         );
 
         // Step 8: the full combination - entailed, but not minimal, since it's a
-        // superset of step 6's justification ((bird~|flies)) - so it contributes
+        // superset of step 6's justification ((bird|~flies)) - so it contributes
         // nothing new to the running justification list.
         PartitionStep step8 = traceSteps.get(7);
         assertThat(step8.getSet()).containsExactlyInAnyOrderElementsOf(knowledgeBase);
@@ -95,7 +95,7 @@ class PartitionUsingPowersetImplTest {
         assertThat(step8.getMinimalSet()).isEmpty();
         assertThat(step8.getJustificationsSoFar()).hasSize(1);
         assertThat(step8.getJustificationsSoFar().get(0)).containsExactlyInAnyOrder(
-                parser.parseFormula("(bird~|flies)")
+                parser.parseFormula("(bird|~flies)")
         );
 
         // Cross-check: the running justification list on the final step, unioned
@@ -111,8 +111,8 @@ class PartitionUsingPowersetImplTest {
     @Test
     void getBasicPartitionExample1() throws Exception {
 
-        KnowledgeBase knowledgeBase = parser.parseFormulas("(bird~|flies),(bird~|wings),(penguin=>bird),(penguin~|!flies)");
-        PlFormula query = parser.parseFormula("(penguin~|!flies)");
+        KnowledgeBase knowledgeBase = parser.parseFormulas("(bird|~flies),(bird|~wings),(penguin=>bird),(penguin|~!flies)");
+        PlFormula query = parser.parseFormula("(penguin|~!flies)");
         boolean isMinimalRelevantClosure = false;
         BaseRank __baseRankForPartitionService = new BaseRankServiceImp().constructBaseRank(knowledgeBase);
         KnowledgeBaseService __fixedKbService = new KnowledgeBaseService() {
@@ -123,11 +123,11 @@ class PartitionUsingPowersetImplTest {
         PartitionService partitionService = new PartitionUsingPowersetImpl(__fixedKbService);
         Partition partition = partitionService.getPartition(knowledgeBase,query,isMinimalRelevantClosure);
         assertThat(partition.getRelevantPartition()).containsExactlyInAnyOrder(
-                parser.parseFormula("(penguin~|!flies)"),
-                parser.parseFormula("(bird~|flies)")
+                parser.parseFormula("(penguin|~!flies)"),
+                parser.parseFormula("(bird|~flies)")
         );
         assertThat(partition.getIrrelevantPartition()).containsExactlyInAnyOrder(
-                parser.parseFormula("(bird~|wings)"),
+                parser.parseFormula("(bird|~wings)"),
                 parser.parseFormula("(penguin=>bird)")
         );
 
@@ -152,22 +152,22 @@ class PartitionUsingPowersetImplTest {
         assertThat(step1.isMinimal()).isFalse();
         assertThat(step1.getJustificationsSoFar()).isEmpty();
 
-        // Step 6: {(bird~|flies),(penguin~|!flies)} plus the classical statement -
+        // Step 6: {(bird|~flies),(penguin|~!flies)} plus the classical statement -
         // the first combination that's both entailed and minimal. Unlike minimal
         // relevant closure, basic relevant closure keeps the WHOLE combination
         // (including the classical statement) as the justification.
         PartitionStep step6 = traceSteps.get(5);
         assertThat(step6.getSet()).containsExactlyInAnyOrder(
-                parser.parseFormula("(bird~|flies)"),
-                parser.parseFormula("(penguin~|!flies)"),
+                parser.parseFormula("(bird|~flies)"),
+                parser.parseFormula("(penguin|~!flies)"),
                 parser.parseFormula("(penguin=>bird)")
         );
         assertThat(step6.isEntailed()).isTrue();
         assertThat(step6.isMinimal()).isTrue();
         assertThat(step6.getJustificationsSoFar()).hasSize(1);
         assertThat(step6.getJustificationsSoFar().get(0)).containsExactlyInAnyOrder(
-                parser.parseFormula("(bird~|flies)"),
-                parser.parseFormula("(penguin~|!flies)"),
+                parser.parseFormula("(bird|~flies)"),
+                parser.parseFormula("(penguin|~!flies)"),
                 parser.parseFormula("(penguin=>bird)")
         );
 
@@ -179,8 +179,8 @@ class PartitionUsingPowersetImplTest {
         assertThat(step8.isMinimal()).isFalse();
         assertThat(step8.getJustificationsSoFar()).hasSize(1);
         assertThat(step8.getJustificationsSoFar().get(0)).containsExactlyInAnyOrder(
-                parser.parseFormula("(bird~|flies)"),
-                parser.parseFormula("(penguin~|!flies)"),
+                parser.parseFormula("(bird|~flies)"),
+                parser.parseFormula("(penguin|~!flies)"),
                 parser.parseFormula("(penguin=>bird)")
         );
 
@@ -198,8 +198,8 @@ class PartitionUsingPowersetImplTest {
     @Test
     void getMinimalPartitionExample2() throws Exception {
 
-        KnowledgeBase knowledgeBase = parser.parseFormulas("(pets=>animals),(kittens=>cats), (cats~|trainable), (kittens~|!trainable), (animals~|legs), (animals~|wild), (cats=>animals), (cats~|!wild)");
-        PlFormula query = parser.parseFormula("(kittens~|!wild)");
+        KnowledgeBase knowledgeBase = parser.parseFormulas("(pets=>animals),(kittens=>cats), (cats|~trainable), (kittens|~!trainable), (animals|~legs), (animals|~wild), (cats=>animals), (cats|~!wild)");
+        PlFormula query = parser.parseFormula("(kittens|~!wild)");
         boolean isMinimalRelevantClosure = true;
         BaseRank __baseRankForPartitionService = new BaseRankServiceImp().constructBaseRank(knowledgeBase);
         KnowledgeBaseService __fixedKbService = new KnowledgeBaseService() {
@@ -210,16 +210,16 @@ class PartitionUsingPowersetImplTest {
         PartitionService partitionService = new PartitionUsingPowersetImpl(__fixedKbService);
         Partition partition = partitionService.getPartition(knowledgeBase,query,isMinimalRelevantClosure);
         assertThat(partition.getRelevantPartition()).containsExactlyInAnyOrder(
-                parser.parseFormula("(animals~|wild)"),
-                parser.parseFormula("(cats~|trainable)")
+                parser.parseFormula("(animals|~wild)"),
+                parser.parseFormula("(cats|~trainable)")
         );
         assertThat(partition.getIrrelevantPartition()).containsExactlyInAnyOrder(
                 parser.parseFormula("(pets=>animals)"),
                 parser.parseFormula("(kittens=>cats)"),
-                parser.parseFormula("(kittens~|!trainable)"),
+                parser.parseFormula("(kittens|~!trainable)"),
                 parser.parseFormula("(cats=>animals)"),
-                parser.parseFormula("(animals~|legs)"),
-                parser.parseFormula("(cats~|!wild)")
+                parser.parseFormula("(animals|~legs)"),
+                parser.parseFormula("(cats|~!wild)")
 
         );
 
@@ -261,8 +261,8 @@ class PartitionUsingPowersetImplTest {
     @Test
     void getBasicPartitionExample2() throws Exception {
 
-        KnowledgeBase knowledgeBase = parser.parseFormulas("(pets=>animals),(kittens=>cats), (cats~|trainable), (kittens~|!trainable), (animals~|legs), (animals~|wild), (cats=>animals), (cats~|!wild)");
-        PlFormula query = parser.parseFormula("(kittens~|!wild)");
+        KnowledgeBase knowledgeBase = parser.parseFormulas("(pets=>animals),(kittens=>cats), (cats|~trainable), (kittens|~!trainable), (animals|~legs), (animals|~wild), (cats=>animals), (cats|~!wild)");
+        PlFormula query = parser.parseFormula("(kittens|~!wild)");
         boolean isMinimalRelevantClosure = false;
         BaseRank __baseRankForPartitionService = new BaseRankServiceImp().constructBaseRank(knowledgeBase);
         KnowledgeBaseService __fixedKbService = new KnowledgeBaseService() {
@@ -273,16 +273,16 @@ class PartitionUsingPowersetImplTest {
         PartitionService partitionService = new PartitionUsingPowersetImpl(__fixedKbService);
         Partition partition = partitionService.getPartition(knowledgeBase,query,isMinimalRelevantClosure);
         assertThat(partition.getRelevantPartition()).containsExactlyInAnyOrder(
-                parser.parseFormula("(animals~|wild)"),
-                parser.parseFormula("(cats~|trainable)"),
-                parser.parseFormula("(kittens~|!trainable)"),
-                parser.parseFormula("(cats~|!wild)")
+                parser.parseFormula("(animals|~wild)"),
+                parser.parseFormula("(cats|~trainable)"),
+                parser.parseFormula("(kittens|~!trainable)"),
+                parser.parseFormula("(cats|~!wild)")
         );
         assertThat(partition.getIrrelevantPartition()).containsExactlyInAnyOrder(
                 parser.parseFormula("(pets=>animals)"),
                 parser.parseFormula("(kittens=>cats)"),
                 parser.parseFormula("(cats=>animals)"),
-                parser.parseFormula("(animals~|legs)")
+                parser.parseFormula("(animals|~legs)")
 
         );
 

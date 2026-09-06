@@ -50,10 +50,10 @@ export function buildLexicographicSteps(entailment: LexicographicEntailmentDTO):
     const weakenedSoFar = new Map<number, string>();
 
     // Same query parsing as rcSteps, so the two views read identically.
-    const queryAntecedent = queryFormula?.replace(/[()]/g, '')?.split('~|')[0]?.split('=>')[0]?.trim() || '';
+    const queryAntecedent = queryFormula?.replace(/[()]/g, '')?.split('|~')[0]?.split('=>')[0]?.trim() || '';
 
-    const rawConsequent = queryFormula?.replace(/[()]/g, '').includes('~|')
-        ? queryFormula?.replace(/[()]/g, '')?.split('~|')[1]
+    const rawConsequent = queryFormula?.replace(/[()]/g, '').includes('|~')
+        ? queryFormula?.replace(/[()]/g, '')?.split('|~')[1]
         : queryFormula?.replace(/[()]/g, '')?.split('=>')[1];
 
     const queryConsequent = rawConsequent?.replace('!', '').trim() || '';
@@ -66,8 +66,8 @@ export function buildLexicographicSteps(entailment: LexicographicEntailmentDTO):
         stepNumber: 1,
         totalSteps: 0,
         highlightedLines: [1, 2],
-        explanation: `Before beginning the entailment check, we materialise the ranked knowledge base.\n\nEach defeasible statement α ~| β is converted to a classical implication α → β, so classical entailment checking can be used throughout.\n\nThe finite ranks form the working set R, while R∞ contains the classical statements that always remain.`,
-        workingSet: finiteRanks.flatMap(r => r.knowledgeBase).map(f => f.replace('~|', '=>')),
+        explanation: `Before beginning the entailment check, we materialise the ranked knowledge base.\n\nEach defeasible statement α |~ β is converted to a classical implication α → β, so classical entailment checking can be used throughout.\n\nThe finite ranks form the working set R, while R∞ contains the classical statements that always remain.`,
+        workingSet: finiteRanks.flatMap(r => r.knowledgeBase).map(f => f.replace('|~', '=>')),
         rankingState: buildRankingState(baseRanking, removedSoFar, weakenedSoFar, -1),
         isFinalStep: false,
         isInitialStep: true,
@@ -149,7 +149,7 @@ export function buildLexicographicSteps(entailment: LexicographicEntailmentDTO):
     // Line 12 - the loop has stopped, ask the query.
     const finalWorkingSet = lexicographicSteps.length > 0
         ? lexicographicSteps[lexicographicSteps.length - 1].remainingAfter
-        : [...rInfinity, ...finiteRanks.flatMap(r => r.knowledgeBase)].map(f => f.replace('~|', '=>'));
+        : [...rInfinity, ...finiteRanks.flatMap(r => r.knowledgeBase)].map(f => f.replace('|~', '=>'));
 
     steps.push({
         ...base,

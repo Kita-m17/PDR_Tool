@@ -8,8 +8,8 @@ import { EXAMPLES } from '../../api/examples';
 
 const kbSchema = z.object({
     input: z.string().min(1, "Knowledge base cannot be empty").refine(
-        (val) => val.includes("~|") || val.includes("=>"),
-        "Must contain at least one defeasible (~|) or classical (=>) statement"
+        (val) => val.includes("|~") || val.includes("=>"),
+        "Must contain at least one defeasible (|~) or classical (=>) statement"
     ),
 });
 
@@ -25,7 +25,7 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<KBFormValues>({
         resolver: zodResolver(kbSchema),
         defaultValues: {
-            input: defaultValue || '(bird~|flies),(penguin=>bird),(penguin~|!flies)'
+            input: defaultValue || '(bird|~flies),(penguin=>bird),(penguin|~!flies)'
         }
     });
 
@@ -41,7 +41,7 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
     }, [inputValue, onSubmit]);
 
     React.useEffect(() => {
-        reset({ input: defaultValue || '(bird~|flies),(penguin=>bird),(penguin~|!flies)' });
+        reset({ input: defaultValue || '(bird|~flies),(penguin=>bird),(penguin|~!flies)' });
     }, [defaultValue, reset]);
 
     {/* Ensure user inputs a valid KB */}
@@ -96,7 +96,7 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
                 <textarea 
                     {...register("input")}
                     className="mt-4 w-full border border-border rounded-lg p-4 font-mono text-sm h-40 resize-y focus:outline-none focus:border-primary"
-                    placeholder="e.g. (bird~|flies),(penguin=>bird),(penguin~|!flies)"
+                    placeholder="e.g. (bird|~flies),(penguin=>bird),(penguin|~!flies)"
                 />  
 
                 {errors.input && (
@@ -105,7 +105,7 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
 
                 {/* Helper text */}
                 <p className = "text-sm text-muted-foreground mt-2">
-                    Use ~| for defeasible, =&gt; for classical. and ! for negation.
+                    Use |~ for defeasible, =&gt; for classical. and ! for negation.
                 </p>
 
                 {/* Buttons */}

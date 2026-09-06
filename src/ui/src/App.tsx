@@ -35,8 +35,8 @@ interface InputPageProps {
 
 function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, setSelectedAlgorithms, evaluation, setEvaluation }: InputPageProps) {
   const navigate = useNavigate();
-  const DEFAULT_FORMULAS = ['(bird~|flies)', '(penguin=>bird)', '(penguin~|!flies)'];
-  const DEFAULT_QUERY = 'penguin~|!flies';
+  const DEFAULT_FORMULAS = ['(bird|~flies)', '(penguin=>bird)', '(penguin|~!flies)'];
+  const DEFAULT_QUERY = 'penguin|~!flies';
   const DEFAULT_ALGORITHMS = ['rational'];
 
   const [loading, setLoading] = useState(false);
@@ -149,14 +149,27 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
                 const hasPartition = result.partition !== null && result.partition !== undefined
                   && result.entailment.partitionExecutionTime !== undefined;
 
+                const entailed = result.entailment.entailed;
+
                 return (
                   <button
                     key={result.algorithm}
                     onClick={() => goToAlgorithm(result.algorithm)}
-                    className="flex flex-col items-start text-left bg-secondary/20 hover:bg-secondary/40 border border-border rounded-lg px-4 py-3 transition-colors"
+                    className={`flex flex-col items-start text-left border rounded-lg px-4 py-3 transition-colors ${
+                      entailed
+                        ? 'bg-green-50 hover:bg-green-100 border-green-300'
+                        : 'bg-red-50 hover:bg-red-100 border-red-300'
+                    }`}
                   >
-                    <span className="font-semibold text-sm text-foreground mb-2">
-                      {ALGORITHM_LABELS[result.algorithm] ?? result.algorithm}
+                    <span className="flex items-center justify-between w-full mb-2 gap-2">
+                      <span className="font-semibold text-sm text-foreground">
+                        {ALGORITHM_LABELS[result.algorithm] ?? result.algorithm}
+                      </span>
+                      <span className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full whitespace-nowrap ${
+                        entailed ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'
+                      }`}>
+                        {entailed ? 'Entails' : 'Does not entail'}
+                      </span>
                     </span>
 
                     <span className="flex flex-col gap-1 text-xs text-muted-foreground w-full">
@@ -202,8 +215,8 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
 }
 
 function App(){
-  const [formulas, setFormulas] = useState<string[]>(['(bird~|flies)', '(penguin=>bird)', '(penguin~|!flies)']);
-  const [query, setQuery] = useState('penguin~|!flies');
+  const [formulas, setFormulas] = useState<string[]>(['(bird|~flies)', '(penguin=>bird)', '(penguin|~!flies)']);
+  const [query, setQuery] = useState('penguin|~!flies');
   const [selectedAlgorithms, setSelectedAlgorithms] = useState<string[]>(['rational']);
   const [evaluation, setEvaluation] = useState<EvaluateAllResponseDTO | null>(null);
 

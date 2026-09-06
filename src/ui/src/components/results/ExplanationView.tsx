@@ -81,7 +81,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
                     </div>
                     
                     <p className="text-xs text-muted-foreground mt-2">
-                        Note: ~| (defeasible) becomes =&gt; (classical) for SAT checking
+                        Note: |~ (defeasible) becomes =&gt; (classical) for SAT checking
                     </p>
                 </div>
             )}

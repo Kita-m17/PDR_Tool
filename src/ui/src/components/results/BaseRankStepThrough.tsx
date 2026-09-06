@@ -206,14 +206,14 @@ const BaseRankStepThrough: React.FC = () => {
                                                     Defeasible:
                                                     </p>
                                                 <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                                    { step.consideredFormulas.filter(f => f.includes('~|')).join(", ") }
+                                                    { step.consideredFormulas.filter(f => f.includes('|~')).join(", ") }
                                                 </div>
 
                                                    <p className="text-sm font-medium text-foreground m-4">
                                                     Classical:
                                                     </p>
                                                 <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                                    {step.consideredFormulas.filter(f => !f.includes('~|')).join(", ") }
+                                                    {step.consideredFormulas.filter(f => !f.includes('|~')).join(", ") }
                                                 </div>
 
                                             </div>
@@ -245,7 +245,7 @@ const BaseRankStepThrough: React.FC = () => {
                                             <span className="text-primary">
                                                 {step.materialisedFormulas![i]}
                                             </span>
-                                            {!original.includes('~|') && (
+                                            {!original.includes('|~') && (
                                                 <span className="text-xs text-muted-foreground">
                                                     (unchanged)
                                                 </span>
