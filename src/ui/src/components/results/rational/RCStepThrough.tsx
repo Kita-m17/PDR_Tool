@@ -17,13 +17,14 @@ interface ResultsState {
     entailment: EntailmentDTO;
     query: string;
     algorithm: string;
+    fromComparison?: boolean;
 }
 
 const RCStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     // const { entailment, query } = location.state as ResultsState;
-    const { baseRank, entailment, query, algorithm } = location.state as ResultsState;
+    const { baseRank, entailment, query, algorithm, fromComparison } = location.state as ResultsState;
 
     const steps = buildDebuggerSteps(entailment);
     const [currentStep, setCurrentStep] = useState(0);
@@ -76,7 +77,7 @@ const RCStepThrough: React.FC = () => {
                 </div>
 
                 {/* Ranking visualiser, full width */}
-                <div className="bg-white border border-border rounded-xl p-6 mb-4 max-h-52 overflow-y-auto">
+                <div className="bg-white border border-border rounded-xl p-6 mb-4">
                     <RankingVisualiser rankingState={step.rankingState} />
                 </div>
 
@@ -106,8 +107,18 @@ const RCStepThrough: React.FC = () => {
                 {/* Done button, only on final step */}
                 {step.isFinalStep && (
                     <div className="flex justify-end mt-4">
-                        <Button variant="primary" size="lg" onClick={() => navigate('/')}>
-                            Done
+                        <Button variant="primary" size="lg" 
+                            onClick={() => {
+                                if (fromComparison) {
+                                    navigate('/results/comparison', {
+                                        state: { baseRank, query, algorithm }
+                                    });
+                                    return;
+                                }
+                                
+                                navigate('/')}
+                            }>
+                            {fromComparison ? 'Back to Comparison' : 'Done'}
                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                         </Button>
                     </div>

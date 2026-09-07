@@ -23,45 +23,27 @@ const Step1_CommonBaseRank: React.FC<Step1Props> = ({ baseRanking, query, onInsp
 
     return (
         <div>
-
-            {/* Query display */}
-            <div className="flex mb-6">
-                <div className=" rounded-xl ">
-                    <span className="text-lg text-muted-foreground uppercase tracking-wide mr-3">Query</span>
-                    <span className="font-mono text-lg text-primary">{query}</span>
-                </div>
-            </div>
-
-            <h1 className="text-2xl font-bold mb">
-                Common Base Rank
+        
+            <h1 className="text-2xl font-bold mb mt-6">
+                Common Starting Point - Base Rank
             </h1>
 
             {/* Explanation box */}
             <div className="rounded-xl mb-6">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-md text-muted-foreground">
                     Before the algorithms begin to differ, they all start with the same ranked knowledge base.
                 </p>
             </div>
 
             {/* Ranking - full width, with heading + inspect button */}
             <div className="bg-white border border-border rounded-xl p-6 mb-8">
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-primary">
-                        Base Rank
-                    </h2>
-                    <Button onClick={onInspect}>
-                        Inspect BaseRank Step-Through
-                        <ArrowRightIcon className="ml-2 h-4 w-4" />
-                    </Button>
-                </div>
-
                 <RankingVisualiser rankingState={rankingState} />
             </div>
 
             {/* Branching diagram to the three methods */}
             <div className="flex flex-col items-center mb-8">
-                <span className="text-sm font-medium text-muted-foreground mb-2">
-                    Same starting point
+                <span className="text-sm font-medium text-primary mb-2">
+                    Base Rank
                 </span>
 
                 <div className="w-px h-6 bg-border" />
@@ -83,7 +65,9 @@ const Step1_CommonBaseRank: React.FC<Step1Props> = ({ baseRanking, query, onInsp
             {/* Insight box */}
             <div className="border-l-4 border-blue-400 bg-white pl-4 py-4 mb-6">
                 <p className="text-md text-foreground">
-                    <strong className="text-blue-700">Key idea:</strong> All three methods begin with the same Base Rank. The difference comes from how each method processes the ranks when answering the query.
+                    <strong className="text-blue-700">
+                        Key idea:
+                    </strong> All three methods begin with the same Base Rank. They differ in how they process the ranks when answering the query.
                 </p>
             </div>
 

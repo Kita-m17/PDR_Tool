@@ -368,7 +368,7 @@ const BaseRankStepThrough: React.FC = () => {
 
                             }}
                         >
-                            {fromComparison ? 'Back to Comparison' : algorithm === 'basic relevant' ? 'Continue to Relevant Partition' : algorithm === 'minimal relevant' ? 'Continue to Relevant Partition' : algorithm === 'lexicographic' ? 'Continue to Lexicographical Closure' : algorithm === 'rational' ? 'Continue to Rational Closure' : 'Continue to Rational Closure'}
+                            {fromComparison ? 'Continue to Comparison' : algorithm === 'basic relevant' ? 'Continue to Relevant Partition' : algorithm === 'minimal relevant' ? 'Continue to Relevant Partition' : algorithm === 'lexicographic' ? 'Continue to Lexicographical Closure' : algorithm === 'rational' ? 'Continue to Rational Closure' : 'Continue to Rational Closure'}
 
                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                         </Button>

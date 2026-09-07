@@ -14,6 +14,7 @@ import BasicRelevantPartitionStepThrough from './components/results/basic releva
 import MinimalRelevantPartitionStepThrough from './components/results/minimal relevant/MinimalRelevantPartitionStepThrough';
 import BaseRankStepThrough from './components/results/BaseRankStepThrough';
 import LexicographicStepThrough from './components/results/lexicographic/LexicographicStepTrough';
+import ComparisonPage from './components/results/comparison/ComparisonPage';
 
 interface InputPageProps {
   formulas: string[];
@@ -51,6 +52,20 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
 
     try {
       const baseRank = await submitKnowledgeBase(formulas);
+      if (algorithm === 'comparison') {
+        navigate('/baserank', {
+          state:{
+            baseRank,
+            entailment: null,
+            partition: null,
+            query,
+            algorithm: 'comparison',
+            fromComparison: true
+          }
+        });
+        return;
+      }
+
       const entailment = await submitQuery(algorithm, query);
       const partition = algorithm === 'minimal relevant'
         ? await submitMinimalPartitionQuery(query)
@@ -64,6 +79,7 @@ function InputPage({formulas, setFormulas, query, setQuery, algorithm, setAlgori
     } finally {
       setLoading(false);
     }
+    
   };
 
   const handleReset = () => {
@@ -152,7 +168,7 @@ function App(){
       <Route path="/results/lexicographic" element={<LexicographicStepThrough/>}/>
       <Route path="/results/relevant/basic/partition" element = {<BasicRelevantPartitionStepThrough/>}/>
       <Route path="/results/relevant/minimal/partition" element = {<MinimalRelevantPartitionStepThrough/>}/>
-      <Route path="/results/comparison" element />
+      <Route path="/results/comparison" element = {<ComparisonPage/>} />
     </Routes>
   )
 }

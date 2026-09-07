@@ -17,7 +17,7 @@ const RankingVisualiser: React.FC<RankingVisualiserProps> = ({ rankingState }) =
                 Ranks are ordered from least to most exceptional.
             </p>
 
-            <div className="max-h-48 overflow-y-auto">
+            <div className="max-h-32 overflow-y-auto">
                 <table className="w-full border-collapse">
                     <tbody>
                         {rankingState.map((rank) => (

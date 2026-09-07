@@ -5,10 +5,10 @@ import Header from '../../layout/Header';
 import Footer from '../../layout/Footer';
 import StepControls from '../StepControls';
 import Step1_CommonBaseRank from './steps/Step1_CommonBaseRank';
-// import Step2_WhereMethodsDiffer from './steps/Step2_WhereMethodsDiffer';
-// import Step3_InspectAlgorithms from './steps/Step3_InspectAlgorithms';
-// import Step4_FinalKB from './steps/Step4_FinalKB';
-// import Step5_FinalResults from './steps/Step5_FinalResults';
+import Step2_WhereMethodsDiffer from './steps/Step2_WhereMethodsDiffer';
+import Step3_InspectAlgos from './steps/Step3_InspectAlgos';
+import Step4_FinalKB from './steps/Step4_FinalKB';
+import Step5_FinalResults from './steps/Step5_FinalResults';
 // import { Button } from '../../ui/Buttons';
 
 interface ComparisonState {
@@ -26,13 +26,14 @@ const ComparisonPage: React.FC = () => {
     const {baseRank, query} = location.state as ComparisonState;
 
     const [currentStep, setCurrentStep] = useState(0);
-    const [rcEntailment, setRcEntailment] = useState<EntailmentDTO | null>(null);
-    const [lcEntailment, setLcEntailment] = useState<EntailmentDTO | null>(null);
-    const [relcEntailment, setRelcEntailment] = useState<EntailmentDTO | null>(null);
+    const [rcResult, setRcResult] = useState<EntailmentDTO | null>(null);
+    const [lcResult, setLcResult] = useState<EntailmentDTO | null>(null);
+    const [relcResult, setRelcResult] = useState<EntailmentDTO | null>(null);
+    const [partition, setPartition] = useState<RankDTO | null>(null);
 
     const [loading, setLoading] = useState(true);
 
-    const totalSteps = 5;
+
 
     useEffect(() => {
         const fetchResults = async () => {
@@ -42,22 +43,22 @@ const ComparisonPage: React.FC = () => {
                 //rc
                 const rcResults = await fetch('http://localhost:8080/api/entailment/rational', {
                     method: 'POST',
-                    headers: {'Content-Type': 'test/plain'},
+                    headers: {'Content-Type': 'text/plain'},
                     body: query,
                 });
 
                 const rc = await rcResults.json();
-                setRcEntailment(rc);
+                setRcResult(rc);
 
                 //lc
                 const lcResults = await fetch('http://localhost:8080/api/entailment/lexicographic', {
                     method: 'POST',
-                    headers: {'Content-Type': 'test/plain'},
+                    headers: {'Content-Type': 'text/plain'},
                     body: query,
                 });
 
                 const lc = await lcResults.json();
-                setLcEntailment(lc);
+                setLcResult(lc);
 
                 //Minimal RelC - partition first, then entailment
                 const partitionRes = await fetch('http://localhost:8080/api/partition/relevant/create/minimal', {
@@ -66,14 +67,15 @@ const ComparisonPage: React.FC = () => {
                     body: query,
                 });
                 const partitionData = await partitionRes.json();
+                setPartition(partitionData); 
 
                 const relcResults = await fetch('http://localhost:8080/api/entailment/minimal relevant', {
                     method: 'POST',
-                    headers: {'Content-Type': 'test/plain'},
+                    headers: {'Content-Type': 'text/plain'},
                     body: query,
                 });
                 const relc = await relcResults.json();
-                setRelcEntailment(relc);
+                setRelcResult(relc);
 
             } catch (error) {
                 console.error('Error fetching entailment results:', error);
@@ -89,10 +91,39 @@ const ComparisonPage: React.FC = () => {
         <Step1_CommonBaseRank 
             baseRanking={baseRank.ranking} 
             query={query}
-            onInspect = { () => navigate('/baseRank', { state: {baseRank, query, algorithm: 'rational', fromComparison: true } }) }
+            onInspect = { () => navigate('/baserank', { state: {baseRank, query, algorithm: 'rational', fromComparison: true } }) }
         
         />,
+        <Step2_WhereMethodsDiffer />,
+        <Step3_InspectAlgos
+            baseRank={baseRank}
+            query={query}
+            rcResult={rcResult}
+            lcResult={lcResult}
+            relcResult={relcResult}
+            // partition={partition}
+            onInspectRC={() => navigate('/results/rational', { state: { baseRank, entailment: rcResult, partition, query, algorithm: 'rational', fromComparison: true } })}
+            onInspectLC={() => navigate('/results/lexicographic', { state: { baseRank, entailment: lcResult, partition, query, algorithm: 'lexicographic', fromComparison: true } })}
+            onInspectRelC={() => navigate('/results/relevant/minimal/partition', { state: { baseRank, entailment: relcResult, partition, query, algorithm: 'minimal relevant', fromComparison: true } })}
+        />,
+
+        <Step4_FinalKB
+            baseRanking={baseRank.ranking}
+            rcResult={rcResult}
+            lcResult={lcResult}
+            relcResult={relcResult}
+        />,
+        
+        
+        <Step5_FinalResults
+            query={query}
+            rcResult={rcResult}
+            lcResult={lcResult}
+            relcResult={relcResult}
+        />,
     ];
+
+    const totalSteps = steps.length;
 
     if(loading){
         return (
@@ -115,10 +146,11 @@ const ComparisonPage: React.FC = () => {
             <main className = "flex-1 px-8 py-6">
 
                 {/* Page header */}
-                <div className="text-center mb-6">
+                <div>
                     <h1 className="text-2xl font-bold text-foreground">
                         Comparison of Entailment Algorithms
                     </h1>
+
 
                     <p className="text-muted-foreground">
                         Same knowledge base. Same query. Different approaches.

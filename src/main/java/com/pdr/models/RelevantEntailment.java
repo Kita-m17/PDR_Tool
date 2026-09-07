@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 public class RelevantEntailment extends Entailment {
     @JsonIgnore
     private final KnowledgeBase weakJustification;
+    @JsonIgnore
+    private final Ranking removedRanking;
 
     /**
      * Constructor using the builder pattern
@@ -24,10 +26,26 @@ public class RelevantEntailment extends Entailment {
     protected RelevantEntailment(RelevantEntailmentBuilder builder) {
         super(builder);
         this.weakJustification = builder.weakJustification;
+        this.removedRanking = builder.removedRanking;
     }
 @JsonProperty("smallestWeakJustification")
     public List<String> getWeakJustification() {
         return weakJustification.toStringList();
+    }
+
+    /**
+     * @return Ranking the formulas excluded from the relevant partition
+     *         because they were still exceptional (per rank).
+     */
+    public Ranking getRemovedRanking() {
+        return removedRanking;
+    }
+
+    @JsonProperty("removedRanking")
+    public List<RankDTO> getRemovedRankingDTO() {
+        return removedRanking != null
+                ? removedRanking.stream().map(Rank::toDTO).collect(Collectors.toList())
+                : List.of();
     }
 
     // builder class for relevant entailment
@@ -37,6 +55,11 @@ public class RelevantEntailment extends Entailment {
 
         public RelevantEntailmentBuilder withWeakJustification(KnowledgeBase weakJustification) {
             this.weakJustification = weakJustification;
+            return self();
+        }
+
+        public RelevantEntailmentBuilder withRemovedRanking(Ranking removedRanking) {
+            this.removedRanking = removedRanking;
             return self();
         }
 
