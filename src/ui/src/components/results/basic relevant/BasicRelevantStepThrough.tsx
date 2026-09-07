@@ -18,13 +18,14 @@ interface ResultsState {
     partition: PartitionDTO;
     query: string;
     algorithm: string;
+    fromComparison?: boolean;
 }
 
 const RCStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     // const { entailment, query } = location.state as ResultsState;
-    const { baseRank, entailment, partition, query, algorithm } = location.state as ResultsState;
+    const { baseRank, entailment, partition, query, algorithm, fromComparison } = location.state as ResultsState;
 
     const steps = buildDebuggerSteps(entailment);
     const [currentStep, setCurrentStep] = useState(0);
@@ -63,7 +64,7 @@ const RCStepThrough: React.FC = () => {
                     <Button className="text-sm text-muted-foreground border border-border rounded-lg px-4 py-2 hover:bg-white transition"
                         onClick={() => navigate(
                             algorithm === 'basic relevant' ? '/results/relevant/basic/partition' : '/results/relevant/minimal/partition',
-                            { state: { baseRank, entailment, partition, query, algorithm } }
+                            { state: { baseRank, entailment, partition, query, algorithm, fromComparison } }
                         )}
                     >
                         <span className="flex items-center gap-1">
@@ -120,8 +121,19 @@ const RCStepThrough: React.FC = () => {
                 {/* Done button, only on final step */}
                 {step.isFinalStep && (
                     <div className="flex justify-end mt-4">
-                        <Button variant="primary" size="lg" onClick={() => navigate('/')}>
-                            Done
+                        <Button variant="primary" size="lg" onClick={() => {
+
+                            if (fromComparison) {
+                                navigate('/results/comparison', {
+                                    state: { baseRank, query, algorithm }
+                                });
+                                return;
+                            }
+                            
+                            navigate('/');
+                        }}
+                        >
+                            {fromComparison ? 'Back to Comparison' : 'Done'}
                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                         </Button>
                     </div>

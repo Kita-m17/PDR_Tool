@@ -18,6 +18,8 @@ public class RelevantEntailment extends Entailment {
     // The one timing specific to relevant closure - baseRankExecutionTime and
     // closureExecutionTime are shared by every algorithm and live on Entailment.
     private double partitionExecutionTime;
+    @JsonIgnore
+    private final Ranking removedRanking;
 
     /**
      * Constructor using the builder pattern
@@ -28,6 +30,7 @@ public class RelevantEntailment extends Entailment {
         super(builder);
         this.weakJustification = builder.weakJustification;
         this.partitionExecutionTime = builder.partitionExecutionTime;
+        this.removedRanking = builder.removedRanking;
     }
 @JsonProperty("smallestWeakJustification")
     public List<String> getWeakJustification() {
@@ -37,6 +40,21 @@ public class RelevantEntailment extends Entailment {
     @JsonProperty("partitionExecutionTime")
     public double getPartitionExecutionTime() {
         return this.partitionExecutionTime;
+    }
+
+    /**
+     * @return Ranking the formulas excluded from the relevant partition
+     *         because they were still exceptional (per rank).
+     */
+    public Ranking getRemovedRanking() {
+        return removedRanking;
+    }
+
+    @JsonProperty("removedRanking")
+    public List<RankDTO> getRemovedRankingDTO() {
+        return removedRanking != null
+                ? removedRanking.stream().map(Rank::toDTO).collect(Collectors.toList())
+                : List.of();
     }
 
     // builder class for relevant entailment
@@ -53,6 +71,11 @@ public class RelevantEntailment extends Entailment {
 
         public RelevantEntailmentBuilder withPartitionExecutionTime(double partitionExecutionTime) {
             this.partitionExecutionTime = partitionExecutionTime;
+            return self();
+        }
+
+        public RelevantEntailmentBuilder withRemovedRanking(Ranking removedRanking) {
+            this.removedRanking = removedRanking;
             return self();
         }
 

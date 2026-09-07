@@ -11,6 +11,7 @@ const EntailmentQueryCard: React.FC<EntailmentQueryCardProps> = ({selected, onAl
         {id: 'lexicographic', label: 'Lexicographic Closure'},
         {id: 'basic relevant', label: 'Basic Relevant Closure'},
         {id: 'minimal relevant', label: 'Minimal Relevant Closure'},
+        {id: 'comparison', label: 'Comparison'},
     ];
 
     const toggleAlgorithm = (id: string) => {
