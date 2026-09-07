@@ -1,0 +1,14 @@
+# Auto-detect text files and normalize line endings to LF in the repository,
+# regardless of what OS/editor checked them out. This stops git status from
+# showing whole-file "changes" that are really just CRLF vs LF.
+* text=auto eol=lf
+
+# Explicitly mark binaries so they're never touched by line-ending normalization
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.jar binary
+*.class binary
