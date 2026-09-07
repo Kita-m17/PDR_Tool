@@ -14,6 +14,7 @@ import BasicRelevantPartitionStepThrough from './components/results/basic releva
 import MinimalRelevantPartitionStepThrough from './components/results/minimal relevant/MinimalRelevantPartitionStepThrough';
 import BaseRankStepThrough from './components/results/BaseRankStepThrough';
 import LexicographicStepThrough from './components/results/lexicographic/LexicographicStepTrough';
+import ComparisonPage from './components/results/comparison/ComparisonPage';
 
 const ALGORITHM_LABELS: Record<string, string> = {
   'rational': 'Rational Closure',
@@ -62,14 +63,41 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
     setError(null);
 
     try {
+<<<<<<< HEAD
       await submitKnowledgeBase(formulas);
       const result = await submitEvaluateAll(query, selectedAlgorithms);
       setEvaluation(result);
+=======
+      const baseRank = await submitKnowledgeBase(formulas);
+      if (algorithm === 'comparison') {
+        navigate('/baserank', {
+          state:{
+            baseRank,
+            entailment: null,
+            partition: null,
+            query,
+            algorithm: 'comparison',
+            fromComparison: true
+          }
+        });
+        return;
+      }
+
+      const entailment = await submitQuery(algorithm, query);
+      const partition = algorithm === 'minimal relevant'
+        ? await submitMinimalPartitionQuery(query)
+        : await submitPartitionQuery(query);
+      navigate('/baserank', {
+        state: { baseRank, entailment, partition, query, algorithm }
+      });
+
+>>>>>>> Nikita
     } catch (err) {
       setError('Something went wrong. Make sure the backend is running.');
     } finally {
       setLoading(false);
     }
+    
   };
 
   const handleReset = () => {
@@ -240,6 +268,7 @@ function App(){
       <Route path="/results/lexicographic" element={<LexicographicStepThrough/>}/>
       <Route path="/results/relevant/basic/partition" element = {<BasicRelevantPartitionStepThrough/>}/>
       <Route path="/results/relevant/minimal/partition" element = {<MinimalRelevantPartitionStepThrough/>}/>
+      <Route path="/results/comparison" element = {<ComparisonPage/>} />
     </Routes>
   )
 }

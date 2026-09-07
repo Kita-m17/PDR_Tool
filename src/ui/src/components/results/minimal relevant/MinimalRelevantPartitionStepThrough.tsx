@@ -18,6 +18,7 @@ interface ResultsState {
     partition: PartitionDTO;
     query: string;
     algorithm: string;
+    fromComparison?: boolean;
 }
 function getAntecedent(formula: string): string {
     const stripped = formula.replace(/[()]/g, '');
@@ -89,7 +90,7 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
         );
     }
 
-    const { baseRank, entailment, partition, query, algorithm } = resultsState;
+    const { baseRank, entailment, partition, query, algorithm, fromComparison } = resultsState;
 
     return (
         <div className="min-h-screen bg-accent flex flex-col">
@@ -123,7 +124,7 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
 
                     <Button className="text-sm text-muted-foreground border border-border rounded-lg px-4 py-2 hover:bg-white transition"
                         onClick={() => navigate('/baserank', {
-                            state: { baseRank, entailment, partition, query, algorithm }
+                            state: { baseRank, entailment, partition, query, algorithm, fromComparison }
                         })}
                     >
                         <span className="flex items-center gap-1">
@@ -274,8 +275,9 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                         {isLastInView && (
                             <div className="flex justify-end mt-4">
                                 <Button variant="primary" size="lg"
-                                    onClick={() => navigate('/results/relevant/basic', {
-                                        state: { baseRank, entailment, partition, query, algorithm }
+                                    onClick={() => 
+                                        navigate('/results/relevant/basic', {
+                                        state: { baseRank, entailment, partition, query, algorithm, fromComparison }
                                     })}
                                 >
                                     Continue to Relevant Closure

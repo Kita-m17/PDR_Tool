@@ -60,7 +60,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
                     </div>
 
                     <p className="text-xs text-muted-foreground">
-                        {step.highlightedLines.includes(3) && !step.isFinalStep ? step.workingSet.some(f => f.includes(step.queryAntecedent || ''))
+                        {step.highlightedLines.includes(5) && !step.isFinalStep ? step.workingSet.some(f => f.includes(step.queryAntecedent || ''))
                                 ? `These formulas together determine whether '${step.queryAntecedent}' leads to a contradiction when assumed true.`
                                 : `The full working set is checked classically to determine if '${step.queryAntecedent}' leads to a contradiction.`
                                 : ''

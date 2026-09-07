@@ -5,7 +5,9 @@ package com.pdr.services;
  * Context: Used in PDR project for relevant closure reasoning.
  * Purpose: Educational use only.
  */
-import com.pdr.models.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.tweetyproject.logics.pl.reasoner.SatReasoner;
 import org.tweetyproject.logics.pl.sat.Sat4jSolver;
 import org.tweetyproject.logics.pl.sat.SatSolver;
@@ -13,8 +15,14 @@ import org.tweetyproject.logics.pl.syntax.Implication;
 import org.tweetyproject.logics.pl.syntax.Negation;
 import org.tweetyproject.logics.pl.syntax.PlFormula;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.pdr.models.BaseRank;
+import com.pdr.models.Entailment;
+import com.pdr.models.EntailmentStep;
+import com.pdr.models.KnowledgeBase;
+import com.pdr.models.Partition;
+import com.pdr.models.Rank;
+import com.pdr.models.Ranking;
+import com.pdr.models.RelevantEntailment;
 
 public class MinimalRelevantReasonerImpl implements ReasonerService {
     private final PartitionService partitionService;
@@ -56,6 +64,13 @@ public class MinimalRelevantReasonerImpl implements ReasonerService {
             KnowledgeBase intersection = relevantPartition.intersection(baseRank.getRanking().getRank(i).getFormulas());
             relevantPrime = relevantPrime.difference(intersection);
             trace.add(new EntailmentStep(i,relevantPrime,true,"",intersection));
+
+            // Record what was actually excluded from rank i so the frontend
+            // can show it as "removed", the same way Rational/Lexicographic do.
+            if (!intersection.isEmpty()) {
+                removedRanking.add(new Rank(i, intersection));
+            }
+            
             i+=1;
         }
         trace.add(new EntailmentStep(i,relevantPrime,false,"",new KnowledgeBase()));
@@ -92,6 +107,7 @@ public class MinimalRelevantReasonerImpl implements ReasonerService {
                 .withBaseRankExecutionTime(baseRank.getExecutionTime())
                 .withPartitionExecutionTime(partition.getExecutionTime())
                 .withWeakJustification(smallestJustification)
+                .withRemovedRanking(removedRanking)
                 .build();
 
 
