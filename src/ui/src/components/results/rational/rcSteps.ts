@@ -24,13 +24,48 @@ export interface RankState{
     isBeingRemoved: boolean;
 }
 
+// Strips whitespace/parens so formulas from different sources compare equal.
+function normaliseFormula(formula: string): string {
+    return formula.replace(/[()\s]/g, '').toLowerCase();
+}
+
+// The exact KB + query behind the "The Drowning Problem" preset in examples.ts.
+// We detect it by content 
+const DROWNING_EXAMPLE = {
+    query: 'penguin|~wings',
+    formulas: ['bird|~flies', 'bird|~wings', 'penguin=>bird', 'penguin|~!flies'],
+};
+
+// Exported so RCStepThrough can also gate the "Compare closures" button on this the drowning-problem eg".
+export function isDrowningProblemExample(entailment: EntailmentDTO): boolean {
+    const allKbFormulas = entailment.baseRanking.flatMap(r => r.knowledgeBase).map(normaliseFormula);
+    return (
+        normaliseFormula(entailment.queryFormula ?? '') === normaliseFormula(DROWNING_EXAMPLE.query) &&
+        DROWNING_EXAMPLE.formulas.every(f => allKbFormulas.includes(normaliseFormula(f)))
+    );
+}
+
+// Two short steps, appended only when the loaded KB/query is exactly the drowning-problem eg and RC failed to entail the query
+function buildDrowningProblemEpilogue(removedRanking: RankDTO[]): { reveal: string; consequence: string } {
+    const removedList = removedRanking
+        .filter(r => r.knowledgeBase.length > 0)
+        .map(r => `Rank ${r.rankNumber}: { ${r.knowledgeBase.map(f => f.replace('|~', '=>')).join(', ')} }`)
+        .join('\n');
+
+    const reveal = `The query is NOT entailed - and this is the drowning problem in action.\n\nTo reach this answer, Rational Closure removed:\n${removedList}\n\nRank 0 held two unrelated facts about birds: bird=>flies and bird=>wings. Because penguins are an exceptional kind of bird - they can't fly - Rational Closure had to abandon bird=>flies. But bird=>wings had nothing to do with flying, and it was swept away right along with it.`;
+
+    const consequence = `That's the unwanted result: an irrelevant statement got discarded, so we lose the ability to conclude that penguins have wings, even though nothing about the reasoning ever challenged that.\n\nThis is exactly what Lexicographic Closure and Relevant Closure are designed to avoid, each in a different way - compare all three below to see how.`;
+
+    return { reveal, consequence };
+}
+
 export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
     const steps: DebuggerStep[] = [];
     const { traceSteps, baseRanking, removedRanking = [], entailed, queryFormula } = entailment;
 
     // Get R_infinity
     const rInfinity = baseRanking.find(r => r.rankNumber === 2147483647)?.knowledgeBase || [];
-    
+
     // Get finite ranks
     const finiteRanks = baseRanking.filter(r => r.rankNumber !== 2147483647);
 
@@ -55,7 +90,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
     //     explanation: `Before beginning the entailment check, we materialise the ranked knowledge base.\n\nEach defeasible statement α |~ β is converted to a classical implication α → β. This allows us to use classical entailment checking (via a SAT solver) throughout the algorithm.\n\nThe finite ranks form the working set R, while R∞ contains the classical statements that always remain.`,
     //     workingSet: finiteRanks.flatMap(r => r.knowledgeBase),
     //     rInfinity,
-    //     materialisedWorking: finiteRanks.flatMap(r => 
+    //     materialisedWorking: finiteRanks.flatMap(r =>
     //         r.knowledgeBase.map(f => f.replace('|~', '=>'))
     //     ),
     //     rankingState: buildRankingState(baseRanking, new Set<number>(), -1),
@@ -148,6 +183,43 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
             });
         }
     });
+
+    // Drowning-problem-only epilogue
+    const lastAlgorithmStep = steps[steps.length - 1];
+    if (lastAlgorithmStep.isFinalStep && lastAlgorithmStep.entailed === false && isDrowningProblemExample(entailment)) {
+        
+        lastAlgorithmStep.isFinalStep = false;
+
+        const { reveal, consequence } = buildDrowningProblemEpilogue(removedRanking);
+
+        steps.push({
+            stepNumber: steps.length + 1,
+            totalSteps: 0,
+            highlightedLines: lastAlgorithmStep.highlightedLines,
+            explanation: reveal,
+            workingSet: lastAlgorithmStep.workingSet,
+            rInfinity,
+            rankingState: lastAlgorithmStep.rankingState,
+            isFinalStep: false,
+            entailed,
+            queryAntecedent,
+            queryConsequent,
+        });
+
+        steps.push({
+            stepNumber: steps.length + 1,
+            totalSteps: 0,
+            highlightedLines: lastAlgorithmStep.highlightedLines,
+            explanation: consequence,
+            workingSet: lastAlgorithmStep.workingSet,
+            rInfinity,
+            rankingState: lastAlgorithmStep.rankingState,
+            isFinalStep: true,
+            entailed,
+            queryAntecedent,
+            queryConsequent,
+        });
+    }
 
     // Update total steps
     const total = steps.length;

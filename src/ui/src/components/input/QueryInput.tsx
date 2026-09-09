@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Button } from "../ui/Buttons";
+import { fi } from "zod/v4/locales";
 
 interface QueryInputProps {
     onSubmit: (query: string) => void;
     defaultValue?: string;
+    disabled?: boolean;
 }
 
-const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue }) => {
+const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disabled }) => {
 
     //parse defaultValue back into parts
     const parseDefault = (val?: string) => {
@@ -50,6 +52,8 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue }) => {
         setNegate(defaults.negate);
     }, [defaultValue]);
 
+    const fieldClass = `border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pdr-blue ${disabled ? 'bg-accent text-muted-foreground cursor-not-allowed' : ''}`;
+
     return(
         <div className = "mb-8">
             <h2 className = "text-primary font-semibold mb-3">
@@ -70,7 +74,8 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue }) => {
 
                     <input
                         type="text"
-                        className="border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pdr-blue"
+                        disabled={disabled}
+                        className={fieldClass}
                         placeholder="e.g. penguin"
                         value={antecedent}
                         onChange={(e) => setAntecedent(e.target.value)}
@@ -84,9 +89,10 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue }) => {
                     </label>
 
                     <select
-                        className="border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pdr-blue"
+                        className={fieldClass}
                         value={relation}
                         onChange={(e) => setRelation(e.target.value)}
+                        disabled={disabled}
                     >
                         <option value="|~">|~ (defeasible)</option>
                         <option value="=>">=&gt; (classical)</option>
@@ -101,7 +107,8 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue }) => {
                     
                     <input
                         type="text"
-                        className="border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pdr-blue"
+                        disabled={disabled}
+                        className={fieldClass}
                         placeholder="e.g. flies"
                         value={consequent}
                         onChange={(e) => setConsequent(e.target.value)}
@@ -117,7 +124,8 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue }) => {
                     <div className="flex items-center gap-2 py-2">
                         <input
                             type="checkbox"
-                            className="w-4 h-4 accent-pdr-blue"
+                            disabled={disabled}
+                            className={`w-4 h-4 accent-pdr-blue ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
                             checked={negate}
                             onChange={(e) => setNegate(e.target.checked)}
                         />

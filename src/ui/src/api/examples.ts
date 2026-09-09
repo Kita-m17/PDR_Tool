@@ -34,5 +34,12 @@ export const EXAMPLES: Example[] = [
         formulas: ['(pets=>animals)','(kittens=>cats)','(cats|~trainable)','(kittens|~!trainable)','(animals|~legs)','(animals|~wild)','(cats=>animals)','(cats|~!wild)'],
         query: 'kittens|~!wild',
         algorithm: 'minimal relevant'
-    }
+    },
+    {
+    label: 'The Drowning Problem',
+    description: "Same penguin/bird setup, but asks about wings instead of flying - watch Rational Closure lose information it shouldn't.",
+    formulas: ['(bird|~flies)', '(bird|~wings)', '(penguin=>bird)', '(penguin|~!flies)'],
+    query: 'penguin|~wings',
+    algorithm: 'rational'
+}
 ]
