@@ -4,7 +4,7 @@ import { BaseRankDTO, EntailmentDTO } from '../../../api/api';
 import Header from '../../layout/Header';
 import AlgorithmProgress from '../../layout/AlgorithmProgress';
 import Footer from '../../layout/Footer';
-import { buildDebuggerSteps, DebuggerStep } from './rcSteps';
+import { buildDebuggerSteps, DebuggerStep, isDrowningProblemExample } from './rcSteps';
 import RankingVisualiser from './RankingVisualiser';
 import AlgorithmView from './AlgorithmView';
 import ExplanationView from '../ExplanationView';
@@ -30,6 +30,9 @@ const RCStepThrough: React.FC = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const step: DebuggerStep = steps[currentStep];
 
+    // Only true for the hardcoded "The Drowning Problem" preset, and only once we're on the final step where the failed entailment (and the reveal appended to its explanation in rcSteps.ts) is actually showing.
+    const showDrowningCompareButton = step.isFinalStep && step.entailed === false && isDrowningProblemExample(entailment);
+
     return (
         <div className="min-h-screen bg-accent flex flex-col">
             <Header />
@@ -42,7 +45,7 @@ const RCStepThrough: React.FC = () => {
                 {/* Page header */}
                 <div className="flex items-start justify-between mb-4">
                     <div>
-                        
+
                         <h1 className="text-2xl font-bold text-foreground">
                             Rational Closure
                         </h1>
@@ -52,8 +55,8 @@ const RCStepThrough: React.FC = () => {
 
                         {/* Brief explanation of the RC algorithm */}
                         <p className="text-sm text-foreground mt-2 max-w-2xl">
-                            Rational Closure evaluates whether a query is entailed by 
-                            progressively removing exceptional ranks from the knowledge 
+                            Rational Closure evaluates whether a query is entailed by
+                            progressively removing exceptional ranks from the knowledge
                             base until the query antecedent is no longer exceptional.
                         </p>
                     </div>
@@ -61,7 +64,7 @@ const RCStepThrough: React.FC = () => {
                     <Button className="text-sm text-muted-foreground border border-border rounded-lg px-4 py-2 hover:bg-white transition"
                         onClick={() => navigate('/baserank', {
                             state: { baseRank, entailment, query, algorithm }
-                        })} 
+                        })}
                     >
                         <span className="flex items-center gap-1">
                             <ArrowLeftIcon className="h-3 w-3" />
@@ -89,6 +92,18 @@ const RCStepThrough: React.FC = () => {
 
                     <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px] overflow-y-auto">
                         <ExplanationView step={step}/>
+                        {/* Drowning-problem-only: hint at the other closures and offer to compare, right above the Done button. */}
+                        {showDrowningCompareButton && (
+                            <div className="flex justify-end mt-4">
+                                <Button
+                                    variant="outline"
+                                    size="default"
+                                    onClick={() => navigate('/results/comparison', { state: { baseRank, query } })}
+                                >
+                                    Compare all three closures on this knowledge base
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -107,7 +122,7 @@ const RCStepThrough: React.FC = () => {
                 {/* Done button, only on final step */}
                 {step.isFinalStep && (
                     <div className="flex justify-end mt-4">
-                        <Button variant="primary" size="lg" 
+                        <Button variant="primary" size="lg"
                             onClick={() => {
                                 if (fromComparison) {
                                     navigate('/results/comparison', {
@@ -115,7 +130,7 @@ const RCStepThrough: React.FC = () => {
                                     });
                                     return;
                                 }
-                                
+
                                 navigate('/')}
                             }>
                             {fromComparison ? 'Back to Comparison' : 'Done'}
@@ -125,7 +140,7 @@ const RCStepThrough: React.FC = () => {
                 )}
 
             </main>
-            
+
             <Footer />
         </div>
     );
