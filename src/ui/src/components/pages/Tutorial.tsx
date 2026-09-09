@@ -7,9 +7,9 @@
  */
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from './layout/Header';
-import Footer from './layout/Footer';
-import { Button } from './ui/Buttons';
+import Header from '../layout/Header';
+import Footer from '../layout/Footer';
+import { Button } from '../ui/Buttons';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 
 interface TutorialStep {
