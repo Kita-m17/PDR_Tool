@@ -15,7 +15,7 @@ import MinimalRelevantPartitionStepThrough from './components/results/minimal re
 import BaseRankStepThrough from './components/results/BaseRankStepThrough';
 import LexicographicStepThrough from './components/results/lexicographic/LexicographicStepTrough';
 import ComparisonPage from './components/results/comparison/ComparisonPage';
-import Tutorial from './components/Tutorial';
+import Tutorial from './components/pages/Tutorial';
 
 const ALGORITHM_LABELS: Record<string, string> = {
   'rational': 'Rational Closure',
