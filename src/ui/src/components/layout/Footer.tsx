@@ -1,3 +1,10 @@
+/*
+ * File: Footer.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: React component for displaying a footer.
+ * Purpose: Educational use only.
+ */
 import React from "react";
 
 const Footer: React.FC = () => {

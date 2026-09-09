@@ -1,3 +1,10 @@
+/*
+ * File: AlgorithmProgress.tsx
+ * Author: Liam De Saldanha (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: React component for displaying a algorithm progress.
+ * Purpose: Educational use only.
+ */
 import React from 'react';
 import { CheckIcon } from '@radix-ui/react-icons';
 
