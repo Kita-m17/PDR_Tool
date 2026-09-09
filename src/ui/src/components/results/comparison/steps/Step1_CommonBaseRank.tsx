@@ -21,10 +21,16 @@ const Step1_CommonBaseRank: React.FC<Step1Props> = ({ baseRanking, query, onInsp
         isBeingRemoved: false,
     }));
 
+    const branches = [
+        { name: 'Rational Closure', tag: 'removes exceptional ranks' },
+        { name: 'Lexicographic Closure', tag: 'weakens exceptional ranks' },
+        { name: 'Relevant Closure', tag: 'filters to relevant ranks only' },
+    ];
+
     return (
         <div>
         
-            <h1 className="text-2xl font-bold mb mt-6">
+            <h1 className="text-2xl font-bold mb-1 mt-6">
                 Common Starting Point - Base Rank
             </h1>
 
@@ -50,13 +56,17 @@ const Step1_CommonBaseRank: React.FC<Step1Props> = ({ baseRanking, query, onInsp
 
                 <div className="flex w-full max-w-xl justify-between relative">
                     <div className="absolute top-0 left-0 right-0 h-px bg-border" style={{ top: '0px' }} />
-                    {['Rational Closure', 'Lexicographic Closure', 'Relevant Closure'].map((name) => (
+                    {branches.map(({ name, tag }) => (
                         <div key={name} className="flex flex-col items-center flex-1">
                             <div className="w-px h-6 bg-border" />
-
+ 
                             <div className="bg-white border border-border rounded-lg px-4 py-2 text-sm font-medium text-primary text-center">
                                 {name}
                             </div>
+ 
+                            <span className="text-xs text-muted-foreground mt-1 text-center max-w-[9rem]">
+                                {tag}
+                            </span>
                         </div>
                     ))}
                 </div>
@@ -64,7 +74,7 @@ const Step1_CommonBaseRank: React.FC<Step1Props> = ({ baseRanking, query, onInsp
             
             {/* Insight box */}
             <div className="border-l-4 border-blue-400 bg-white pl-4 py-4 mb-6">
-                <p className="text-md text-foreground">
+                <p className="text-sm text-foreground">
                     <strong className="text-blue-700">
                         Key idea:
                     </strong> All three methods begin with the same Base Rank. They differ in how they process the ranks when answering the query.

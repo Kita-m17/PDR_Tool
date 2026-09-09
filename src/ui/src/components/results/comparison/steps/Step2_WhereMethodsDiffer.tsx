@@ -7,13 +7,14 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
             <h1 className="text-2xl font-bold text-foreground mt-6 mb-1">
                 Where do the entailment methods differ?
             </h1>
-            <p className="text-muted-foreground text-sm mb-6">
+            <p className="text-muted-foreground text-md mb-6">
                 Each entailment method processes the ranking in a different way.
             </p>
 
+            {/* explanation boxes for each method */}
             <div className="grid grid-cols-3 gap-4">
 
-                {/* RC */}
+                {/* RC - explanation box */}
                 <div className="bg-white border-2 border-blue-300 rounded-xl p-6 text-center shadow-sm">
                     <h3 className="font-bold text-blue-700 mb-1">
                         Rational Closure
@@ -28,12 +29,11 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
                     </div>
 
                     <p className="text-sm text-foreground mb-4">
-                        Checks whether the query antecedent is exceptional. 
-                        If yes, it removes the corresponding ranks.
+                        If the query's antecedent is exceptional at some rank, Rational Closure removes that entire rank from consideration - every statement in it, whether or not it's actually related to the query.
                     </p>
                     
                     <p className="text-xs font-semibold text-primary">
-                        Key idea: Exceptionality
+                        Mechanism: removes the whole rank
                     </p>
                 </div>
 
@@ -52,12 +52,11 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
                     </div>
 
                     <p className="text-sm text-foreground mb-4">
-                        Compares preferred alternatives using the ranking 
-                        and keeps consistent information.
+                        Instead of deleting an entire exceptional rank outright, Lexicographic Closure looks for the largest subset of that rank that can stay, and combines the possibilities into a single weaker statement that goes back into the ranking in place of the original.
                     </p>
 
                     <p className="text-xs font-semibold text-indigo-700">
-                        Key idea: Preference
+                        Mechanism: weakens the rank
                     </p>
                 </div>
 
@@ -76,12 +75,11 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
                     </div>
 
                     <p className="text-sm text-foreground mb-4">
-                        Identifies and keeps only the information that is 
-                        relevant to the query antecedent.
+                        Relevant Closure first works out which statements are even relevant to the query, then only ever reasons over that relevant partition - anything irrelevant is set aside completely and can't be affected.
                     </p>
                     
                     <p className="text-xs font-semibold text-sky-700">
-                        Key idea: Relevance
+                        Mechanism: filters to relevant ranks only
                     </p>
                 </div>
 
@@ -97,9 +95,7 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
                 </div>
 
                 <p className="text-sm text-blue-700">
-                    All three methods use the same Base Rank but differ 
-                    in how they decide which information to keep when 
-                    answering the query.
+                    All three start from the same Base Rank (Step 1). Where they diverge is what happens once a rank is found to be exceptional for the query. Rational Closure discards the whole rank - sometimes taking unrelated statements down with it, which is known as the{' '} <strong>drowning problem</strong>. Lexicographic Closure improves this by keeping a weaker version of the rank instead of deleting it outright. Relevant Closure sidesteps the issue entirely by only ever looking at the part of the knowledge base that's actually relevant to the query.
                 </p>
             </div>
         </div>

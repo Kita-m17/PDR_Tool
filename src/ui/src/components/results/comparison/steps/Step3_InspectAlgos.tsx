@@ -33,7 +33,7 @@ const Step3_InspectAlgos: React.FC<Step3Props> = ({baseRank, query, rcResult, lc
             borderClass: 'border-indigo-300',
             textClass: 'text-indigo-700',
             subtitleClass: 'text-indigo-600',
-            description: 'Weakens exceptional ranks instead of removing them entirely - keeping as many statements as possible by forming disjunctions of surviving subsets.',
+            description: 'Weakens exceptional ranks instead of removing them entirely - keeping as many statements as possible by forming disjunctions of surviving subsets. This keeps more information than Rational Closure, though it can still lose some in the process.',
             onInspect: onInspectLC
         },
 
@@ -43,7 +43,7 @@ const Step3_InspectAlgos: React.FC<Step3Props> = ({baseRank, query, rcResult, lc
             borderClass: 'border-sky-300',
             textClass: 'text-sky-700',
             subtitleClass: 'text-sky-600',
-            description: 'Identifies only the relevant partition of the knowledge base and applies a modified closure over those relevant statements only, ignoring irrelevant ones entirely.',
+            description: 'Identifies only the relevant partition of the knowledge base and applies a modified closure over those relevant statements only, ignoring irrelevant ones entirely - so it is never exposed to the drowning problem in the first place.',
             onInspect: onInspectRelC
         },
     ];
@@ -60,12 +60,12 @@ const Step3_InspectAlgos: React.FC<Step3Props> = ({baseRank, query, rcResult, lc
 
             {/* Insight box */}
             <div className="border-l-4 border-blue-400 bg-white pl-4 py-4 mt-4 mb-6">
-                <p className="text-md text-foreground">
+                <p className="text-sm text-foreground">
                     <strong className="text-blue-700">
                         Key idea:
                     </strong> 
                     
-                    <p className="text-md text-foreground">
+                    <p className="text-sm text-foreground">
                         Each algorithm processes the same Base Rank differently. Click <strong>Inspect</strong> on any algorithm to step through its execution and observe exactly how it handles the ranked knowledge base to answer your query. You can inspect them in any order and return here to continue.
                     </p>
                 </p>
@@ -85,7 +85,7 @@ const Step3_InspectAlgos: React.FC<Step3Props> = ({baseRank, query, rcResult, lc
                             ({algo.subtitle})
                         </p>
 
-                        <p className="text-md text-foreground mb-6">
+                        <p className="text-sm text-foreground mb-6">
                             {algo.description}
                         </p>
                         
@@ -99,7 +99,7 @@ const Step3_InspectAlgos: React.FC<Step3Props> = ({baseRank, query, rcResult, lc
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-4">
-                <p className="text-md text-blue-700">
+                <p className="text-sm text-blue-700">
                     💡 Tip: You can inspect any method in any order. Come back here to continue.
                 </p>
             </div>
