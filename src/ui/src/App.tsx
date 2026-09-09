@@ -41,10 +41,16 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [kbValid, setKbValid] = useState(true);
 
   const handleEvaluate = async () => {
     if (formulas.length === 0) {
       setError('Please enter a knowledge base');
+      return;
+    }
+
+    if (!kbValid) {
+      setError('Please fix the invalid formula(s) in your knowledge base');
       return;
     }
 
@@ -107,6 +113,7 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
           {/* KB Card — wider */}
           <div className="mb-4 bg-white rounded-xl border border-border shadow-sm p-6 flex-[2]">
             <FormulaCard onSubmit={setFormulas} defaultValue={formulas.join(',')}
+                onValidityChange={setKbValid}
                 onLoadExample={(exampleFormulas, exampleQuery, exampleAlgorithm) => {
                     setFormulas(exampleFormulas);
                     setQuery(exampleQuery);
@@ -202,7 +209,7 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
                 Reset to Defaults
             </Button>
 
-            <Button variant="primary" size="lg" onClick={handleEvaluate} disabled={loading}>
+            <Button variant="primary" size="lg" onClick={handleEvaluate} disabled={loading || !kbValid}>
                 {loading ? 'Evaluating...' : 'Evaluate'}
                 <ArrowRightIcon className="ml-2 h-4 w-4" />
             </Button>
