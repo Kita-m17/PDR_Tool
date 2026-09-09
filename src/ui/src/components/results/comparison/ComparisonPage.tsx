@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BaseRankDTO, EntailmentDTO, RankDTO } from '../../../api/api';
+import { BaseRankDTO, EntailmentDTO, LexicographicEntailmentDTO, RankDTO } from '../../../api/api';
 import Header from '../../layout/Header';
 import Footer from '../../layout/Footer';
 import StepControls from '../StepControls';
@@ -9,7 +9,8 @@ import Step2_WhereMethodsDiffer from './steps/Step2_WhereMethodsDiffer';
 import Step3_InspectAlgos from './steps/Step3_InspectAlgos';
 import Step4_FinalKB from './steps/Step4_FinalKB';
 import Step5_FinalResults from './steps/Step5_FinalResults';
-// import { Button } from '../../ui/Buttons';
+import { Button } from '../../ui/Buttons';
+import { ArrowLeftIcon,ArrowRightIcon } from '@radix-ui/react-icons';
 
 interface ComparisonState {
     baseRank: BaseRankDTO;
@@ -27,7 +28,7 @@ const ComparisonPage: React.FC = () => {
 
     const [currentStep, setCurrentStep] = useState(0);
     const [rcResult, setRcResult] = useState<EntailmentDTO | null>(null);
-    const [lcResult, setLcResult] = useState<EntailmentDTO | null>(null);
+    const [lcResult, setLcResult] = useState<LexicographicEntailmentDTO | null>(null);
     const [relcResult, setRelcResult] = useState<EntailmentDTO | null>(null);
     const [partition, setPartition] = useState<RankDTO | null>(null);
 
@@ -91,10 +92,11 @@ const ComparisonPage: React.FC = () => {
         <Step1_CommonBaseRank 
             baseRanking={baseRank.ranking} 
             query={query}
-            onInspect = { () => navigate('/baserank', { state: {baseRank, query, algorithm: 'rational', fromComparison: true } }) }
-        
+            onInspect = { () => navigate('/baserank', { state: {baseRank, query, algorithm: 'rational', fromComparison: true } }) } 
         />,
+
         <Step2_WhereMethodsDiffer />,
+
         <Step3_InspectAlgos
             baseRank={baseRank}
             query={query}
@@ -113,7 +115,6 @@ const ComparisonPage: React.FC = () => {
             lcResult={lcResult}
             relcResult={relcResult}
         />,
-        
         
         <Step5_FinalResults
             query={query}
@@ -146,26 +147,35 @@ const ComparisonPage: React.FC = () => {
             <main className = "flex-1 px-8 py-6">
 
                 {/* Page header */}
-                <div>
-                    <h1 className="text-2xl font-bold text-foreground">
-                        Comparison of Entailment Algorithms
-                    </h1>
-
-
-                    <p className="text-muted-foreground">
-                        Same knowledge base. Same query. Different approaches.
-                    </p>
-
-                    {/* <p className="text-xs text-primary mt-2">
-                        STEP {currentStep + 1} OF {totalSteps}
-                    </p> */}
+                <div className="flex items-start justify-between mb-2">
+                    <div>
+                        <h1 className="text-2xl font-bold text-foreground">
+                            Comparison of Entailment Algorithms
+                        </h1>
+ 
+ 
+                        <p className="text-muted-foreground">
+                            Same knowledge base. Same query. Different approaches.
+                        </p>
+ 
+                        {/* <p className="text-xs text-primary mt-2">
+                            STEP {currentStep + 1} OF {totalSteps}
+                        </p> */}
+                    </div>
+ 
+                    <Button className="text-sm text-muted-foreground border border-border rounded-lg px-4 py-2 hover:bg-white transition" onClick={() => navigate('/baserank', {state: { baseRank, entailment: rcResult, query, algorithm: 'rational', fromComparison: true }})}>
+                        <span className="flex items-center gap-1">
+                            <ArrowLeftIcon className="h-3 w-3" />
+                            Back to BaseRank
+                        </span>
+                    </Button>
                 </div>
 
-                {/* Query banner
-                <div className="bg-white border border-border rounded-xl p-4 mb-4 flex items-center gap-3">
+                {/* Query banner */}
+                <div className="rounded-xl pt-6 mb-4 flex items-center gap-3">
                     <span className="text-primary font-bold text-sm">Query</span>
                     <span className="font-mono text-foreground">{query}</span>
-                </div> */}
+                </div>
 
                 {/* current step content */}
                 <div className="mb-6">
@@ -183,6 +193,18 @@ const ComparisonPage: React.FC = () => {
                         onEnd={() => setCurrentStep(totalSteps - 1)}
                     />
                 </div>
+
+                {/* Done button, only on the final step */}
+                {currentStep === totalSteps - 1 && (
+                    <div className="flex justify-end mt-4">
+                        <Button variant="primary" size="lg"
+                            onClick={() => navigate('/')}
+                        >
+                            Done
+                            <ArrowRightIcon className="ml-2 h-4 w-4" />
+                        </Button>
+                    </div>
+                )}
 
             </main>
             <Footer/>
