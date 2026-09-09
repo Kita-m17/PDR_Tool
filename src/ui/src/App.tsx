@@ -15,6 +15,7 @@ import MinimalRelevantPartitionStepThrough from './components/results/minimal re
 import BaseRankStepThrough from './components/results/BaseRankStepThrough';
 import LexicographicStepThrough from './components/results/lexicographic/LexicographicStepTrough';
 import ComparisonPage from './components/results/comparison/ComparisonPage';
+import Tutorial from './components/Tutorial';
 
 const ALGORITHM_LABELS: Record<string, string> = {
   'rational': 'Rational Closure',
@@ -42,6 +43,8 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isExampleLocked, setIsExampleLocked] = useState(false);
+  const [loadedExampleLabel, setLoadedExampleLabel] = useState<string | null>(null);
 
   const handleEvaluate = async () => {
     if (formulas.length === 0) {
@@ -63,41 +66,39 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
     setError(null);
 
     try {
-<<<<<<< HEAD
       await submitKnowledgeBase(formulas);
       const result = await submitEvaluateAll(query, selectedAlgorithms);
       setEvaluation(result);
-=======
-      const baseRank = await submitKnowledgeBase(formulas);
-      if (algorithm === 'comparison') {
-        navigate('/baserank', {
-          state:{
-            baseRank,
-            entailment: null,
-            partition: null,
-            query,
-            algorithm: 'comparison',
-            fromComparison: true
-          }
-        });
-        return;
-      }
-
-      const entailment = await submitQuery(algorithm, query);
-      const partition = algorithm === 'minimal relevant'
-        ? await submitMinimalPartitionQuery(query)
-        : await submitPartitionQuery(query);
-      navigate('/baserank', {
-        state: { baseRank, entailment, partition, query, algorithm }
-      });
-
->>>>>>> Nikita
     } catch (err) {
       setError('Something went wrong. Make sure the backend is running.');
     } finally {
       setLoading(false);
     }
     
+  };
+
+  const handleCompare = async () => {
+    if (formulas.length === 0) {
+        setError('Please enter a knowledge base');
+        return;
+    }
+
+    if (!query) {
+        setError('Please enter a query');
+        return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+        const baseRank = await submitKnowledgeBase(formulas);
+        navigate('/results/comparison', { state: { baseRank, query } });
+    } catch (err) {
+        setError('Something went wrong. Make sure the backend is running.');
+    } finally {
+        setLoading(false);
+    }
   };
 
   const handleReset = () => {
@@ -127,26 +128,40 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
     <div className="min-h-screen bg-accent flex flex-col">
       <Header />
 
+      {isExampleLocked && (
+        <div className="flex items-center justify-between bg-accent border border-border rounded-lg px-4 py-2 mb-4 text-sm">
+            <span className="text-foreground">
+                Example loaded: <strong>{loadedExampleLabel}</strong> - inputs are locked so the walkthrough stays accurate.
+            </span>
+            <Button variant="outline" size="default" onClick={() => setIsExampleLocked(false)}>
+                Try your own
+            </Button>
+        </div>
+      )}
+          
+
       <main className="flex-1 px-8 py-8">
 
         {/* Top row: KB and Query side by side */}
         <div className="flex gap-6 mb-6">
-          
           {/* KB Card — wider */}
           <div className="mb-4 bg-white rounded-xl border border-border shadow-sm p-6 flex-[2]">
-            <FormulaCard onSubmit={setFormulas} defaultValue={formulas.join(',')}
-                onLoadExample={(exampleFormulas, exampleQuery, exampleAlgorithm) => {
+              <FormulaCard onSubmit={setFormulas} defaultValue={formulas.join(',')}
+                disabled={isExampleLocked}
+                onLoadExample={(exampleFormulas, exampleQuery, exampleAlgorithm, exampleLabel) => {
                     setFormulas(exampleFormulas);
                     setQuery(exampleQuery);
                     setSelectedAlgorithms([exampleAlgorithm]);
                     setEvaluation(null);
+                    setIsExampleLocked(true);
+                    setLoadedExampleLabel(exampleLabel);
                 }}
-            />
+              />
           </div>
 
-          {/* Query Card — narrower */}
+          {/* Query Card - narrower */}
           <div className="mb-4 mt-2 bg-white rounded-xl border border-border shadow-sm p-6 flex-[1]">
-            <QueryInput onSubmit={setQuery} defaultValue={query}/>
+            <QueryInput onSubmit={setQuery} defaultValue={query} disabled={isExampleLocked}/>
           </div>
         </div>
         
@@ -230,6 +245,10 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
                 Reset to Defaults
             </Button>
 
+            <Button variant="outline" size="lg" onClick={handleCompare} disabled={loading}>
+                {loading ? 'Comparing...' : 'Compare Closures'}
+            </Button>
+
             <Button variant="primary" size="lg" onClick={handleEvaluate} disabled={loading}>
                 {loading ? 'Evaluating...' : 'Evaluate'}
                 <ArrowRightIcon className="ml-2 h-4 w-4" />
@@ -269,6 +288,7 @@ function App(){
       <Route path="/results/relevant/basic/partition" element = {<BasicRelevantPartitionStepThrough/>}/>
       <Route path="/results/relevant/minimal/partition" element = {<MinimalRelevantPartitionStepThrough/>}/>
       <Route path="/results/comparison" element = {<ComparisonPage/>} />
+      <Route path="/help" element={<Tutorial/>} />
     </Routes>
   )
 }
