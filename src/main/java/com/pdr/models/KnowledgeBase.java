@@ -122,6 +122,17 @@ public class KnowledgeBase extends PlBeliefSet {
         });
         return result;
     }
+    public KnowledgeBase materialisedKnowledgeBase() {
+        KnowledgeBase result = new KnowledgeBase();
+        this.forEach(formula -> {
+            if (formula instanceof DefeasibleImplication defeasibleImplication) {
+                result.add(new Implication(defeasibleImplication.getFormulas()));
+            } else {
+                result.add(formula);
+            }
+        });
+        return result;
+    }
 
     /** 
         * Convert classical implications (=>) to defeasible implications (~>)
@@ -194,10 +205,34 @@ public class KnowledgeBase extends PlBeliefSet {
         return formula;
     }
 
-    @Override
-    public boolean contains(Object o) {
-        return super.contains(o);
+    /**
+     * @Author Liam De Saldanha
+     */
+    public boolean contains(PlFormula pl) {
+        KnowledgeBase tmp = new KnowledgeBase();
+        tmp.add(pl);
+        return (this.union(tmp)).size() == this.size();
+
+
     }
+
+    /**
+     * @Author Liam De Saldanha
+     */
+
+    public boolean contains(KnowledgeBase knowledgeBase) {
+        for(PlFormula formula: knowledgeBase){
+            if(!this.contains(formula)){
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    /**
+     * @Author Liam De Saldanha
+     */
     public List<String> getStringFormulas(){
         List<PlFormula> list= new ArrayList<PlFormula>(this);
         List<String> result = new ArrayList<>();

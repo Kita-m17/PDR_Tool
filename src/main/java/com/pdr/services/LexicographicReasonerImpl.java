@@ -73,6 +73,7 @@ public class LexicographicReasonerImpl implements ReasonerService {
 
     @Override
     public Entailment getEntailment(BaseRank baseRank, PlFormula queryFormula) {
+        long startTime = System.nanoTime();
         PlFormula antecedent = ((Implication) queryFormula).getFirstFormula();
         PlFormula negation = new Negation(antecedent);
         PlFormula materialisedQuery = KnowledgeBase.materialise(queryFormula);
@@ -166,6 +167,9 @@ public class LexicographicReasonerImpl implements ReasonerService {
                 antecedent + " is no longer refuted, checking R∞ ∪ R |= " + materialisedQuery,
                 new KnowledgeBase()));
 
+        long endTime = System.nanoTime();
+        double closureExecutionTime = (double) (endTime - startTime) / 1_000_000_000.0;
+
         return new LexicographicEntailment.LexicographicEntailmentBuilder()
                 .withWeakenedRanking(weakenedRanking)
                 .withFinalChecks(finalChecks)
@@ -176,6 +180,8 @@ public class LexicographicReasonerImpl implements ReasonerService {
                 .withRemovedRanking(removedRanking)
                 .withEntailed(entailed)
                 .withTraceSteps(trace)
+                .withBaseRankExecutionTime(baseRank.getExecutionTime())
+                .withClosureExecutionTime(closureExecutionTime)
                 .build();
     }
 

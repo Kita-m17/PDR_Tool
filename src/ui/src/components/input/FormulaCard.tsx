@@ -8,8 +8,8 @@ import { EXAMPLES } from '../../api/examples';
 
 const kbSchema = z.object({
     input: z.string().min(1, "Knowledge base cannot be empty").refine(
-        (val) => val.includes("~|") || val.includes("=>"),
-        "Must contain at least one defeasible (~|) or classical (=>) statement"
+        (val) => val.includes("|~") || val.includes("=>"),
+        "Must contain at least one defeasible (|~) or classical (=>) statement"
     ),
 });
 
@@ -18,14 +18,15 @@ type KBFormValues = z.infer<typeof kbSchema>;
 interface FormulaCardProps {
     onSubmit: (formulas: string[]) => void;
     defaultValue?: string;
-    onLoadExample?: (formulas: string[], query: string, algorithm: string) => void;
+    onLoadExample?: (formulas: string[], query: string, algorithm: string, label: string) => void;
+    disabled?: boolean;
 }
 
-const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoadExample }) => {
+const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoadExample, disabled }) => {
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<KBFormValues>({
         resolver: zodResolver(kbSchema),
         defaultValues: {
-            input: defaultValue || '(bird~|flies),(penguin=>bird),(penguin~|!flies)'
+            input: defaultValue || '(bird|~flies),(penguin=>bird),(penguin|~!flies)'
         }
     });
 
@@ -41,7 +42,7 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
     }, [inputValue, onSubmit]);
 
     React.useEffect(() => {
-        reset({ input: defaultValue || '(bird~|flies),(penguin=>bird),(penguin~|!flies)' });
+        reset({ input: defaultValue || '(bird|~flies),(penguin=>bird),(penguin|~!flies)' });
     }, [defaultValue, reset]);
 
     {/* Ensure user inputs a valid KB */}
@@ -93,11 +94,16 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
 
             {/* Textarea for input */}
             <form onSubmit={handleSubmit(onValid)}>
-                <textarea 
+                {/* <textarea 
                     {...register("input")}
                     className="mt-4 w-full border border-border rounded-lg p-4 font-mono text-sm h-40 resize-y focus:outline-none focus:border-primary"
-                    placeholder="e.g. (bird~|flies),(penguin=>bird),(penguin~|!flies)"
-                />  
+                    placeholder="e.g. (bird|~flies),(penguin=>bird),(penguin|~!flies)"
+                />   */}
+                <textarea
+                    {...register("input")} disabled={disabled}
+                    className={`mt-4 w-full border border-border rounded-lg p-4 font-mono text-sm h-40 resize-y focus:outline-none focus:border-primary ${disabled ? 'bg-accent text-muted-foreground cursor-not-allowed' : ''}`}
+                    placeholder="e.g. (bird|~flies),(penguin=>bird),(penguin|~!flies)"
+                />
 
                 {errors.input && (
                     <p className="text-red-500 text-xs mt-1">{errors.input.message}</p>
@@ -105,7 +111,7 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
 
                 {/* Helper text */}
                 <p className = "text-sm text-muted-foreground mt-2">
-                    Use ~| for defeasible, =&gt; for classical. and ! for negation.
+                    Use |~ for defeasible, =&gt; for classical. and ! for negation.
                 </p>
 
                 {/* Buttons */}
@@ -134,12 +140,12 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
                             {EXAMPLES.map((example) => (
                                 <button key={example.label} className="w-full text-left px-4 py-3 hover:bg-accent text-sm border-b border-border last:border-0" type="button"
                                     onClick={() => {
-                                        const formulaString = example.formulas.join(',');
-                                        reset({ input: formulaString });
-                                        onSubmit(example.formulas);
-                                        onLoadExample?.(example.formulas, example.query, example.algorithm);
-                                        setShowExamples(false);
-                                    }}
+                                    const formulaString = example.formulas.join(',');
+                                    reset({ input: formulaString });
+                                    onSubmit(example.formulas);
+                                    onLoadExample?.(example.formulas, example.query, example.algorithm, example.label);
+                                    setShowExamples(false);
+                                }}
                                 >
                                     <p className="font-medium text-foreground">{example.label}</p>
                                     <p className="text-xs text-muted-foreground mt-0.5">{example.description}</p>

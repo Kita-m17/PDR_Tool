@@ -8,7 +8,6 @@
  *
  * Status: Not modified
  * Context: Used in PDR's project for rational closure reasoning.
- * Purpose: Educational use only.
  */
 package com.pdr.models;
 

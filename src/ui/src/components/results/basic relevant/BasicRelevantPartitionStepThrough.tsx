@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../../api/api';
 import Header from '../../layout/Header';
+import AlgorithmProgress from '../../layout/AlgorithmProgress';
 import Footer from '../../layout/Footer';
 import { buildPartitionSteps, PartitionDebuggerStep } from './PartitionSteps';
-import PowersetView from './PowersetView';
+import PowersetView, { PartitionFilter } from './PowersetView';
 import JustificationVisualiser from './JustificationVisualiser';
-import StepControls from './BasicRelevantStepControls';
+import StepControls from '../StepControls';
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import { Button } from '../../ui/Buttons';
 
@@ -17,21 +18,84 @@ interface ResultsState {
     query: string;
     algorithm: string;
 }
-
+function getAntecedent(formula: string): string {
+    const stripped = formula.replace(/[()]/g, '');
+    return stripped.split(/\|~|~\|/)[0].trim();
+}
 const BasicRelevantPartitionStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { baseRank, entailment, partition, query, algorithm } = location.state as ResultsState;
+    
+    // location.state is only populated when this page is reached via
+    // navigate(path, { state }) - a refresh, pasted URL, or bookmark lands
+    // here with state === null, which used to crash buildPartitionSteps
+    // trying to read .traceSteps off undefined. Guarded below instead of
+    // crashing - but ALL hooks still have to run on every render regardless
+    // of resultsState, so the guard's early return comes after them, not
+    // before. Hooks conditionally called (only when resultsState exists)
+    // violate React's rules-of-hooks and break hook state across renders.
+    const resultsState = location.state as ResultsState | null;
 
-    const steps = buildPartitionSteps(partition);
+    const [filter, setFilter] = useState<PartitionFilter>('all');
     const [currentStep, setCurrentStep] = useState(0);
-    const step: PartitionDebuggerStep | undefined = steps[currentStep];
+
+    // Plain derived value, not a hook - fine to compute conditionally.
+    const steps = resultsState ? buildPartitionSteps(resultsState.partition) : [];
+
+    // Filtering only changes which subsets you page through - the underlying
+    // data (justificationsSoFar per step, and the completed relevantPartition/
+    // irrelevantPartition on `partition` itself) is unaffected, so the number
+    // of Next/Back clicks needed to reach the end matches whatever's filtered
+    // in, not the full unfiltered powerset.
+    const filteredSteps = useMemo(() => {
+        switch (filter) {
+            case 'entailed': return steps.filter(s => s.entailed);
+            case 'minimal': return steps.filter(s => s.entailed && s.minimal);
+            default: return steps;
+        }
+    }, [steps, filter]);
+
+    const step: PartitionDebuggerStep | undefined = filteredSteps[currentStep];
+    const isLastInView = filteredSteps.length > 0 && currentStep === filteredSteps.length - 1;
+
+    const handleFilterChange = (next: PartitionFilter) => {
+        setFilter(next);
+        setCurrentStep(0);
+    };
+
+    if (!resultsState) {
+        return (
+            <div className="min-h-screen bg-accent flex flex-col">
+                <Header />
+                <main className="flex-1 px-8 py-6 flex items-center justify-center">
+                    <div className="bg-white border border-border rounded-xl p-8 text-center max-w-md">
+                        <h2 className="text-lg font-semibold text-foreground mb-2">
+                            No query data found
+                        </h2>
+                        <p className="text-sm text-muted-foreground mb-6">
+                            This page needs data from a submitted query. It looks like it was reached
+                            directly - for example a page refresh, a pasted link, or a bookmark - which
+                            doesn't carry that data along. Start a new query instead.
+                        </p>
+                        <Button variant="primary" onClick={() => navigate('/')}>
+                            Back to start
+                        </Button>
+                    </div>
+                </main>
+                <Footer />
+            </div>
+        );
+    }
+
+    const { baseRank, entailment, partition, query, algorithm } = resultsState;
 
     return (
         <div className="min-h-screen bg-accent flex flex-col">
             <Header />
 
             <main className="flex-1 px-8 py-6">
+
+                <AlgorithmProgress currentPhase="partition" />
 
                 {/* Page header */}
                 <div className="flex items-start justify-between mb-4">
@@ -44,9 +108,11 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
                         </p>
 
                         <p className="text-sm text-foreground mt-2 max-w-2xl">
-                            Every subset of the knowledge base is checked for classical entailment of the query.
-                            Minimal entailing subsets become justifications; the statements that appear in at
-                            least one justification form the relevant partition, everything else is irrelevant.
+                            Every subset of the defeasible knowledge base unioned with the classical statements is checked for classical entailment of the negation of the query's antecedent in this case {"!"+getAntecedent(query)}.
+                             This is done to find the set of defeasible statements that us the knowledge base conclude no {getAntecedent(query)} exists.
+                            Minimal entailing subsets are called justifications. The statements that appear in at
+                            least one justification form part of the relevant partition, everything else forms part of the irrelevant partition. The relevant partition is used in addition to the base rank in the Relevant Closure Algorithm
+                            to provide a inferentially more powerful query check.
                         </p>
                     </div>
 
@@ -64,74 +130,82 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
 
                 {/* Query banner */}
                 <div className="bg-white border border-border rounded-xl p-4 mb-4 flex items-center gap-3">
-                    <span className="text-primary font-bold text-sm">Query</span>
-                    <span className="font-mono text-foreground">{query}</span>
+                    <span className="text-primary font-bold text-sm">Checking</span>
+                    <span className="font-mono text-foreground">{"!"+getAntecedent(query)}</span>
                 </div>
 
-                {!step ? (
-                    <div className="bg-white border border-border rounded-xl p-6 text-sm text-muted-foreground italic">
-                        No partition trace data was returned for this query.
+                {/* Justification visualiser, full width - only meaningful once a step exists */}
+                {step && (
+                    <div className="bg-white border border-border rounded-xl p-6 mb-4">
+                        <JustificationVisualiser
+                            justificationsSoFar={step.justificationsSoFar}
+                            isFinalStep={isLastInView}
+                            relevantPartition={partition.relevantPartition}
+                            irrelevantPartition={partition.irrelevantPartition}
+                        />
                     </div>
-                ) : (
-                    <>
-                        {/* Justification visualiser, full width */}
-                        <div className="bg-white border border-border rounded-xl p-6 mb-4">
-                            <JustificationVisualiser
-                                justificationsSoFar={step.justificationsSoFar}
-                                isFinalStep={step.isFinalStep}
-                                relevantPartition={step.relevantPartition}
-                                irrelevantPartition={step.irrelevantPartition}
-                            />
-                        </div>
+                )}
 
-                        {/* Powerset + Explanation side by side */}
-                        <div className="flex gap-4 mb-4">
-                            <div className="bg-white border border-border rounded-xl p-6 flex-1">
-                                <PowersetView
-                                    currentSet={step.currentSet}
-                                    entailed={step.entailed}
-                                    minimal={step.minimal}
-                                    stepNumber={step.stepNumber}
-                                    totalSteps={step.totalSteps}
-                                />
-                            </div>
+                {/* Powerset (left, owns the subset filter so it's always reachable)
+                    + Explanation (right) side by side */}
+                <div className="flex gap-4 mb-4">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1">
+                        <PowersetView
+                            currentSet={step?.currentSet ?? []}
+                            entailed={step?.entailed ?? false}
+                            minimal={step?.minimal ?? false}
+                            stepNumber={step ? currentStep + 1 : 0}
+                            totalSteps={filteredSteps.length}
+                            filter={filter}
+                            onFilterChange={handleFilterChange}
+                        />
+                    </div>
 
-                            <div className="bg-white border border-border rounded-xl p-6 flex-1">
-                                <h3 className="text-primary font-semibold mb-4 flex items-center gap-2">
-                                    Explanation
-                                </h3>
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1">
+                        <h3 className="text-primary font-semibold mb-4 flex items-center gap-2">
+                            Explanation
+                        </h3>
 
+                        {step ? (
+                            <>
                                 <p className="text-sm text-foreground leading-relaxed whitespace-pre-line mb-4">
-                                    {step.explanation}
+                                    {step.explanation }
                                 </p>
 
-                                {step.isFinalStep && (
+                                {isLastInView && (
                                     <div className="mt-4 rounded-lg p-4 border bg-green-50 border-green-200">
                                         <p className="font-bold text-green-700 mb-1">
                                             ✓ Partition Complete
                                         </p>
-                                        <p className="text-sm text-green-600">
-                                            Every subset has been checked. The relevant and irrelevant partitions are shown above.
-                                        </p>
+
                                     </div>
                                 )}
-                            </div>
-                        </div>
+                            </>
+                        ) : (
+                            <p className="text-sm text-muted-foreground italic">
+                                {steps.length === 0
+                                    ? 'No partition trace data was returned for this query.'
+                                    : 'No subsets match this filter - try a different option on the left.'}
+                            </p>
+                        )}
+                    </div>
+                </div>
 
-                        {/* Step controls */}
+                {/* Step controls + continue, only once a step exists */}
+                {step && (
+                    <>
                         <div className="bg-white border border-border rounded-xl p-4">
                             <StepControls
                                 current={currentStep}
-                                total={steps.length}
+                                total={filteredSteps.length}
                                 onStart={() => setCurrentStep(0)}
                                 onBack={() => setCurrentStep(prev => Math.max(0, prev - 1))}
-                                onNext={() => setCurrentStep(prev => Math.min(steps.length - 1, prev + 1))}
-                                onEnd={() => setCurrentStep(steps.length - 1)}
+                                onNext={() => setCurrentStep(prev => Math.min(filteredSteps.length - 1, prev + 1))}
+                                onEnd={() => setCurrentStep(filteredSteps.length - 1)}
                             />
                         </div>
 
-                        {/* Continue to Relevant Closure, only on final step */}
-                        {step.isFinalStep && (
+                        {isLastInView && (
                             <div className="flex justify-end mt-4">
                                 <Button variant="primary" size="lg"
                                     onClick={() => navigate('/results/relevant/basic', {

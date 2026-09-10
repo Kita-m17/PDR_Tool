@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BaseRankDTO, LexicographicEntailmentDTO } from '../../../api/api';
 import Header from '../../layout/Header';
+import AlgorithmProgress from '../../layout/AlgorithmProgress';
 import Footer from '../../layout/Footer';
 import { buildLexicographicSteps, LexDebuggerStep } from './LexicographicStep';
 import LexicographicRankingVisualiser from './LexiRankingVis';
@@ -16,12 +17,13 @@ interface ResultsState {
     entailment: LexicographicEntailmentDTO;
     query: string;
     algorithm: string;
+    fromComparison?: boolean; 
 }
 
 const LexicographicStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { baseRank, entailment, query, algorithm } = location.state as ResultsState;
+    const { baseRank, entailment, query, algorithm, fromComparison } = location.state as ResultsState;
 
     const steps = buildLexicographicSteps(entailment);
     const [currentStep, setCurrentStep] = useState(0);
@@ -33,6 +35,8 @@ const LexicographicStepThrough: React.FC = () => {
 
             {/* Page Body */}
             <main className="flex-1 px-8 py-6">
+
+                <AlgorithmProgress currentPhase="closure" phases={['baserank', 'closure']} />
 
                 {/* Page header */}
                 <div className="flex items-start justify-between mb-4">
@@ -102,8 +106,18 @@ const LexicographicStepThrough: React.FC = () => {
                 {/* Done button, only on final step */}
                 {step.isFinalStep && (
                     <div className="flex justify-end mt-4">
-                        <Button variant="primary" size="lg" onClick={() => navigate('/')}>
-                            Done
+                        <Button variant="primary" size="lg" 
+                            onClick={() => 
+                                {if(fromComparison) {
+                                    navigate('/results/comparison', {
+                                        state: { baseRank, query, algorithm }
+                                    });
+                                    return;
+                                }
+                                
+                            navigate('/')}}>
+
+                            {fromComparison ? 'Back to Comparison' : 'Done'}
                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                         </Button>
                     </div>
