@@ -194,6 +194,10 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
                           <span>{result.entailment.partitionExecutionTime?.toFixed(3)}s</span>
                         </span>
                       )}
+                      <span className="flex justify-between gap-2 font-medium text-foreground border-t border-border/70 pt-1 mt-1">
+                        <span>Total</span>
+                        <span>{result.entailment.totalExecutionTime.toFixed(3)}s</span>
+                      </span>
                     </span>
                   </button>
                 );

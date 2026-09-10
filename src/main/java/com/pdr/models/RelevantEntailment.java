@@ -39,6 +39,17 @@ public class RelevantEntailment extends Entailment {
         return this.partitionExecutionTime;
     }
 
+    /**
+     * Relevant closure additionally goes through a partitioning phase (also
+     * timed separately from base rank and closure), so its total is the
+     * base Entailment total plus partitionExecutionTime.
+     */
+    @Override
+    @JsonProperty("totalExecutionTime")
+    public double getTotalExecutionTime() {
+        return super.getTotalExecutionTime() + this.partitionExecutionTime;
+    }
+
     // builder class for relevant entailment
     public static class RelevantEntailmentBuilder extends EntailmentBuilder<RelevantEntailmentBuilder> {
         public double partitionExecutionTime;
