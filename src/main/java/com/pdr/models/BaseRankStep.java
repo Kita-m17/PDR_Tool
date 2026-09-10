@@ -2,7 +2,7 @@
  * File: TraceStep.java
  * Package: com.pdr.models
  * 
- * Original Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Original Author: Nikita Martin, Liam De Saldanha (2026 Honours Project, University of Cape Town)
  * Context: Used in PDR project for the BaseRank algorithm.
  * Purpose: Used for educational purposes
  */
@@ -10,69 +10,28 @@ package com.pdr.models;
 import java.util.List;
 import com.pdr.dtos.BaseRankStepDTO;
 import com.pdr.dtos.ExceptionalityCheckDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+
 import java.util.stream.Collectors;
 
 /**
  * This class represents a single step in the trace of the BaseRank algorithm.
  */
+@AllArgsConstructor
+@Data
+@Builder(setterPrefix = "with")
 public class BaseRankStep {
     private int iteration; //i
     private KnowledgeBase consideredFormulas; //Ei
     private List<ExceptionalityCheck> checks;
-    public KnowledgeBase assignedRank; //Ri
-    public KnowledgeBase carriedForward; //Ei+1
+    private KnowledgeBase assignedRank; //Ri
+    private KnowledgeBase carriedForward; //Ei+1
 
-    /**
-     * Creates a new TraceStep instance with the given iteration number, considered formulas, exceptionality checks, assigned rank, and carried forward formulas.
-     * 
-     * @param iteration
-     * @param consideredFormulas
-     * @param checks
-     * @param assignedRank
-     * @param carriedForward
-     */
-    public BaseRankStep(int iteration, KnowledgeBase consideredFormulas, List<ExceptionalityCheck> checks, KnowledgeBase assignedRank, KnowledgeBase carriedForward) {
-        this.iteration = iteration;
-        this.consideredFormulas = consideredFormulas;
-        this.checks = checks;
-        this.assignedRank = assignedRank;
-        this.carriedForward = carriedForward;
-    }
 
-    /**
-     * @return int The iteration number of this trace step
-     */
-    public int getIteration() {
-        return iteration;
-    }
 
-    /**
-     * @return KnowledgeBase The set of formulas considered in this trace step
-     */
-    public KnowledgeBase getConsideredFormulas() {
-        return consideredFormulas;
-    }
 
-    /**
-     * @return List<ExceptionalityCheck> The list of exceptionality checks performed in this trace step
-     */
-    public List<ExceptionalityCheck> getChecks() {
-        return checks;
-    }
-
-    /**
-     * @return KnowledgeBase The set of formulas assigned a rank in this trace step
-     */
-    public KnowledgeBase getAssignedRank() {
-        return assignedRank;
-    }
-
-    /**
-     * @return KnowledgeBase The set of formulas carried forward to the next trace step
-     */
-    public KnowledgeBase getCarriedForward() {
-        return carriedForward;
-    }
 
     public BaseRankStepDTO toDTO() {
         List<ExceptionalityCheckDTO> checksDTO = this.checks.stream().map(ExceptionalityCheck::toDTO).collect(Collectors.toList());

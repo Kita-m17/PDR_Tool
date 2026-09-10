@@ -35,12 +35,12 @@ public class DefeasibleParser {
     public PlFormula parseFormula(String formula) throws Exception {
         PlFormula parsedFormula;
         try {
-            // normalise ~> to ~| so both symbols work
+            // normalise ~> to |~ so both symbols work
             // formula = formula.replace("~>", Symbols.DEFEASIBLE_IMPLICATION());
             formula = formula.trim();
-            formula = formula.replace(" ~| ", "~|");
-            formula = formula.replace(" => ", "=>");
-            formula = formula.replace("~>", "~|"); 
+            formula = formula.replace("|~", "|~");
+            formula = formula.replace("=>", "=>");
+            formula = formula.replace("~>", "|~");
 
             boolean isDI = formula.contains(Symbols.DEFEASIBLE_IMPLICATION());
             formula = isDI ? reformatDefeasibleImplication(formula) : formula;

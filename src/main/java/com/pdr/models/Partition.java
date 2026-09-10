@@ -1,6 +1,13 @@
+/*
+ * Original Author: Liam De Saldanha , Honours Project (2026), University of Cape Town
+ *
+ * Context: Used in PDR project for partition service.
+ * Purpose: Educational use only.
+ */
 package com.pdr.models;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,19 +20,17 @@ import com.pdr.dtos.PartitionStepDTO;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(setterPrefix = "with")
 public class Partition {
     private KnowledgeBase relevantPartition;
     private KnowledgeBase irrelevantPartition;
     private KnowledgeBase classicalStatements;
     private KnowledgeBase knowledgeBase;
-    // Initialised so callers that build a Partition via the no-args
-    // constructor (e.g. PartitionUsingPowersetImpl) can call
-    // getTraceSteps().add(...) immediately without a null check.
     private List<PartitionStep> traceSteps = new ArrayList<>();
+    private double executionTime;
 
     /**
-     * Converts this Partition instance to a PartitionDTO for data transfer,
-     * flattening every KnowledgeBase field down to a plain list of formula strings.
+     * Converts this Partition instance to a PartitionDTO for endpoint
      * @return PartitionDTO The DTO representation of this Partition
      */
     public PartitionDTO toDTO() {
@@ -37,7 +42,8 @@ public class Partition {
                 this.irrelevantPartition != null ? this.irrelevantPartition.getStringFormulas() : new ArrayList<>(),
                 this.classicalStatements != null ? this.classicalStatements.getStringFormulas() : new ArrayList<>(),
                 this.knowledgeBase != null ? this.knowledgeBase.getStringFormulas() : new ArrayList<>(),
-                traceStepsDTO
+
+                traceStepsDTO,this.executionTime
         );
     }
 }

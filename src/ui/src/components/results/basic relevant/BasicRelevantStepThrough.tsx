@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../../api/api';
 import Header from '../../layout/Header';
+import AlgorithmProgress from '../../layout/AlgorithmProgress';
 import Footer from '../../layout/Footer';
 import { buildDebuggerSteps, DebuggerStep } from './BasicRelevantSteps';
 import PrimeVisualiser from './BasicRelevantPrimeVisualiser';
 import AlgorithmView from './BasicRelevantAlgorithmView';
 import ExplanationView from './BasicRelevantExplanationView';
-import StepControls from './BasicRelevantStepControls';
+import StepControls from '../StepControls';
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import { Button } from '../../ui/Buttons';
 
@@ -17,13 +18,14 @@ interface ResultsState {
     partition: PartitionDTO;
     query: string;
     algorithm: string;
+    fromComparison?: boolean;
 }
 
 const RCStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     // const { entailment, query } = location.state as ResultsState;
-    const { baseRank, entailment, partition, query, algorithm } = location.state as ResultsState;
+    const { baseRank, entailment, partition, query, algorithm, fromComparison } = location.state as ResultsState;
 
     const steps = buildDebuggerSteps(entailment);
     const [currentStep, setCurrentStep] = useState(0);
@@ -36,12 +38,14 @@ const RCStepThrough: React.FC = () => {
             {/* Page Body */}
             <main className="flex-1 px-8 py-6">
 
+                <AlgorithmProgress currentPhase="closure" />
+
                 {/* Page header */}
                 <div className="flex items-start justify-between mb-4">
                     <div>
                         
                         <h1 className="text-2xl font-bold text-foreground">
-                            Basic Relevant Closure
+                            {algorithm === 'basic relevant' ?"Basic Relevant Closure":"Minimal Relevant Closure"}
                         </h1>
                         <p className="text-muted-foreground text-sm mt-1">
                             Step-by-step evaluation
@@ -50,16 +54,18 @@ const RCStepThrough: React.FC = () => {
                         {/* Brief explanation of the RC algorithm */}
                         <p className="text-sm text-foreground mt-2 max-w-2xl">
                             Relevant Closure evaluates whether a query is entailed by
-                            progressively removing relevant statements in exceptional ranks
-                            from the knowledge base until the query antecedent is no longer
-                            exceptional.
+                            progressively removing relevant statements rank by rank
+                            from the Running Knowledge Base until the query antecedent is no longer
+                            exceptional for the Running Knowledge Base. This process removes defeasible information
+                            for more specific information relating to the query.
                         </p>
                     </div>
 
                     <Button className="text-sm text-muted-foreground border border-border rounded-lg px-4 py-2 hover:bg-white transition"
-                        onClick={() => navigate('/results/relevant/basic/partition', {
-                            state: { baseRank, entailment, partition, query, algorithm }
-                        })}
+                        onClick={() => navigate(
+                            algorithm === 'basic relevant' ? '/results/relevant/basic/partition' : '/results/relevant/minimal/partition',
+                            { state: { baseRank, entailment, partition, query, algorithm, fromComparison } }
+                        )}
                     >
                         <span className="flex items-center gap-1">
                             <ArrowLeftIcon className="h-3 w-3" />
@@ -79,6 +85,8 @@ const RCStepThrough: React.FC = () => {
                     <PrimeVisualiser
                         currentRankIndex={step.currentRankIndex}
                         currentRPrime={step.currentRPrime}
+                        irrelevantPartition={partition?.irrelevantPartition ?? []}
+
                     />
 
                 </div>
@@ -113,8 +121,19 @@ const RCStepThrough: React.FC = () => {
                 {/* Done button, only on final step */}
                 {step.isFinalStep && (
                     <div className="flex justify-end mt-4">
-                        <Button variant="primary" size="lg" onClick={() => navigate('/')}>
-                            Done
+                        <Button variant="primary" size="lg" onClick={() => {
+
+                            if (fromComparison) {
+                                navigate('/results/comparison', {
+                                    state: { baseRank, query, algorithm }
+                                });
+                                return;
+                            }
+                            
+                            navigate('/');
+                        }}
+                        >
+                            {fromComparison ? 'Back to Comparison' : 'Done'}
                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                         </Button>
                     </div>

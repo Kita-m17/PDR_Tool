@@ -32,6 +32,7 @@ export interface BaseRankDTO {
     sequence: RankDTO[];
     ranking: RankDTO[];
     traceSteps: BaseRankStepDTO[];
+    executionTime: number;
 }
 
 export interface EntailmentStepDTO {
@@ -49,11 +50,24 @@ export interface EntailmentDTO {
     baseRanking: RankDTO[];
     removedRanking: RankDTO[];
     traceSteps: EntailmentStepDTO[];
+    // Only populated for Basic/Minimal Relevant Closure - the smallest weak
+    // justification (proof) for the entailment, per RelevantEntailment.java.
+    // Empty/undefined when not entailed, since there's nothing to justify.
+    smallestWeakJustification?: string[];
+    baseRankExecutionTime: number;
+    closureExecutionTime: number;
+    // Only populated for Basic/Minimal Relevant Closure.
+    partitionExecutionTime?: number;
 }
 
 export interface PartitionStepDTO {
     ID: number;
     set: string[];
+    // Only populated when this step's subset is entailed and minimal AND the
+    // partition was built for Minimal Relevant Closure - the single
+    // lowest-ranked statement from `set`, which is what actually gets added
+    // to justificationsSoFar for that closure (see PartitionUsingPowersetImpl).
+    minimalSet: string[];
     entailed: boolean;
     minimal: boolean;
     reason: string;
@@ -66,6 +80,7 @@ export interface PartitionDTO {
     classicalStatements: string[];
     knowledgeBase: string[];
     traceSteps: PartitionStepDTO[];
+    executionTime: number;
 }
 
 export interface SubKnowledgeBaseCheckDTO {
@@ -101,6 +116,22 @@ export interface LexicographicEntailmentDTO extends EntailmentDTO {
 }
 
 
+export interface AlgorithmEvaluationDTO {
+    algorithm: string;
+    entailment: EntailmentDTO;
+    partition: PartitionDTO | null;
+}
+
+export interface EvaluateAllRequestDTO {
+    query: string;
+    algorithms: string[];
+}
+
+export interface EvaluateAllResponseDTO {
+    baseRank: BaseRankDTO;
+    results: AlgorithmEvaluationDTO[];
+}
+
 // POST /api/knowledge-base/create-knowledge-base
 export const submitKnowledgeBase = async (formulas: string[]): Promise<BaseRankDTO> => {
     const response = await fetch(`${BASE_URL}/knowledge-base/create-knowledge-base`, {
@@ -129,7 +160,7 @@ export const submitQuery = async (algorithm: string, query: string): Promise<Ent
 
 // POST /api/partition/relevant/basic/create
 export const submitPartitionQuery = async (query: string): Promise<PartitionDTO> => {
-    const response = await fetch(`${BASE_URL}/partition/relevant/basic/create`, {
+    const response = await fetch(`${BASE_URL}/partition/relevant/create/basic`, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: query,
@@ -137,5 +168,31 @@ export const submitPartitionQuery = async (query: string): Promise<PartitionDTO>
 
     if (!response.ok)
         throw new Error('Failed to submit partition query');
+    return response.json();
+};
+
+// POST /api/partition/relevant/create/minimal
+export const submitMinimalPartitionQuery = async (query: string): Promise<PartitionDTO> => {
+    const response = await fetch(`${BASE_URL}/partition/relevant/create/minimal`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: query,
+    });
+
+    if (!response.ok)
+        throw new Error('Failed to submit minimal partition query');
+    return response.json();
+};
+
+// POST /api/entailment/evaluate-all
+export const submitEvaluateAll = async (query: string, algorithms: string[]): Promise<EvaluateAllResponseDTO> => {
+    const response = await fetch(`${BASE_URL}/entailment/evaluate-all`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, algorithms }),
+    });
+
+    if (!response.ok)
+        throw new Error('Failed to evaluate selected algorithms');
     return response.json();
 };

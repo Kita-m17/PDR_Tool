@@ -1,45 +1,93 @@
 package com.pdr.models;
-
+/*
+ * Original Author: Liam De Saldanha , Honours Project (2026), University of Cape Town
+ *
+ * Context: Used in PDR project for relevant closure.
+ * Purpose: Educational use only.
+ */
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pdr.dtos.RankDTO;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RelevantEntailment extends Entailment{
+public class RelevantEntailment extends Entailment {
+    @JsonIgnore
+    private final KnowledgeBase weakJustification;
+    // The one timing specific to relevant closure - baseRankExecutionTime and
+    // closureExecutionTime are shared by every algorithm and live on Entailment.
+    private double partitionExecutionTime;
+    @JsonIgnore
+    private final Ranking removedRanking;
+
     /**
      * Constructor using the builder pattern
      *
      * @param builder
      */
-    protected RelevantEntailment(EntailmentBuilder<?> builder) {
+    protected RelevantEntailment(RelevantEntailmentBuilder builder) {
         super(builder);
+        this.weakJustification = builder.weakJustification;
+        this.partitionExecutionTime = builder.partitionExecutionTime;
+        this.removedRanking = builder.removedRanking;
     }
-    public static RationalEntailment.RationalEntailmentBuilder builder(){
-        return new RationalEntailment.RationalEntailmentBuilder();
+@JsonProperty("smallestWeakJustification")
+    public List<String> getWeakJustification() {
+        return weakJustification.toStringList();
     }
 
+    @JsonProperty("partitionExecutionTime")
+    public double getPartitionExecutionTime() {
+        return this.partitionExecutionTime;
+    }
 
+    /**
+     * @return Ranking the formulas excluded from the relevant partition
+     *         because they were still exceptional (per rank).
+     */
+    public Ranking getRemovedRanking() {
+        return removedRanking;
+    }
 
+    @JsonProperty("removedRanking")
+    public List<RankDTO> getRemovedRankingDTO() {
+        return removedRanking != null
+                ? removedRanking.stream().map(Rank::toDTO).collect(Collectors.toList())
+                : List.of();
+    }
 
-    // builer class for rational entailment
-    public static class RelevantEntailmentBuilder extends EntailmentBuilder<RelevantEntailment.RelevantEntailmentBuilder>{
+    // builder class for relevant entailment
+    public static class RelevantEntailmentBuilder extends EntailmentBuilder<RelevantEntailmentBuilder> {
+        public double partitionExecutionTime;
+
         private Ranking removedRanking;
+        private KnowledgeBase weakJustification;
 
+        public RelevantEntailmentBuilder withWeakJustification(KnowledgeBase weakJustification) {
+            this.weakJustification = weakJustification;
+            return self();
+        }
 
+        public RelevantEntailmentBuilder withPartitionExecutionTime(double partitionExecutionTime) {
+            this.partitionExecutionTime = partitionExecutionTime;
+            return self();
+        }
+
+        public RelevantEntailmentBuilder withRemovedRanking(Ranking removedRanking) {
+            this.removedRanking = removedRanking;
+            return self();
+        }
 
         @Override
-        protected RelevantEntailment.RelevantEntailmentBuilder self(){
+        protected RelevantEntailmentBuilder self() {
             return this;
         }
 
         @Override
-        public RelevantEntailment build(){
+        public RelevantEntailment build() {
             return new RelevantEntailment(this);
         }
+
     }
-
-
-
-
 }

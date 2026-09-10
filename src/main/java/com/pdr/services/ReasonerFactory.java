@@ -3,7 +3,7 @@
  * Package: com.pdr.services
  *
  * Original Author: Thabo Vincent Moloi , Honours Project (2024), University of Cape Town
- * Adapted by: Nikita Martin (202 Honours Project, University of Cape Town)
+ * Adapted by: Nikita Martin, Liam De Saldanha (2026 Honours Project, University of Cape Town)
  *
  * Status: Modified – Springboot use.
  * Context: Used in PDR's project for closure algorithms.
@@ -30,6 +30,7 @@ public class ReasonerFactory {
             case "rational" -> new RationalReasonerImpl();
             case "lexicographic" -> new LexicographicReasonerImpl();
             case "basic relevant" -> new BasicRelevantReasonerImpl(partitionService,knowledgeBaseService);
+            case "minimal relevant" -> new MinimalRelevantReasonerImpl(partitionService,knowledgeBaseService);
             default -> throw new IllegalArgumentException("Unknown reasoner: " + type);
         };
     }

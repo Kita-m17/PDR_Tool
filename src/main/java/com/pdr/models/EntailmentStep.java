@@ -1,7 +1,7 @@
 /**
  * File: EntailmentStep.java
  * Package: com.pdr.models
- * 
+ *
  * Original Author: Nikita Martin (2026 Honours Project, University of Cape Town)
  * Context: Used in PDR project for the Closure algorithms.
  * Purpose: Used for educational purposes
@@ -19,18 +19,18 @@ import com.pdr.dtos.EntailmentStepDTO;
  */
 public class EntailmentStep {
     private final int iteration; // The iteration number of this entailment step
-    
+
     @JsonIgnore
     private final KnowledgeBase remaining; // The remaining knowledge base after this entailment step
     private final boolean antecedentExceptional; // True if the antecedent is exceptional, false otherwise
     private final String reason; // Reason for the exceptionality result, e.g., "Exceptional because it leads to a contradiction."
-    
+
     @JsonIgnore
     private final KnowledgeBase removed; // The removed knowledge base after this entailment step
 
     /**
      * Constructor that creates a new EntailmentStep instance with the given iteration number, remaining knowledge base, exceptionality checks, removed ranks, and the reason.
-     * 
+     *
      * @param iteration
      * @param remaining
      * @param antecedentExceptional

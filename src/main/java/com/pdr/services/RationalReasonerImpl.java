@@ -53,6 +53,7 @@ public class RationalReasonerImpl implements ReasonerService {
      */
     @Override
     public Entailment getEntailment(BaseRank baseRank, PlFormula queryFormula) {
+        long startTime = System.nanoTime();
 
         // Get inputs
         PlFormula antecedent = ((Implication) queryFormula).getFirstFormula();
@@ -106,6 +107,8 @@ public class RationalReasonerImpl implements ReasonerService {
         // add the final step to trace
         trace.add(new EntailmentStep(i, currentUnion, false, antecedent + " is no longer exceptional, checking R∞ U R |=" + queryFormula, new KnowledgeBase()));
 
+        long endTime = System.nanoTime();
+        double closureExecutionTime = (double) (endTime - startTime) / 1_000_000_000.0;
 
         // return the entailment result along with the trace
         return new RationalEntailment.RationalEntailmentBuilder()
@@ -115,6 +118,8 @@ public class RationalReasonerImpl implements ReasonerService {
             .withEntailed(entailed)
             .withTraceSteps(trace)
             .withRemovedRanking(removedRanking)
+            .withBaseRankExecutionTime(baseRank.getExecutionTime())
+            .withClosureExecutionTime(closureExecutionTime)
             .build();
     }
 }

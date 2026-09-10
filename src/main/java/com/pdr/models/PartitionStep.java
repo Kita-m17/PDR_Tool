@@ -1,6 +1,13 @@
+/*
+ * Original Author: Liam De Saldanha , Honours Project (2026), University of Cape Town
+ *
+ * Context: Used in PDR project for partition controller.
+ * Purpose: Educational use only.
+ */
 package com.pdr.models;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,9 +19,11 @@ import com.pdr.dtos.PartitionStepDTO;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(setterPrefix = "with")
 public class PartitionStep {
     private Integer id;
     private KnowledgeBase set;
+    private KnowledgeBase minimalSet;
     private boolean isEntailed;
     private boolean isMinimal;
     private String reason;
@@ -28,6 +37,7 @@ public class PartitionStep {
         PartitionStepDTO dto = new PartitionStepDTO();
         dto.setID(this.id);
         dto.setSet(this.set != null ? this.set.getStringFormulas() : new ArrayList<>());
+        dto.setMinimalSet(this.minimalSet != null ? this.minimalSet.getStringFormulas() : new ArrayList<>());
         dto.setEntailed(this.isEntailed);
         dto.setMinimal(this.isMinimal);
         dto.setReason(this.reason);

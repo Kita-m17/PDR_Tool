@@ -1,8 +1,11 @@
 package com.pdr.services;
-
-import com.pdr.models.Partition;
-import com.pdr.models.PartitionStep;
-import com.pdr.models.KnowledgeBase;
+/*
+ * Original Author: Liam De Saldanha , Honours Project (2026), University of Cape Town
+ *
+ * Context: Used in PDR project for relevant closure reasoning.
+ * Purpose: Educational use only.
+ */
+import com.pdr.models.*;
 import org.springframework.stereotype.Service;
 import org.tweetyproject.logics.pl.reasoner.SatReasoner;
 import org.tweetyproject.logics.pl.sat.Sat4jSolver;
@@ -16,90 +19,154 @@ import java.util.List;
 @Service
 public class PartitionUsingPowersetImpl implements PartitionService {
 
+    private Partition partition;
+    private final KnowledgeBaseService knowledgeBaseService;
+
+    // Constructor injection - Spring wires this in automatically since it's the
+    // only constructor. Lets us reuse the base rank the app already computed
+    // once (via KnowledgeBaseService) instead of reconstructing it from scratch
+    // on every partition request.
+    public PartitionUsingPowersetImpl(KnowledgeBaseService knowledgeBaseService) {
+        this.knowledgeBaseService = knowledgeBaseService;
+    }
+
     @Override
-    public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query) {
+    public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query, boolean isMinimalRelevantClosure) {
+        long startTime = System.nanoTime();
+        // Was: (new BaseRankServiceImp()).constructBaseRank(knowledgeBase) - recomputed
+        // the base rank from scratch on every call. The caller always passes the
+        // current knowledgeBaseService.getKnowledgeBase() here anyway, so its
+        // already-cached base rank is exactly the right one to reuse.
+        BaseRank baseRank = knowledgeBaseService.getBaseRank();
+
         List<KnowledgeBase> list = getPowerSets(knowledgeBase);
-        int min = Integer.MAX_VALUE;
+
         List<KnowledgeBase> resList = new ArrayList<>();
-        KnowledgeBase res = new KnowledgeBase();
         SatSolver.setDefaultSolver(new Sat4jSolver());
         SatReasoner reasoner = new SatReasoner();
-        System.out.println("query: "+query.toString());
-        Partition result = new Partition();
-        result.setTraceSteps(new ArrayList<>());
+        List<PartitionStep> traceSteps = new ArrayList<>();
         int count =1;
+        boolean isEntailed = false;
+        boolean isMinimal = false;
 
         KnowledgeBase classicalKnowledgeBase = knowledgeBase.separate()[1];
 
         for(KnowledgeBase combination:list){
+            isEntailed = false;
+            isMinimal = false;
 
-            PartitionStep step = new PartitionStep();
-            step.setId(count);
-            step.setSet(combination);
+            KnowledgeBase minimalJustificationStatement = new KnowledgeBase();
+            List<KnowledgeBase> justificationSoFar = new ArrayList<>();
             for(PlFormula pl:classicalKnowledgeBase){
                 combination.add(pl);
             }
-            if(step.getId()!=1){
+            if(count!=1){
 
-                step.setJustificationsSoFar(new ArrayList<>((result.getTraceSteps().get(step.getId()-2)).getJustificationsSoFar()));
+                justificationSoFar = new ArrayList<>((traceSteps.get(count-2)).getJustificationsSoFar());
             }else{
-                step.setJustificationsSoFar(new ArrayList<>());
+                justificationSoFar = new ArrayList<>();
             }
 
-            System.out.println("subset: "+combination+" entailemnt: "+reasoner.query(combination,new Negation(((Implication) query).getFirstFormula())));
-            //System.out.println(new Negation(((Implication) query).getFirstFormula()));
             if(reasoner.query(combination,new Negation(((Implication) query).getFirstFormula()))){
                 boolean minimal = true;
-                step.setEntailed(true);
+                isEntailed = true;
+
                 for(int i =0;i<resList.size();i++){
                     if(combination.containsAll(resList.get(i)) ){
-                        // System.out.println("Relevant: "+combination +" i: "+i);
 
                         minimal = false;
                     }
                 }
 
-                //System.out.println("Relevant: "+combination);
 
                 if(minimal){
-                    step.setMinimal(true);
-                    System.out.println("Relevant: "+combination);
-                    resList.add(combination);
+                    isMinimal = true;
+                    if (isMinimalRelevantClosure){
+                        int lowestRank =Integer.MAX_VALUE;
+                        for(Rank rank : baseRank.getRanking()){
+                            for(PlFormula pl : combination){
+
+                                if(rank.getFormulas().contains(pl) && rank.getRankNumber()<lowestRank){
+
+                                    lowestRank = rank.getRankNumber();
+                                    minimalJustificationStatement.add(pl);
+                                }
+                            }
+
+                        }
+                        resList.add(minimalJustificationStatement);
+
+                    }else{
+                        resList.add(combination);
+
+                    }
 
                 }
 
 
             }
-            if(step.isEntailed() && step.isMinimal()){
+            if(isEntailed && isMinimal){
 
 
+                if(isMinimalRelevantClosure){
+                    justificationSoFar.add(minimalJustificationStatement);
 
+                }else{
+                    justificationSoFar.add(combination);
 
-                step.getJustificationsSoFar().add(step.getSet());
+                }
 
 
             }
-            result.getTraceSteps().add(step);
+
+            traceSteps.add(PartitionStep.builder()
+                    .withId(count)
+                    .withIsEntailed(isEntailed)
+                    .withIsMinimal(isMinimal)
+                    .withJustificationsSoFar(justificationSoFar)
+                    .withMinimalSet(minimalJustificationStatement)
+                    .withReason("")
+                    .withSet(combination)
+                    .build()
+
+            );
+
             count++;
         }
 
 
 
 
-        System.out.println("Possible relevant sets: "+resList);
         KnowledgeBase relevantString = new KnowledgeBase();
         KnowledgeBase irrelevantString = new KnowledgeBase(knowledgeBase);
         for(KnowledgeBase kb:resList){
             relevantString = relevantString.union(kb);
-            irrelevantString = irrelevantString.difference(kb);
+
         }
         relevantString = relevantString.difference(classicalKnowledgeBase);
-        irrelevantString = irrelevantString.difference(classicalKnowledgeBase);
-        result.setClassicalStatements(classicalKnowledgeBase);
-        result.setRelevantPartition(relevantString);
-        result.setIrrelevantPartition(irrelevantString);
-        result.setKnowledgeBase(knowledgeBase);
-        return result;
+        irrelevantString = irrelevantString.difference(relevantString);
+        long endTime = System.nanoTime();
+        long durationNs = endTime - startTime;
+
+        double durationSeconds = (double) durationNs / 1_000_000_000.0;
+
+
+        String formattedTime = String.format("%.3fs", durationSeconds);
+        //System.out.println("Execution time: " + formattedTime);
+        this.partition = Partition.builder()
+                .withIrrelevantPartition(irrelevantString)
+                .withRelevantPartition(relevantString)
+                .withTraceSteps(traceSteps)
+                .withExecutionTime(durationSeconds)
+
+
+                .withClassicalStatements(classicalKnowledgeBase)
+                .withKnowledgeBase(knowledgeBase)
+                .build();
+        return this.partition;
+    }
+    public Partition getInstance(){
+        return partition;
     }
 
     public static List<KnowledgeBase> getPowerSets(KnowledgeBase kb){
@@ -110,8 +177,8 @@ public class PartitionUsingPowersetImpl implements PartitionService {
         List<PlFormula> plFormulas = new ArrayList<>(kb);
 
         for(PlFormula pl:plFormulas){
-            List<KnowledgeBase> snapshot = new ArrayList<>(res);
-            for(KnowledgeBase list: snapshot){
+            List<KnowledgeBase> temp = new ArrayList<>(res);
+            for(KnowledgeBase list: temp){
                 KnowledgeBase tmp = new KnowledgeBase(list);
                 tmp.add(pl);
                 res.add(tmp);
