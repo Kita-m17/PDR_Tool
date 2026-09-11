@@ -163,10 +163,10 @@ const ComparisonPage: React.FC = () => {
                         </p> */}
                     </div>
  
-                    <Button className="text-sm text-muted-foreground border border-border rounded-lg px-4 py-2 hover:bg-white transition" onClick={() => navigate('/baserank', {state: { baseRank, entailment: rcResult, query, algorithm: 'rational', fromComparison: true }})}>
+                    <Button className="text-sm text-muted-foreground border border-border rounded-lg px-4 py-2 hover:bg-white transition" onClick={() => navigate('/')}>
                         <span className="flex items-center gap-1">
                             <ArrowLeftIcon className="h-3 w-3" />
-                            Back to BaseRank
+                            Edit Query
                         </span>
                     </Button>
                 </div>
