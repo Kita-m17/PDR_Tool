@@ -16,6 +16,7 @@ import BaseRankStepThrough from './components/results/BaseRankStepThrough';
 import LexicographicStepThrough from './components/results/lexicographic/LexicographicStepTrough';
 import ComparisonPage from './components/results/comparison/ComparisonPage';
 import Tutorial from './components/pages/Tutorial';
+import Info from './components/pages/Info';
 
 const ALGORITHM_LABELS: Record<string, string> = {
   'rational': 'Rational Closure',
@@ -301,6 +302,7 @@ function App(){
       <Route path="/results/relevant/minimal/partition" element = {<MinimalRelevantPartitionStepThrough/>}/>
       <Route path="/results/comparison" element = {<ComparisonPage/>} />
       <Route path="/help" element={<Tutorial/>} />
+      <Route path="/info" element={<Info/>} />
     </Routes>
   )
 }

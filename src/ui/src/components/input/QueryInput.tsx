@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Button } from "../ui/Buttons";
-import { fi } from "zod/v4/locales";
+// import { Button } from "../ui/Buttons";
+// import { fi } from "zod/v4/locales";
+import { Link } from "react-router-dom";
 
 interface QueryInputProps {
     onSubmit: (query: string) => void;
@@ -58,7 +59,15 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
         <div className = "mb-8">
             <h2 className = "text-primary font-semibold mb-3">
                 2. Query
-                <span className = "ml-2 text-blue-700 cursor-pointer">ⓘ</span>
+                {/* <span className = "ml-2 text-blue-700 cursor-pointer">ⓘ</span> */}
+                <Link
+                    to="/info#query"
+                    title="How to write a query"
+                    aria-label="How to write a query"
+                    className="ml-2 text-blue-700 hover:text-primary transition-colors"
+                >
+                    ⓘ
+                </Link>
             </h2>
             <p className="text-muted-foreground text-sm mb-4">
                 Specify the query you want to test against the knowledge base.
