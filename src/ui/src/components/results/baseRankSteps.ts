@@ -125,7 +125,7 @@ export function baseRankSteps(baseRank: BaseRankDTO): BaseRankDebuggerStep[]{
         steps.push({
             stepNumber: steps.length + 1,
             totalSteps: 0,
-            highlightedLines: [5],
+            highlightedLines: [4,5],
             explanation: `Iteration ${traceStep.iteration}: Checking exceptionality.\n\nFor each antecedent α in the current set, we ask: does the materialised KB classically entail ¬α?\n\nIf yes, assuming α is true leads to a contradiction, α is exceptional and its rules carry forward to the next iteration.\nIf no, α is not exceptional and its rules are assigned to Rank ${traceStep.iteration}.`,
             consideredFormulas: traceStep.consideredFormulas,
             checks: traceStep.checks.map(c => ({
