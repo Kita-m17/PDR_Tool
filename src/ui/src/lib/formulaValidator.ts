@@ -210,6 +210,72 @@ function invalid(raw: string, error: string): InvalidFormula {
   return { valid: false, raw, error };
 }
 
+// --- Term-level validation ---------------------------------------------------
+//
+// Validates a single TERM in isolation (no surrounding connective) - used by
+// the query builder, which collects the antecedent and consequent as two
+// separate free-text fields rather than one fully-wrapped formula string.
+
+export interface ValidTerm {
+  valid: true;
+  raw: string;
+  term: Term;
+}
+
+export interface InvalidTerm {
+  valid: false;
+  raw: string;
+  error: string;
+}
+
+export type TermValidationResult = ValidTerm | InvalidTerm;
+
+const TERM_HINT =
+  "Must be an atom (e.g. 'bird'), optionally negated with '!', or a group " +
+  "combining terms with '&&'/'||' in its own parentheses, e.g. " +
+  "'(bird&&!flies)' or '!(bird||swims)'.";
+
+/**
+ * Validates a bare TERM, e.g. the antecedent or consequent field in the
+ * query builder: `bird`, `!bird`, `(bird&&!flies)`, `!(a||(b&&c))`, etc.
+ * Unlike `validateFormula`, this does NOT require outer wrapping parens or a
+ * top-level '=>'/'|~' connective - a query's antecedent/consequent is just
+ * one TERM, combined with the connective by the caller.
+ */
+export function validateTerm(input: string): TermValidationResult {
+  const raw = input;
+  const trimmed = input.trim();
+
+  if (trimmed.length === 0) {
+    return { valid: false, raw, error: "This field is required." };
+  }
+
+  try {
+    const c: Cursor = { text: trimmed, pos: 0 };
+    const term = parseTerm(c);
+    skipSpaces(c);
+
+    if (c.pos !== trimmed.length) {
+      throw new FormulaParseError(
+        `Unexpected characters at position ${c.pos}.`
+      );
+    }
+
+    return { valid: true, raw, term };
+  } catch (e) {
+    const message = e instanceof FormulaParseError ? e.message : TERM_HINT;
+    return { valid: false, raw, error: message };
+  }
+}
+
+/**
+ * Convenience boolean check for a single term, e.g. for disabling a submit
+ * button while the query builder's antecedent/consequent field is invalid.
+ */
+export function isValidTerm(input: string): boolean {
+  return validateTerm(input).valid;
+}
+
 // --- Public API ----------------------------------------------------------
 
 /**
