@@ -56,7 +56,6 @@ public class ClassicalJustificationService
         //System.out.println("Tree:");
         //System.out.println(rootNode.toString());
         
-        System.out.println("<<ALL possible classical justifications>>");
         List<List<PlFormula>> justifications = rootNode.getAllJustifications();
 
 
