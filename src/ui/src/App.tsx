@@ -16,6 +16,7 @@ import BaseRankStepThrough from './components/results/BaseRankStepThrough';
 import LexicographicStepThrough from './components/results/lexicographic/LexicographicStepTrough';
 import ComparisonPage from './components/results/comparison/ComparisonPage';
 import Tutorial from './components/pages/Tutorial';
+import Info from './components/pages/Info';
 
 const ALGORITHM_LABELS: Record<string, string> = {
   'rational': 'Rational Closure',
@@ -43,12 +44,18 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [kbValid, setKbValid] = useState(true);
   const [isExampleLocked, setIsExampleLocked] = useState(false);
   const [loadedExampleLabel, setLoadedExampleLabel] = useState<string | null>(null);
 
   const handleEvaluate = async () => {
     if (formulas.length === 0) {
       setError('Please enter a knowledge base');
+      return;
+    }
+
+    if (!kbValid) {
+      setError('Please fix the invalid formula(s) in your knowledge base');
       return;
     }
 
@@ -74,7 +81,7 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
     } finally {
       setLoading(false);
     }
-    
+
   };
 
   const handleCompare = async () => {
@@ -138,7 +145,7 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
             </Button>
         </div>
       )}
-          
+
 
       <main className="flex-1 px-8 py-8">
 
@@ -146,7 +153,8 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
         <div className="flex gap-6 mb-6">
           {/* KB Card — wider */}
           <div className="mb-4 bg-white rounded-xl border border-border shadow-sm p-6 flex-[2]">
-              <FormulaCard onSubmit={setFormulas} defaultValue={formulas.join(',')}
+            <FormulaCard onSubmit={setFormulas} defaultValue={formulas.join(',')}
+                onValidityChange={setKbValid}
                 disabled={isExampleLocked}
                 onLoadExample={(exampleFormulas, exampleQuery, exampleAlgorithm, exampleLabel) => {
                     setFormulas(exampleFormulas);
@@ -230,6 +238,10 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
                           <span>{result.entailment.partitionExecutionTime?.toFixed(3)}s</span>
                         </span>
                       )}
+                      <span className="flex justify-between gap-2 font-medium text-foreground border-t border-border/70 pt-1 mt-1">
+                        <span>Total</span>
+                        <span>{result.entailment.totalExecutionTime.toFixed(3)}s</span>
+                      </span>
                     </span>
                   </button>
                 );
@@ -249,7 +261,8 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
                 {loading ? 'Comparing...' : 'Compare Closures'}
             </Button>
 
-            <Button variant="primary" size="lg" onClick={handleEvaluate} disabled={loading}>
+                        <Button variant="primary" size="lg" onClick={handleEvaluate} disabled={loading || !kbValid}>
+
                 {loading ? 'Evaluating...' : 'Evaluate'}
                 <ArrowRightIcon className="ml-2 h-4 w-4" />
             </Button>
@@ -289,6 +302,7 @@ function App(){
       <Route path="/results/relevant/minimal/partition" element = {<MinimalRelevantPartitionStepThrough/>}/>
       <Route path="/results/comparison" element = {<ComparisonPage/>} />
       <Route path="/help" element={<Tutorial/>} />
+      <Route path="/info" element={<Info/>} />
     </Routes>
   )
 }
