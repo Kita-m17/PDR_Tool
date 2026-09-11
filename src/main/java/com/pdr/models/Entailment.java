@@ -111,6 +111,21 @@ public abstract class Entailment {
         return this.closureExecutionTime;
     }
 
+    /**
+     * Total wall-clock time for this algorithm's evaluation. baseRankExecutionTime
+     * and closureExecutionTime are measured as separate, non-overlapping phases
+     * (closure timing only starts once the - possibly cached - base rank is
+     * available), so neither one alone represents the full cost of an
+     * evaluation; this sums them. Overridden by RelevantEntailment to also
+     * include partitionExecutionTime for Basic/Minimal Relevant Closure.
+     *
+     * @return double
+     */
+    @JsonProperty("totalExecutionTime")
+    public double getTotalExecutionTime() {
+        return this.baseRankExecutionTime + this.closureExecutionTime;
+    }
+
     // Builder for Entailment
     public static abstract class EntailmentBuilder<T extends EntailmentBuilder<T>> {
         private KnowledgeBase knowledgeBase;

@@ -90,6 +90,9 @@ public class MinimalRelevantReasonerImpl implements ReasonerService {
                 smallestJustificationSize = justification.size();
             }
         }
+        if(!entailment){
+            smallestJustification = new KnowledgeBase();
+        }
         long endTime = System.nanoTime();
         long durationNs = endTime - startTime;
 
