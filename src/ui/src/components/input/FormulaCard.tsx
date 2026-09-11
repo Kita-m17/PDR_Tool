@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import { Button } from "../ui/Buttons";
 import { UploadIcon, TriangleDownIcon} from "@radix-ui/react-icons";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -133,7 +134,14 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
         <div className = "mb-8">
             <h2 className = "text-primary font-semibold mb-3">
                 1. Knowledge Base, <span className="italic">K</span>
-                <span className="ml-2 text-blue-700 cursor-pointer">ⓘ</span>
+                <Link
+                    to="/info#input"
+                    title="How to write a knowledge base"
+                    aria-label="How to write a knowledge base"
+                    className="ml-2 text-blue-700 hover:text-primary transition-colors"
+                >
+                    ⓘ
+                </Link>
             </h2>
             
             <p className="text-muted-foreground text-sm mb-3">
