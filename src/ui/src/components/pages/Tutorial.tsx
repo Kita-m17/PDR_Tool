@@ -33,30 +33,33 @@ const STEPS: TutorialStep[] = [
                 <p className="text-sm text-foreground mb-3">
                     We'll use the tool's built-in "Drowning Problem" example throughout - load it from the Home page via{' '}
                     <strong>Try an example</strong>. Here's exactly what it contains. <Formula>|~</Formula> marks a{' '}
-                    <strong>defeasible</strong> statement and <Formula>=&gt;</Formula> marks a{' '}
-                    <strong>classical</strong> one (always true, no exceptions):
+                    <strong>defeasible</strong> statement and <Formula>=&gt;</Formula> marks a{' '} <strong>classical</strong> one (always true, no exceptions):
                 </p>
+
                 <div className="space-y-1.5 mb-3">
                     <div className="flex items-center gap-2 text-sm">
                         <Formula>bird|~flies</Formula>
                         <span className="text-muted-foreground">birds typically fly</span>
                     </div>
+
                     <div className="flex items-center gap-2 text-sm">
                         <Formula>bird|~wings</Formula>
                         <span className="text-muted-foreground">birds typically have wings</span>
                     </div>
+
                     <div className="flex items-center gap-2 text-sm">
                         <Formula>penguin=&gt;bird</Formula>
                         <span className="text-muted-foreground">penguins are always birds (classical, no exceptions)</span>
                     </div>
+
                     <div className="flex items-center gap-2 text-sm">
                         <Formula>penguin|~!flies</Formula>
                         <span className="text-muted-foreground">penguins typically don't fly</span>
                     </div>
                 </div>
+
                 <p className="text-sm text-foreground">
-                    And the query we'll ask: <Formula>penguin|~wings</Formula> - <em>do penguins have wings?</em> To you and
-                    me, obviously yes. Let's see what each closure says.
+                    And the query we'll ask: <Formula>penguin|~wings</Formula> - <em>do penguins have wings?</em> To you and me, obviously yes. Let's see what each closure says.
                 </p>
             </>
         ),
@@ -67,25 +70,30 @@ const STEPS: TutorialStep[] = [
         body: (
             <>
                 <p className="text-sm text-foreground mb-3">
-                    Press <strong>Evaluate</strong> button and the tool sorts these four statements into ranks, by how exceptional their antecedent is:
+                    Press the <strong>Evaluate</strong> button and the tool sorts these four statements into ranks, by how exceptional their antecedent is:
                 </p>
+
                 <div className="space-y-2 mb-3">
                     <div className="flex flex-wrap items-center gap-2 bg-accent border border-border rounded-lg px-3 py-2">
                         <span className="text-xs font-semibold text-foreground">Rank 0</span>
                         <Formula>bird|~flies</Formula>
                         <Formula>bird|~wings</Formula>
                     </div>
+
                     <div className="flex flex-wrap items-center gap-2 bg-accent border border-border rounded-lg px-3 py-2">
                         <span className="text-xs font-semibold text-foreground">Rank 1</span>
                         <Formula>penguin|~!flies</Formula>
                     </div>
+
                     <div className="flex flex-wrap items-center gap-2 bg-accent border border-border rounded-lg px-3 py-2">
                         <span className="text-xs font-semibold text-foreground">R∞</span>
                         <Formula>penguin=&gt;bird</Formula>
                     </div>
                 </div>
+
                 <p className="text-sm text-foreground">
-                    Notice <Formula>bird|~flies</Formula> and <Formula>bird|~wings</Formula> are in the <em>same</em> rank - not because they're related to each other, but because they share the same antecedent, <Formula>bird</Formula>. Keep that in mind - it's what causes everything that follows.
+                    Notice <Formula>bird|~flies</Formula> and <Formula>bird|~wings</Formula> are in the <em>same</em> rank - not because they're related to each other, but because they share the same antecedent, <Formula>bird</Formula>. 
+                    Keep that in mind - it's what causes everything that follows.
                 </p>
             </>
         ),
@@ -96,21 +104,25 @@ const STEPS: TutorialStep[] = [
         body: (
             <>
                 <p className="text-sm text-foreground mb-3">
-                    Continue to the Rational Closure step-through. From here the tool works with the <em>materialised</em> form knowledge base, where (defeasible statements <Formula>|~</Formula> becomes classical <Formula>=&gt;</Formula> for the reasoning itself) - so you'll see <Formula>bird=&gt;flies</Formula> and <Formula>bird=&gt;wings</Formula>{' '} instead if their original <Formula>|~</Formula> form from here on. 
-                    It checks: is{' '} <Formula>penguin</Formula> exceptional? Yes - a penguin that flies would contradict{' '} <Formula>penguin=&gt;!flies</Formula>. 
+                    Continue to the Rational Closure step-through. 
+                    From here the tool works with the <em>materialised</em> knowledge base, where (defeasible statements <Formula>|~</Formula> becomes classical <Formula>=&gt;</Formula> for the reasoning itself) - so you'll see <Formula>bird=&gt;flies</Formula> and <Formula>bird=&gt;wings</Formula>{' '} instead of their original <Formula>|~</Formula> form from here on. 
+                    It checks: is{' '} <Formula>penguin</Formula> exceptional? 
+                    Yes - a penguin that flies would contradict{' '} <Formula>penguin=&gt;!flies</Formula>. 
                     So Rational Closure removes the {' '}<strong>entire</strong> lowest rank, Rank 0:
                 </p>
+
                 <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-3">
                     <span className="text-xs font-semibold text-red-700 mr-2">Removed</span>
                     <Formula>bird=&gt;flies</Formula>{' '}
                     <span className="mx-1" />
                     <Formula>bird=&gt;wings</Formula>
                 </div>
+
                 <p className="text-sm text-foreground">
                     Both statements are removed, even though only <Formula>bird=&gt;flies</Formula> actually caused the contradiction.
-                    With{' '} <Formula>bird=&gt;wings</Formula> removed as well, Rational Closure can no longer conclude penguins have wings - the final step shows <strong><Formula>penguin|~wings</Formula> is NOT entailed</strong>. 
-                    An innocent statement drowned alongside the one that was actually exceptional. 
-                    That's the drowning problem.
+                    With{' '} <Formula>bird=&gt;wings</Formula> removed with the statement that was actually exceptional, even though it had nothing to do with flying.
+                    That's the drowning problem - <Formula>bird=&gt;wings</Formula> "drowned" alongside <Formula>bird=&gt;flies</Formula>, even through it had nothing to do with the conflict.
+                    Step forward to the final check yourself and see what the tool concludes about <Formula>penguin|~wings</Formula> as a result.
                 </p>
             </>
         ),
@@ -120,9 +132,8 @@ const STEPS: TutorialStep[] = [
         title: 'Compare the closures',
         body: (
             <>
-                <p className="text-sm text-foreground mb-3">
-                    Now use <strong>Compare all three closures</strong> to bring in Lexicographic Closure and Relevant Closure on the same knowledge base and query. 
-                    They land differently:
+                <p className="text-sm text-foreground mt-3">
+                    Use the <strong>Compare</strong> feature to step through each algorithm side by side and see exactly how they differ at each stage.
                 </p>
                 <div className="space-y-2 mb-3">
                     <div className="flex items-center justify-between bg-accent border border-border rounded-lg px-3 py-2">

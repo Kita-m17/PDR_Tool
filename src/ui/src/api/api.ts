@@ -58,6 +58,9 @@ export interface EntailmentDTO {
     closureExecutionTime: number;
     // Only populated for Basic/Minimal Relevant Closure.
     partitionExecutionTime?: number;
+    // Sum of the phases above (baseRank + closure [+ partition]) - see
+    // Entailment.getTotalExecutionTime() / RelevantEntailment.getTotalExecutionTime().
+    totalExecutionTime: number;
 }
 
 export interface PartitionStepDTO {

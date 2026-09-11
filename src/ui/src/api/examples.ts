@@ -29,8 +29,8 @@ export const EXAMPLES: Example[] = [
         algorithm: 'rational'
     },
     {
-        label: 'Kittens (Chipo Hamayobe)',
-        description: 'Weak justification example: are kittens typically wild, given cats and animals typically are not?',
+        label: 'Kittens ',
+        description: 'Demonstrating Basic RelC vs. Minimal RelC example by Chipo Hamayobe',
         formulas: ['(pets=>animals)','(kittens=>cats)','(cats|~trainable)','(kittens|~!trainable)','(animals|~legs)','(animals|~wild)','(cats=>animals)','(cats|~!wild)'],
         query: 'kittens|~!wild',
         algorithm: 'minimal relevant'
@@ -41,5 +41,13 @@ export const EXAMPLES: Example[] = [
     formulas: ['(bird|~flies)', '(bird|~wings)', '(penguin=>bird)', '(penguin|~!flies)'],
     query: 'penguin|~wings',
     algorithm: 'rational'
-}
+
+    },
+    {
+        label: 'Perry',
+        description: 'Does perry have a bill? example by Liam De Saldanha',
+        formulas: ['(perry=>platypus)','(perry|~hat)','(platypus|~!hat)','(platypus|~bill)'],
+        query: 'perry|~bill',
+        algorithm: 'basic relevant'
+    }
 ]
