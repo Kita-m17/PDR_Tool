@@ -152,7 +152,7 @@ const BaseRankStepThrough: React.FC = () => {
                 <div className="flex gap-4 mb-4">
 
                     {/* algorithm */}
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px] overflow-y-auto">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px]">
 
                         <h3 className="text-primary font-semibold mb-1">
                             Algorithm
@@ -162,7 +162,7 @@ const BaseRankStepThrough: React.FC = () => {
                             BaseRank (pseudocode)
                         </p>
 
-                        <div className="text-sm space-y-1">
+                        <div className="text-sm space-y-1 h-[350px] overflow-y-auto">
 
                             {pseudocode.map((line) => {
                                 const isHighlighted = step.highlightedLines.includes(line.num);
