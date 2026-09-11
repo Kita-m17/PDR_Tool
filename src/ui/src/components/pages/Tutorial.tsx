@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../layout/Header';
 import Footer from '../layout/Footer';
 import { Button } from '../ui/Buttons';
+import { Formula } from '../ui/Formula';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 
 interface TutorialStep {
@@ -19,9 +20,9 @@ interface TutorialStep {
 }
 
 // A small inline "code chip" for formulas
-const Formula: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <span className="font-mono text-blue-800 text-xs bg-accent border border-border rounded px-1.5 py-0.5">{children}</span>
-);
+// const Formula: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+//     <span className="font-mono text-blue-800 text-xs bg-accent border border-border rounded px-1.5 py-0.5">{children}</span>
+// );
 
 const STEPS: TutorialStep[] = [
     {
