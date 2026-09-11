@@ -20,6 +20,13 @@ interface AlgorithmProgressProps {
      * step entirely, so their pages pass `['baserank', 'closure']`.
      */
     phases?: AlgorithmPhase[];
+    /**
+     * Overrides the label shown for the `closure` checkpoint. Defaults to
+     * "Relevant Closure". Rational and Lexicographic Closure pass their own
+     * algorithm name here so the bar doesn't mislabel their closure phase
+     * as Relevant Closure.
+     */
+    closureLabel?: string;
     className?: string;
 }
 
@@ -50,6 +57,7 @@ const DEFAULT_PHASES: AlgorithmPhase[] = ['baserank', 'partition', 'closure'];
 const AlgorithmProgress: React.FC<AlgorithmProgressProps> = ({
     currentPhase,
     phases = DEFAULT_PHASES,
+    closureLabel,
     className = '',
 }) => {
     const currentIndex = phases.indexOf(currentPhase);
@@ -82,7 +90,7 @@ const AlgorithmProgress: React.FC<AlgorithmProgressProps> = ({
                                         : 'text-foreground'
                                 }`}
                             >
-                                {PHASE_LABELS[phaseKey]}
+                                {phaseKey === 'closure' && closureLabel ? closureLabel : PHASE_LABELS[phaseKey]}
                             </span>
 
                             {/* checkpoint circle, sits on the track */}

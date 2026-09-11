@@ -28,6 +28,14 @@ const BaseRankStepThrough: React.FC = () => {
     const progressPhases: AlgorithmPhase[] = isRelevantClosure
         ? ['baserank', 'partition', 'closure']
         : ['baserank', 'closure'];
+    // The bar renders every phase's label up front (not just the current
+    // one), so the upcoming "closure" checkpoint needs the right name here
+    // too - otherwise Rational/Lexicographic Closure show "Relevant Closure"
+    // while still on the Base Rank step.
+    const closureLabel =
+        algorithm === 'lexicographic' ? 'Lexicographic Closure' :
+        algorithm === 'rational' ? 'Rational Closure' :
+        undefined;
 
     const steps = baseRankSteps(baseRank);
     const [currentStep, setCurrentStep] = useState(0);
@@ -63,7 +71,7 @@ const BaseRankStepThrough: React.FC = () => {
             <Header />
             <main className = "flex-1 px-8 py-6">
 
-                <AlgorithmProgress currentPhase="baserank" phases={progressPhases} />
+                <AlgorithmProgress currentPhase="baserank" phases={progressPhases} closureLabel={closureLabel} />
 
                 {/* page header */}
                 <div className="flex items-start justify-between mb-4">
