@@ -22,41 +22,44 @@ const lines: { num: number; tex: string; indent?: boolean }[] = [
 
 const AlgorithmView: React.FC<AlgorithmViewProps> =({highlightedLines}) => {
     return (
-        <div>
-            <h3 className="text-primary font-semibold mb-1 flex items-center gap-2">
-                Algorithm
-            </h3>
+        <div className="h-full flex flex-col"> 
+            
+                <h3 className="text-primary font-semibold mb-1 flex items-center gap-2">
+                    Algorithm
+                </h3>
 
-            <p className="text-xs text-muted-foreground mb-4">
-                Rational Closure (pseudocode)
-            </p>
+                <p className="text-xs text-muted-foreground mb-4">
+                    Rational Closure (pseudocode)
+                </p>
+                
+            <div className="flex-1 min-h-0 pr-1 overflow-y-auto">
+                <div className="font-mono text-sm space-y-1">
+                    {lines.map((line) => {
+                        const isHighlighted = highlightedLines.includes(line.num);
+                        return (
+                            <div
+                                key={line.num}
+                                className={`flex items-center gap-3 px-3 py-2 rounded-lg ${isHighlighted ? 'bg-amber-50 border border-amber-200' : ''}`}
+                            >
+                                {isHighlighted ? (
+                                        <span className="text-amber-500">
+                                            <TriangleRightIcon/>
+                                        </span>
+                                    ) : (
+                                        <span className="w-3" />
+                                )}
 
-            <div className="font-mono text-sm space-y-1">
-                {lines.map((line) => {
-                    const isHighlighted = highlightedLines.includes(line.num);
-                    return (
-                        <div
-                            key={line.num}
-                            className={`flex items-center gap-3 px-3 py-2 rounded-lg ${isHighlighted ? 'bg-amber-50 border border-amber-200' : ''}`}
-                        >
-                            {isHighlighted ? (
-                                    <span className="text-amber-500">
-                                        <TriangleRightIcon/>
-                                    </span>
-                                ) : (
-                                    <span className="w-3" />
-                            )}
+                                <span className={`w-5 text-xs rounded px-1 ${isHighlighted ? 'bg-amber-400 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                                    {line.num}
+                                </span>
 
-                            <span className={`w-5 text-xs rounded px-1 ${isHighlighted ? 'bg-amber-400 text-white' : 'bg-gray-100 text-gray-500'}`}>
-                                {line.num}
-                            </span>
-
-                            <span className={`${line.indent ? 'ml-4' : ''} ${isHighlighted ? 'text-foreground font-medium': 'text-muted-foreground'}`}>
-                                <TexFormula>{line.tex}</TexFormula>
-                            </span>
-                        </div>
-                    );
-                })}
+                                <span className={`${line.indent ? 'ml-4' : ''} ${isHighlighted ? 'text-foreground font-medium': 'text-muted-foreground'}`}>
+                                    <TexFormula>{line.tex}</TexFormula>
+                                </span>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );
