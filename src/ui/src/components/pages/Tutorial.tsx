@@ -104,7 +104,11 @@ const STEPS: TutorialStep[] = [
         body: (
             <>
                 <p className="text-sm text-foreground mb-3">
-                    Continue to the Rational Closure step-through. 
+                    Continue to the Rational Closure step-through. (From the Base Rank page you can actually open any of the
+                    three closures - Rational, Lexicographic, or Relevant - but for this walkthrough we'll start with
+                    Rational Closure, since it's the one that runs into trouble here.)
+                </p>
+                <p className="text-sm text-foreground mb-3">
                     From here the tool works with the <em>materialised</em> knowledge base, where (defeasible statements <Formula>|~</Formula> becomes classical <Formula>=&gt;</Formula> for the reasoning itself) - so you'll see <Formula>bird=&gt;flies</Formula> and <Formula>bird=&gt;wings</Formula>{' '} instead of their original <Formula>|~</Formula> form from here on. 
                     It checks: is{' '} <Formula>penguin</Formula> exceptional? 
                     Yes - a penguin that flies would contradict{' '} <Formula>penguin=&gt;!flies</Formula>. 
@@ -133,7 +137,7 @@ const STEPS: TutorialStep[] = [
         body: (
             <>
                 <p className="text-sm text-foreground mt-3">
-                    Use the <strong>Compare</strong> feature to step through each algorithm side by side and see exactly how they differ at each stage.
+                    Use the <strong>Compare Closures</strong> feature to step through each algorithm side by side and see exactly how they differ at each stage.
                 </p>
                 <div className="space-y-2 mb-3">
                     <div className="flex items-center justify-between bg-accent border border-border rounded-lg px-3 py-2">
