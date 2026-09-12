@@ -162,7 +162,7 @@ public class LexicographicStep {
         sb.append("Iteration: ").append(iteration).append("\n");
         sb.append("   The antecedent is refuted, so we weaken the lowest remaining rank.\n");
         sb.append("   Rank being weakened (R").append(rankNumber).append("): ").append(originalRank).append("\n");
-        sb.append("   The reamining ranks with this rank removed: ").append(remainingRanks).append("\n\n");
+        sb.append("   The remaining ranks with this rank removed: ").append(remainingRanks).append("\n\n");
 
         sb.append("   Sub-knowledge bases tested :\n");
 

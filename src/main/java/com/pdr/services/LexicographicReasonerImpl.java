@@ -13,7 +13,9 @@ package com.pdr.services;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.tweetyproject.logics.pl.reasoner.SatReasoner;
 import org.tweetyproject.logics.pl.sat.Sat4jSolver;
@@ -137,12 +139,13 @@ public class LexicographicReasonerImpl implements ReasonerService {
 
             if (rankRemoved) {
                 removedRanking.add(new Rank(currentRank.getRankNumber(), originalRank));
-                reason = antecedent + " is refuted in every sub-knowledge base of Rank "
-                + currentRank.getRankNumber() + " - removing Rank " + currentRank.getRankNumber();
+                reason = "Every sub-knowledge base of Rank " + currentRank.getRankNumber()
+                        + " still refutes " + antecedent + ", so Rank " + currentRank.getRankNumber() + " is removed.";
             } else {
                 weakenedRanking.add(new Rank(currentRank.getRankNumber(), List.of(combined)));
                 r = r.union(single(combined));
-                reason = "Rank " + currentRank.getRankNumber() + " weakened to " + combined + " - " + antecedent + " is no longer refuted";
+                reason = "Rank " + currentRank.getRankNumber() + " is weakened to " + combined
+                        + ", and " + antecedent + " is no longer refuted.";
             }
 
             KnowledgeBase remainingAfter = rankInfKB.union(r);
@@ -164,14 +167,21 @@ public class LexicographicReasonerImpl implements ReasonerService {
                 materialisedQuery);
 
         trace.add(new EntailmentStep(i, new KnowledgeBase(finalKnowledgeBase), false,
-                antecedent + " is no longer refuted, checking R∞ ∪ R |= " + materialisedQuery,
+                antecedent + " is no longer refuted, so we check whether R∞ ∪ R entails " + materialisedQuery + ".",
                 new KnowledgeBase()));
 
         long endTime = System.nanoTime();
         double closureExecutionTime = (double) (endTime - startTime) / 1_000_000_000.0;
 
+        // The justification is worked out after the clock has stopped. Building the
+        // hitting set tree is expensive and is not part of LexC itself, so timing it
+        // as closure time would make the algorithm look slower than it is on the
+        // comparison page.
+        KnowledgeBase weakJustification = computeWeakJustification(finalKnowledgeBase, materialisedQuery, entailed, knowledgeBase);
+
         return new LexicographicEntailment.LexicographicEntailmentBuilder()
                 .withWeakenedRanking(weakenedRanking)
+                .withWeakJustification(weakJustification)
                 .withFinalChecks(finalChecks)
                 .withLexicographicSteps(lexicographicSteps)
                 .withKnowledgeBase(knowledgeBase)
@@ -189,7 +199,63 @@ public class LexicographicReasonerImpl implements ReasonerService {
     // Helpers
     // =================================================================================
 
-    
+    /**
+     * The smallest justification for the query in the knowledge base that survived
+     * the weakening loop - that is, the smallest subset of R∞ ∪ R that on its own
+     * still entails the query. This is the same notion of proof Basic and Minimal
+     * Relevant Closure show, computed with the same service.
+     *
+     * <p>Nothing is returned when the query is not entailed, since there is then no
+     * entailment to justify.</p>
+     *
+     * @param finalKnowledgeBase The materialised R∞ ∪ R the answer was read off
+     * @param materialisedQuery  The query, materialised
+     * @param entailed           Whether the query was entailed
+     * @param originalKnowledgeBase The knowledge base as the user wrote it
+     * @return The smallest justification, in the user's own notation
+     */
+    private KnowledgeBase computeWeakJustification(KnowledgeBase finalKnowledgeBase, PlFormula materialisedQuery, boolean entailed, KnowledgeBase originalKnowledgeBase) {
+        if (!entailed) {
+            return new KnowledgeBase();
+        }
+
+        List<KnowledgeBase> justifications = ClassicalJustificationService.computeJustification(finalKnowledgeBase, materialisedQuery);
+
+        KnowledgeBase smallest = new KnowledgeBase();
+        int smallestSize = Integer.MAX_VALUE;
+
+        for (KnowledgeBase justification : justifications) {
+            if (justification.size() < smallestSize) {
+                smallestSize = justification.size();
+                smallest = justification;
+            }
+        }
+
+        return presentJustification(smallest, originalKnowledgeBase);
+    }
+
+    /**
+     * Rewrites a justification in the notation the user typed.
+     *
+     * <p>Everything in the final knowledge base has been materialised, so a statement
+     * that started life as a |~ b is sitting there as a => b and would be shown that
+     * way. Utils.dematerialise cannot be used here because, once materialised, a
+     * defeasible statement is indistinguishable from a genuinely classical implication.
+     * Looking each formula up by what it materialises to avoids the guesswork.</p>
+     *
+     * <p>Anything with no original is left alone - in particular the combined formula
+     * Ri,m, which was built by the algorithm and was never in the knowledge base.</p>
+     */
+    private KnowledgeBase presentJustification(KnowledgeBase justification, KnowledgeBase originalKnowledgeBase) {
+        Map<String, PlFormula> byMaterialised = new HashMap<>();
+        originalKnowledgeBase.forEach(formula -> byMaterialised.put(KnowledgeBase.materialise(formula).toString(), formula));
+
+        KnowledgeBase result = new KnowledgeBase();
+        justification.forEach(formula -> result.add(byMaterialised.getOrDefault(formula.toString(), formula)));
+
+        return result;
+    }
+
     //  Builds every subset as a sub-knowledge base check against {@code context}, and returns the disjunction of their conjunctions.
     private PlFormula buildCombinedFormula(int rankNumber, List<PlFormula> rankFormulas, int m, KnowledgeBase otherRanks, PlFormula negation, List<SubKnowledgeBaseCheck> subKBs) {
         List<List<PlFormula>> subsets = subsetsOfSize(rankFormulas, m);
