@@ -14,6 +14,12 @@ export interface DebuggerStep {
     isInitialStep?: boolean;
     queryAntecedent?: string
     queryConsequent?: string;
+    workingSetIncludesRInfinity?: boolean;
+    drowningHighlight?: {
+        rankLabel: string;
+        culprit: string;
+        innocent: string[];
+    };
 }
 
 export interface RankState{
@@ -46,7 +52,7 @@ export function isDrowningProblemExample(entailment: EntailmentDTO): boolean {
 }
 
 // Two short steps, appended only when the loaded KB/query is exactly the drowning-problem eg and RC failed to entail the query
-function buildDrowningProblemEpilogue(removedRanking: RankDTO[]): { reveal: string; consequence: string } {
+function buildDrowningProblemEpilogue(removedRanking: RankDTO[]): { reveal: string; consequence: string; drowningHighlight?: DebuggerStep['drowningHighlight'] } {
     const removedList = removedRanking
         .filter(r => r.knowledgeBase.length > 0)
         .map(r => `Rank ${r.rankNumber}: { ${r.knowledgeBase.map(f => f.replace('|~', '=>')).join(', ')} }`)
@@ -56,7 +62,22 @@ function buildDrowningProblemEpilogue(removedRanking: RankDTO[]): { reveal: stri
 
     const consequence = `That's the unwanted result: an irrelevant statement got discarded, so we lose the ability to conclude that penguins have wings, even though nothing about the reasoning ever challenged that.\n\nThis is exactly what Lexicographic Closure and Relevant Closure are designed to avoid, each in a different way - compare all three below to see how.`;
 
-    return { reveal, consequence };
+    const removedRank = removedRanking.find(r => r.knowledgeBase.length > 0);
+
+    if (!removedRank) {
+        return { reveal, consequence };
+    }
+ 
+    const materialisedRemoved = removedRank.knowledgeBase.map(f => f.replace('|~', '=>'));
+    const culprit = materialisedRemoved.find(f => normaliseFormula(f) === normaliseFormula('bird=>flies'));
+    const innocent = materialisedRemoved.filter(f => f !== culprit);
+ 
+    const drowningHighlight = {
+        rankLabel: `Rank ${removedRank.rankNumber}`,
+        culprit: culprit ?? materialisedRemoved[0] ?? '',
+        innocent,
+    };
+    return { reveal, consequence, drowningHighlight };
 }
 
 export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
@@ -132,6 +153,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 isFinalStep: false,
                 queryAntecedent,
                 queryConsequent,
+                workingSetIncludesRInfinity: true,
             });
 
             // Step - remove rank
@@ -150,6 +172,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 isFinalStep: false,
                 queryAntecedent,
                 queryConsequent,
+                workingSetIncludesRInfinity: true,
             });
         }else {
 
@@ -165,6 +188,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 isFinalStep: false,
                 queryAntecedent,
                 queryConsequent,
+                workingSetIncludesRInfinity: true,
             });
 
             // Final step - return
@@ -180,6 +204,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 entailed,
                 queryAntecedent,
                 queryConsequent,
+                workingSetIncludesRInfinity: true,
             });
         }
     });
@@ -190,7 +215,9 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
         
         lastAlgorithmStep.isFinalStep = false;
 
-        const { reveal, consequence } = buildDrowningProblemEpilogue(removedRanking);
+        const { reveal, consequence, drowningHighlight } = buildDrowningProblemEpilogue(removedRanking);
+        const removedRankNumbers = new Set(removedRanking.filter(r => r.knowledgeBase.length > 0).map(r => r.rankNumber));
+        const revealRankingState = lastAlgorithmStep.rankingState.map(r => ({ ...r,isBeingRemoved: removedRankNumbers.has(r.rankNumber),}));
 
         steps.push({
             stepNumber: steps.length + 1,
@@ -204,6 +231,8 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
             entailed,
             queryAntecedent,
             queryConsequent,
+            drowningHighlight,
+            workingSetIncludesRInfinity: true,
         });
 
         steps.push({
@@ -218,6 +247,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
             entailed,
             queryAntecedent,
             queryConsequent,
+            workingSetIncludesRInfinity: true,
         });
     }
 

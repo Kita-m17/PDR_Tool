@@ -28,6 +28,14 @@ const BaseRankStepThrough: React.FC = () => {
     const progressPhases: AlgorithmPhase[] = isRelevantClosure
         ? ['baserank', 'partition', 'closure']
         : ['baserank', 'closure'];
+    // The bar renders every phase's label up front (not just the current
+    // one), so the upcoming "closure" checkpoint needs the right name here
+    // too - otherwise Rational/Lexicographic Closure show "Relevant Closure"
+    // while still on the Base Rank step.
+    const closureLabel =
+        algorithm === 'lexicographic' ? 'Lexicographic Closure' :
+        algorithm === 'rational' ? 'Rational Closure' :
+        undefined;
 
     const steps = baseRankSteps(baseRank);
     const [currentStep, setCurrentStep] = useState(0);
@@ -63,7 +71,7 @@ const BaseRankStepThrough: React.FC = () => {
             <Header />
             <main className = "flex-1 px-8 py-6">
 
-                <AlgorithmProgress currentPhase="baserank" phases={progressPhases} />
+                <AlgorithmProgress currentPhase="baserank" phases={progressPhases} closureLabel={closureLabel} />
 
                 {/* page header */}
                 <div className="flex items-start justify-between mb-4">
@@ -144,7 +152,7 @@ const BaseRankStepThrough: React.FC = () => {
                 <div className="flex gap-4 mb-4">
 
                     {/* algorithm */}
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px] overflow-y-auto">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px]">
 
                         <h3 className="text-primary font-semibold mb-1">
                             Algorithm
@@ -154,7 +162,7 @@ const BaseRankStepThrough: React.FC = () => {
                             BaseRank (pseudocode)
                         </p>
 
-                        <div className="text-sm space-y-1">
+                        <div className="text-sm space-y-1 h-[350px] overflow-y-auto">
 
                             {pseudocode.map((line) => {
                                 const isHighlighted = step.highlightedLines.includes(line.num);
@@ -189,149 +197,149 @@ const BaseRankStepThrough: React.FC = () => {
                     </div>
 
                     {/* Explanation */}
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px] overflow-y-auto">
-                        <h3 className="text-primary font-semibold mb-4">
-                            Explanation
-                        </h3>
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px]">
+                            <h3 className="text-primary font-semibold mb-4">
+                                Explanation
+                            </h3>
 
-                        <p className="text-sm text-foreground leading-relaxed whitespace-pre-line mb-4">
-                            {step.explanation}
-                        </p>
+                        <div className="flex-1 min-h-0 pr-1 h-[370px] overflow-y-auto">
 
-                        {step.isInitialStep &&(
-                            <div className="mb-4">
-                                                <p className="text-sm font-medium text-foreground mb-2">
-                                                    In this knowledge base:
-                                                </p>
-                                                   <p className="text-sm font-medium text-foreground m-4">
-                                                    Defeasible:
-                                                    </p>
-                                                <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                                    { step.consideredFormulas.filter(f => f.includes('|~')).join(", ") }
-                                                </div>
+                            <p className="text-sm text-foreground leading-relaxed whitespace-pre-line mb-4">
+                                {step.explanation}
+                            </p>
 
-                                                   <p className="text-sm font-medium text-foreground m-4">
-                                                    Classical:
-                                                    </p>
-                                                <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                                    {step.consideredFormulas.filter(f => !f.includes('|~')).join(", ") }
-                                                </div>
+                            {step.isInitialStep &&(
+                                <div className="mb-4">
+                                    <p className="text-sm font-medium text-foreground mb-2">
+                                        In this knowledge base:
+                                    </p>
+                                        <p className="text-sm font-medium text-foreground m-4">
+                                        Defeasible:
+                                        </p>
+                                    <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
+                                        { step.consideredFormulas.filter(f => f.includes('|~')).join(", ") }
+                                    </div>
 
-                                            </div>
+                                        <p className="text-sm font-medium text-foreground m-4">
+                                        Classical:
+                                        </p>
+                                    <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
+                                        {step.consideredFormulas.filter(f => !f.includes('|~')).join(", ") }
+                                    </div>
 
-                            )
+                                </div>
+
+                                )
                             }
 
+                            {/* Materialisation panel */}
+                            {step.materialisedFormulas && step.originalFormulas && (
+                                <div className="mb-4">
 
-
-                        {/* Materialisation panel */}
-                        {step.materialisedFormulas && step.originalFormulas && (
-                            <div className="mb-4">
-
-                                <p className="text-sm font-medium text-foreground mb-2">
-                                    Materialisation:
-                                </p>
-
-                                <div className="space-y-1">
-                                    {step.originalFormulas.map((original, i) => (
-                                        <div key={i} className="flex items-center gap-3 font-mono text-sm">
-                                            <span className="text-foreground">
-                                                {original}
-                                            </span>
-
-                                            <span className="text-muted-foreground">
-                                                <ArrowRightIcon/>
-                                            </span>
-
-                                            <span className="text-primary">
-                                                {step.materialisedFormulas![i]}
-                                            </span>
-                                            {!original.includes('|~') && (
-                                                <span className="text-xs text-muted-foreground">
-                                                    (unchanged)
-                                                </span>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-
-                                {/* <p className="text-xs text-muted-foreground mt-2">
-                                    E₀ = {'{ ' + step.materialisedFormulas.join(', ') + ' }'}
-                                </p> */}
-
-                                {/* E₀ in a box */}
-                                <p className="mt-8 text-sm font-medium text-foreground mb-2">
-                                    E₀ (materialised knowledge base):
-                                </p>
-
-                                <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
-                                    { step.materialisedFormulas.join(', ') }
-                                </div>
-
-                                <p className="text-xs text-muted-foreground mt-1">
-                                    This is the starting point for the BaseRank algorithm.
-                                </p>
-                            </div>
-                        )}
-
-                        {/* Exceptionality checks */}
-                        {step.checks.length > 0 && (
-                            <div className="mb-4">
-
-                                <p className="text-sm font-medium text-foreground mb-2">
-                                    Exceptionality checks:
-                                </p>
-
-                                {/* Show materialised KB once above all checks */}
-                                <div className="mb-3">
-                                    <p className="text-xs text-muted-foreground mb-1">
-                                        Materialised KB used for checks:
+                                    <p className="text-sm font-medium text-foreground mb-2">
+                                        Materialisation:
                                     </p>
-                                    
-                                    <div className="bg-accent border border-border rounded-lg p-2 font-mono text-xs text-foreground mb-3">
-                                        {step.checks[0]?.reason}
+
+                                    <div className="space-y-1">
+                                        {step.originalFormulas.map((original, i) => (
+                                            <div key={i} className="flex items-center gap-3 font-mono text-sm">
+                                                <span className="text-foreground">
+                                                    {original}
+                                                </span>
+
+                                                <span className="text-muted-foreground">
+                                                    <ArrowRightIcon/>
+                                                </span>
+
+                                                <span className="text-primary">
+                                                    {step.materialisedFormulas![i]}
+                                                </span>
+                                                {!original.includes('|~') && (
+                                                    <span className="text-xs text-muted-foreground">
+                                                        (unchanged)
+                                                    </span>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* <p className="text-xs text-muted-foreground mt-2">
+                                        E₀ = {'{ ' + step.materialisedFormulas.join(', ') + ' }'}
+                                    </p> */}
+
+                                    {/* E₀ in a box */}
+                                    <p className="mt-8 text-sm font-medium text-foreground mb-2">
+                                        E₀ (materialised knowledge base):
+                                    </p>
+
+                                    <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
+                                        { step.materialisedFormulas.join(', ') }
+                                    </div>
+
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        This is the starting point for the BaseRank algorithm.
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Exceptionality checks */}
+                            {step.checks.length > 0 && (
+                                <div className="mb-4">
+
+                                    <p className="text-sm font-medium text-foreground mb-2">
+                                        Exceptionality checks:
+                                    </p>
+
+                                    {/* Show materialised KB once above all checks */}
+                                    <div className="mb-3">
+                                        <p className="text-xs text-muted-foreground mb-1">
+                                            Materialised KB used for checks:
+                                        </p>
+                                        
+                                        <div className="bg-accent border border-border rounded-lg p-2 font-mono text-xs text-foreground mb-3">
+                                            {step.checks[0]?.reason}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        {step.checks.map((check, i) => (
+                                            <div key={i} className={`rounded-lg p-3 border text-sm ${check.isExceptional ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
+                                                <p className={`font-medium mb-1 ${check.isExceptional ? 'text-red-700' : 'text-green-700'}`}>
+                                                    '{check.antecedent}' is {check.isExceptional ? 'EXCEPTIONAL' : 'NOT exceptional'}
+                                                </p>
+
+                                                {/* <p className="text-xs text-muted-foreground mb-1">
+                                                    Materialised KB: 
+                                                    <span className="font-mono">
+                                                        {check.reason}
+                                                    </span>
+                                                </p> */}
+
+                                                <p className="text-xs text-muted-foreground">
+                                                    {check.isExceptional
+                                                        ? `→ ${check.affectedRules.join(', ')} carries forward`
+                                                        : `→ ${check.affectedRules.join(', ')} assigned to Rank ${check.rankNumber}`
+                                                    }
+                                                </p>
+                                                
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
+                            )}
 
-                                <div className="space-y-3">
-                                    {step.checks.map((check, i) => (
-                                        <div key={i} className={`rounded-lg p-3 border text-sm ${check.isExceptional ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
-                                            <p className={`font-medium mb-1 ${check.isExceptional ? 'text-red-700' : 'text-green-700'}`}>
-                                                '{check.antecedent}' is {check.isExceptional ? 'EXCEPTIONAL' : 'NOT exceptional'}
-                                            </p>
 
-                                            {/* <p className="text-xs text-muted-foreground mb-1">
-                                                Materialised KB: 
-                                                <span className="font-mono">
-                                                    {check.reason}
-                                                </span>
-                                            </p> */}
+                            {/* Final ranking */}
+                            {step.isFinalStep && (
+                                <div className="mt-4 rounded-lg p-4 border bg-green-50 border-green-200">
+                                    <p className="font-bold text-green-700 mb-1">
+                                        ✓ BaseRank Construction Complete
+                                    </p>
 
-                                            <p className="text-xs text-muted-foreground">
-                                                {check.isExceptional
-                                                    ? `→ ${check.affectedRules.join(', ')} carries forward`
-                                                    : `→ ${check.affectedRules.join(', ')} assigned to Rank ${check.rankNumber}`
-                                                }
-                                            </p>
-                                            
-                                        </div>
-                                    ))}
+
                                 </div>
-                            </div>
-                        )}
-
-
-                        {/* Final ranking */}
-                        {step.isFinalStep && (
-                            <div className="mt-4 rounded-lg p-4 border bg-green-50 border-green-200">
-                                <p className="font-bold text-green-700 mb-1">
-                                    ✓ BaseRank Construction Complete
-                                </p>
-
-
-                            </div>
-                        )}
-
+                            )}
+                        </div>
                     </div>
                 </div>
 

@@ -40,7 +40,7 @@ const RCStepThrough: React.FC = () => {
             {/* Page Body */}
             <main className="flex-1 px-8 py-6">
 
-                <AlgorithmProgress currentPhase="closure" phases={['baserank', 'closure']} />
+                <AlgorithmProgress currentPhase="closure" phases={['baserank', 'closure']} closureLabel="Rational Closure" />
 
                 {/* Page header */}
                 <div className="flex items-start justify-between mb-4">
@@ -86,12 +86,14 @@ const RCStepThrough: React.FC = () => {
 
                 {/* Algorithm + Explanation side by side */}
                 <div className="flex gap-4 mb-4">
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px] overflow-y-auto">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[605px]">
                         <AlgorithmView highlightedLines={step.highlightedLines} />
                     </div>
 
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px] overflow-y-auto">
-                        <ExplanationView step={step}/>
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[605px]">
+                        <div className="flex-1 min-h-0 h-[500px]">
+                            <ExplanationView step={step}/>
+                        </div>
                         {/* Drowning-problem-only: hint at the other closures and offer to compare, right above the Done button. */}
                         {showDrowningCompareButton && (
                             <div className="flex justify-end mt-4">

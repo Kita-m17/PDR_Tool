@@ -178,8 +178,9 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
 
                 {/* Helper text */}
                 <p className = "text-sm text-muted-foreground mt-2">
-                    Use |~ for defeasible, =&gt; for classical. and ! for negation. Each formula must be wrapped in
-                    parentheses, e.g. (a=&gt;b) or (a|~!b).
+                    Use |~ for defeasible, =&gt; for classical, ! for negation, &amp;&amp; for and, and || for or.
+                    Each formula must be wrapped in parentheses, e.g. (a=&gt;b) or (a|~!b). Combine terms with
+                    &amp;&amp; or || by giving each group its own parentheses, e.g. ((a&amp;&amp;b)=&gt;c) or (a|~(b||!c)).
                 </p>
 
                 {/* Buttons */}

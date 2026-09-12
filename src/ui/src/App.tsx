@@ -45,6 +45,7 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [kbValid, setKbValid] = useState(true);
+  const [queryValid, setQueryValid] = useState(true);
   const [isExampleLocked, setIsExampleLocked] = useState(false);
   const [loadedExampleLabel, setLoadedExampleLabel] = useState<string | null>(null);
 
@@ -61,6 +62,11 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
 
     if (!query) {
       setError('Please enter a query');
+      return;
+    }
+
+    if (!queryValid) {
+      setError('Please fix the invalid antecedent/consequent in your query');
       return;
     }
 
@@ -169,7 +175,7 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
 
           {/* Query Card - narrower */}
           <div className="mb-4 mt-2 bg-white rounded-xl border border-border shadow-sm p-6 flex-[1]">
-            <QueryInput onSubmit={setQuery} defaultValue={query} disabled={isExampleLocked}/>
+            <QueryInput onSubmit={setQuery} defaultValue={query} disabled={isExampleLocked} onValidityChange={setQueryValid}/>
           </div>
         </div>
         
@@ -261,7 +267,7 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
                 {loading ? 'Comparing...' : 'Compare Closures'}
             </Button>
 
-                        <Button variant="primary" size="lg" onClick={handleEvaluate} disabled={loading || !kbValid}>
+                        <Button variant="primary" size="lg" onClick={handleEvaluate} disabled={loading || !kbValid || !queryValid}>
 
                 {loading ? 'Evaluating...' : 'Evaluate'}
                 <ArrowRightIcon className="ml-2 h-4 w-4" />

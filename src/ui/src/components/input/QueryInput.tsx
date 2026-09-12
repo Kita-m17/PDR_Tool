@@ -2,14 +2,19 @@ import React, { useState } from "react";
 // import { Button } from "../ui/Buttons";
 // import { fi } from "zod/v4/locales";
 import { Link } from "react-router-dom";
+import { validateTerm } from "../../lib/formulaValidator";
 
 interface QueryInputProps {
     onSubmit: (query: string) => void;
     defaultValue?: string;
     disabled?: boolean;
+    /** Fires whenever the antecedent/consequent go valid <-> invalid, so the
+     * parent can gate submission the same way FormulaCard's onValidityChange
+     * gates it for the knowledge base. */
+    onValidityChange?: (valid: boolean) => void;
 }
 
-const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disabled }) => {
+const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disabled, onValidityChange }) => {
 
     //parse defaultValue back into parts
     const parseDefault = (val?: string) => {
@@ -34,6 +39,13 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
     const [relation, setRelation] = useState(defaults.relation);
     const [negate, setNegate] = useState(defaults.negate);
 
+    // Per-field validation, recomputed on every keystroke - each side of the
+    // relation is its own TERM (an atom, or a '&&'/'||' group), the same
+    // grammar the knowledge base formulas use for their antecedent/consequent.
+    const antecedentResult = React.useMemo(() => validateTerm(antecedent), [antecedent]);
+    const consequentResult = React.useMemo(() => validateTerm(consequent), [consequent]);
+    const queryValid = antecedentResult.valid && consequentResult.valid;
+
     //preview query
     const preview = antecedent && consequent ? `${antecedent} ${relation} ${negate ? '!':''}${consequent}` : '';
 
@@ -42,7 +54,9 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
             const query = `${antecedent}${relation}${negate ? '!' : ''}${consequent}`;
             onSubmit(query);
         }
-    }, [antecedent, relation, consequent, negate, onSubmit]);
+        onValidityChange?.(queryValid);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [antecedent, relation, consequent, negate, onSubmit, onValidityChange, queryValid]);
 
     // set to default
     React.useEffect(() => {
@@ -53,7 +67,10 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
         setNegate(defaults.negate);
     }, [defaultValue]);
 
-    const fieldClass = `border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pdr-blue ${disabled ? 'bg-accent text-muted-foreground cursor-not-allowed' : ''}`;
+    const fieldClass = (invalid: boolean) =>
+        `border rounded-lg px-3 py-2 text-sm focus:outline-none ${
+            invalid ? 'border-red-400 focus:border-red-500' : 'border-border focus:border-pdr-blue'
+        } ${disabled ? 'bg-accent text-muted-foreground cursor-not-allowed' : ''}`;
 
     return(
         <div className = "mb-8">
@@ -84,11 +101,15 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
                     <input
                         type="text"
                         disabled={disabled}
-                        className={fieldClass}
+                        className={fieldClass(!antecedentResult.valid)}
                         placeholder="e.g. penguin"
                         value={antecedent}
                         onChange={(e) => setAntecedent(e.target.value)}
                     />
+
+                    {!antecedentResult.valid && (
+                        <p className="text-red-500 text-xs">{antecedentResult.error}</p>
+                    )}
                 </div>
 
                 {/* Relation */}
@@ -98,7 +119,7 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
                     </label>
 
                     <select
-                        className={fieldClass}
+                        className={fieldClass(false)}
                         value={relation}
                         onChange={(e) => setRelation(e.target.value)}
                         disabled={disabled}
@@ -117,11 +138,15 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
                     <input
                         type="text"
                         disabled={disabled}
-                        className={fieldClass}
+                        className={fieldClass(!consequentResult.valid)}
                         placeholder="e.g. flies"
                         value={consequent}
                         onChange={(e) => setConsequent(e.target.value)}
                     />
+
+                    {!consequentResult.valid && (
+                        <p className="text-red-500 text-xs">{consequentResult.error}</p>
+                    )}
                 </div>
 
                 {/* Negate */}
