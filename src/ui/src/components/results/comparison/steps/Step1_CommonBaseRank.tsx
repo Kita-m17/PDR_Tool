@@ -44,6 +44,13 @@ const Step1_CommonBaseRank: React.FC<Step1Props> = ({ baseRanking, query, onInsp
             {/* Ranking - full width, with heading + inspect button */}
             <div className="bg-white border border-border rounded-xl p-6 mb-8">
                 <RankingVisualiser rankingState={rankingState} />
+                {/* Inspect button */}
+                <div className="flex justify-center">
+                    <Button onClick={onInspect}>
+                        Inspect BaseRank Step-Through
+                        <ArrowRightIcon className="ml-2 h-4 w-4" />
+                    </Button>
+                </div>
             </div>
 
             {/* Branching diagram to the three methods */}

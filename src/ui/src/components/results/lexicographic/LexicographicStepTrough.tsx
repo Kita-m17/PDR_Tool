@@ -36,7 +36,7 @@ const LexicographicStepThrough: React.FC = () => {
             {/* Page Body */}
             <main className="flex-1 px-8 py-6">
 
-                <AlgorithmProgress currentPhase="closure" phases={['baserank', 'closure']} />
+                <AlgorithmProgress currentPhase="closure" phases={['baserank', 'closure']} closureLabel="Lexicographic Closure" />
 
                 {/* Page header */}
                 <div className="flex items-start justify-between mb-4">
