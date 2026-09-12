@@ -50,9 +50,9 @@ const LexicographicStepThrough: React.FC = () => {
 
                         {/* Brief explanation of the LexC algorithm */}
                         <p className="text-sm text-foreground mt-2 max-w-2xl">
-                            Lexicographic Closure weakens an exceptional rank rather than
-                            discarding it, keeping as many of its statements as possible and
-                            dropping one more only when every remaining sub-knowledge base
+                            Lexicographic Closure weakens an exceptional rank instead of
+                            discarding it. It keeps as many statements from the rank as it can,
+                            and only drops one more when every remaining sub-knowledge base
                             still refutes the query antecedent.
                         </p>
                     </div>

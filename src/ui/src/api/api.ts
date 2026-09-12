@@ -50,8 +50,9 @@ export interface EntailmentDTO {
     baseRanking: RankDTO[];
     removedRanking: RankDTO[];
     traceSteps: EntailmentStepDTO[];
-    // Only populated for Basic/Minimal Relevant Closure - the smallest weak
-    // justification (proof) for the entailment, per RelevantEntailment.java.
+    // Populated for Basic/Minimal Relevant Closure and for Lexicographic Closure -
+    // the smallest weak justification (proof) for the entailment, per
+    // RelevantEntailment.java and LexicographicEntailment.java.
     // Empty/undefined when not entailed, since there's nothing to justify.
     smallestWeakJustification?: string[];
     baseRankExecutionTime: number;
