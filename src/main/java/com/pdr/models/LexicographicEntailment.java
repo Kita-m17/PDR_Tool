@@ -23,6 +23,12 @@ public class LexicographicEntailment extends Entailment {
     @JsonIgnore
     private final Ranking weakenedRanking;
 
+    // The smallest set of statements in the surviving R∞ ∪ R that on its own
+    // entails the query - empty when the query is not entailed, since there is
+    // nothing to justify then.
+    @JsonIgnore
+    private final KnowledgeBase weakJustification;
+
     // surviving sub-KBs + query + answer
     private final List<SubKnowledgeBaseCheck> finalChecks;
     // trace
@@ -32,6 +38,7 @@ public class LexicographicEntailment extends Entailment {
         super(builder);
         this.removedRanking = builder.removedRanking;
         this.weakenedRanking = builder.weakenedRanking;
+        this.weakJustification = builder.weakJustification;
         this.finalChecks = builder.finalChecks;
         this.lexicographicSteps = builder.lexicographicSteps;
     }
@@ -58,6 +65,16 @@ public class LexicographicEntailment extends Entailment {
     }
 
     // JSON VIEW
+
+    /**
+     * The proof for the entailment, under the same JSON name Basic/Minimal
+     * Relevant Closure use, so the frontend reads it off EntailmentDTO the
+     * same way for all three closures.
+     */
+    @JsonProperty("smallestWeakJustification")
+    public List<String> getWeakJustification() {
+        return weakJustification != null ? weakJustification.toStringList() : List.of();
+    }
     @JsonProperty("removedRanking")
     public List<RankDTO> getRemovedRankingDTO() {
         return removedRanking != null
@@ -76,11 +93,17 @@ public class LexicographicEntailment extends Entailment {
     public static class LexicographicEntailmentBuilder extends EntailmentBuilder<LexicographicEntailmentBuilder> {
         private Ranking removedRanking = new Ranking();
         private Ranking weakenedRanking = new Ranking();
+        private KnowledgeBase weakJustification = new KnowledgeBase();
         private List<SubKnowledgeBaseCheck> finalChecks = new ArrayList<>();
         private List<LexicographicStep> lexicographicSteps = new ArrayList<>();
 
         public LexicographicEntailmentBuilder withRemovedRanking(Ranking removedRanking) {
             this.removedRanking = removedRanking;
+            return this;
+        }
+
+        public LexicographicEntailmentBuilder withWeakJustification(KnowledgeBase weakJustification) {
+            this.weakJustification = weakJustification;
             return this;
         }
 
