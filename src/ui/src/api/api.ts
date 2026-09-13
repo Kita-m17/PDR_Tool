@@ -41,6 +41,8 @@ export interface EntailmentStepDTO {
     reason: string;
     remaining: string[];
     removed: string[];
+    justification?: string[];
+    weakJustification?: string[];
 }
 
 export interface EntailmentDTO {

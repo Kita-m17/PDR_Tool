@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import { DebuggerStep } from './rational/rcSteps';
+import { DebuggerStep } from './rcSteps';
 import { InfoCircledIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import {Button} from '../ui/Buttons'
+import {Button} from '../../ui/Buttons'
 
 interface ExplanationViewProps {
     step: DebuggerStep;
@@ -16,16 +16,16 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
     }, [step.stepNumber]);
 
     // filter working set to show the relevant formulas
-    const relevantFormulas = step.workingSet.filter(f => {
-        const withoutBrackets = f.replace(/[()]/g, '');
-        const parts = withoutBrackets.split('=>');
-        const antecedent = parts[0].trim();
-        const consequent = parts[1]?.replace('!', '').trim() || '';
-        return antecedent === step.queryAntecedent || // directly about penguin
-           consequent === step.queryConsequent ||   // about flies
-           antecedent === step.queryConsequent;     // bird=>flies (bird connects to flies)
+    // const relevantFormulas = step.workingSet.filter(f => {
+    //     const withoutBrackets = f.replace(/[()]/g, '');
+    //     const parts = withoutBrackets.split('=>');
+    //     const antecedent = parts[0].trim();
+    //     const consequent = parts[1]?.replace('!', '').trim() || '';
+    //     return antecedent === step.queryAntecedent || // directly about penguin
+    //        consequent === step.queryConsequent ||   // about flies
+    //        antecedent === step.queryConsequent;     // bird=>flies (bird connects to flies)
         
-    });
+    // });
 
     const isWhileStep = step.highlightedLines.includes(5) && !step.isInitialStep;
 
@@ -85,7 +85,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
                 )}
 
                 {/* details panel */}
-                {isWhileStep && showDetails &&(
+                {/* {isWhileStep && showDetails &&(
                     <div className="mb-4 border border-border rounded-lg p-4 bg-accent">
                         <p className="text-xs font-medium text-foreground mb-2">
                             Relevant formulas checked:
@@ -101,6 +101,25 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
                                     : `The full working set is checked classically to determine if '${step.queryAntecedent}' leads to a contradiction.`
                                     : ''
                             }
+                        </p>
+                    </div>
+                )} */}
+                {isWhileStep && showDetails && (
+                    <div className="mb-4 border border-border rounded-lg p-4 bg-accent">
+                        <p className="text-xs font-medium text-foreground mb-2">
+                            Justification - formulas that caused the contradiction:
+                        </p>
+
+                        <div className="font-mono text-xs text-foreground bg-white border border-border rounded p-2 mb-3">
+                            {step.justification && step.justification.length > 0
+                                ? '{ ' + step.justification.join(', ') + ' }'
+                                : 'No justification computed for this step.'}
+                        </div>
+
+                        <p className="text-xs text-muted-foreground">
+                            {step.justification && step.justification.length > 0
+                                ? `This is the unsatisfiable core: the smallest set of formulas that, together with '${step.queryAntecedent}', leads to a contradiction.`
+                                : ''}
                         </p>
                     </div>
                 )}
@@ -160,6 +179,25 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
                                 'The query is in the Rational Closure of K'
                                 : 'The query is not in the Rational Closure of K'
                             }
+                        </p>
+                    </div>
+                )}
+
+                {/* Justification for why the query is entailed, on the successful final step */}
+                {step.isFinalStep && step.entailed && step.weakJustification && step.weakJustification.length > 0 && (
+                    <div className="mt-4">
+                        <p className="text-sm font-medium text-foreground mb-2">
+                            Justification:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                            {step.weakJustification.map((formula, i) => (
+                                <span key={i} className="font-mono text-xs text-green-700 bg-green-100 border border-green-200 rounded-full px-3 py-1">
+                                    {formula}
+                                </span>
+                            ))}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                            The smallest set of statements in the surviving R∞ ∪ R that entails the query on its own.
                         </p>
                     </div>
                 )}

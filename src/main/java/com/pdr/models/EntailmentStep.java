@@ -28,6 +28,12 @@ public class EntailmentStep {
     @JsonIgnore
     private final KnowledgeBase removed; // The removed knowledge base after this entailment step
 
+    @JsonIgnore
+    private final KnowledgeBase justification;
+
+    @JsonIgnore
+    private final KnowledgeBase weakJustification;
+
     /**
      * Constructor that creates a new EntailmentStep instance with the given iteration number, remaining knowledge base, exceptionality checks, removed ranks, and the reason.
      *
@@ -38,12 +44,23 @@ public class EntailmentStep {
      * @param removed
      */
     public EntailmentStep(int iteration, KnowledgeBase remaining, boolean antecedentExceptional, String reason, KnowledgeBase removed) {
+        this(iteration, remaining, antecedentExceptional, reason, removed, null, null);
+    }
+
+    public EntailmentStep(int iteration, KnowledgeBase remaining, boolean antecedentExceptional, String reason, KnowledgeBase removed, KnowledgeBase justification) {
+        this(iteration, remaining, antecedentExceptional, reason, removed, justification, null);
+    }
+
+    public EntailmentStep(int iteration, KnowledgeBase remaining, boolean antecedentExceptional, String reason, KnowledgeBase removed, KnowledgeBase justification, KnowledgeBase weakJustification) {
         this.iteration = iteration;
         this.remaining = remaining;
         this.antecedentExceptional = antecedentExceptional;
         this.reason = reason;
         this.removed = removed;
+        this.justification = justification;
+        this.weakJustification = weakJustification;
     }
+
 
     // --- Getters ---
 
@@ -82,8 +99,21 @@ public class EntailmentStep {
         return removed;
     }
 
+    /**
+     * @return Knowledge base of the justifications
+     */
+    public KnowledgeBase getJustification() {
+        return justification;
+    }
+
+    public KnowledgeBase getWeakJustification() {
+        return weakJustification;
+    }
+
     public EntailmentStepDTO toDTO() {
-        return new EntailmentStepDTO(iteration, remaining.toStringList(), antecedentExceptional, reason, removed.toStringList());
+        return new EntailmentStepDTO(iteration, remaining.toStringList(), antecedentExceptional, reason, removed.toStringList(),
+        justification != null ? justification.toStringList() : null,
+        weakJustification != null ? weakJustification.toStringList() : null);
     }
 
     @JsonProperty("remaining")
@@ -94,6 +124,16 @@ public class EntailmentStep {
     @JsonProperty("removed")
     public List<String> getRemovedStrings() {
         return removed != null ? removed.toStringList() : null;
+    }
+
+    @JsonProperty("justification")
+    public List<String> getJustificationStrings() {
+        return justification != null ? justification.toStringList() : null;
+    }
+
+    @JsonProperty("weakJustification")
+    public List<String> getWeakJustificationStrings() {
+        return weakJustification != null ? weakJustification.toStringList() : null;
     }
 
     /**
