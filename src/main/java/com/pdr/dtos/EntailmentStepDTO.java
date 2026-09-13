@@ -16,6 +16,6 @@ public class EntailmentStepDTO {
     private boolean antecedentExceptional; // True if the antecedent is exceptional, false otherwise
     private String reason; // Reason for the exceptionality result, e.g., "Exceptional because it leads to a contradiction."
     private List<String> removed; // The removed knowledge base after this entailment step
-
-
+    private List<String> justification;
+    private List<String> weakJustification;
 }

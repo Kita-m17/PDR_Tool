@@ -13,6 +13,7 @@ package com.pdr.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
 
 import org.tweetyproject.logics.pl.reasoner.SatReasoner;
 import org.tweetyproject.logics.pl.sat.Sat4jSolver;
@@ -28,6 +29,8 @@ import com.pdr.models.KnowledgeBase;
 import com.pdr.models.Rank;
 import com.pdr.models.Ranking;
 import com.pdr.models.RationalEntailment;
+
+import com.pdr.services.ClassicalJustificationService;
 
 /**
  * Implementation of the Rational Closure reasoning algorithm
@@ -88,8 +91,18 @@ public class RationalReasonerImpl implements ReasonerService {
             Rank toRemove = baseRanking.get(i); //get the current rank to remove
             removedRanking.add(toRemove);
 
+            List<KnowledgeBase> justifications = ClassicalJustificationService.computeJustification(currentUnion, negation);
+            KnowledgeBase justification = new KnowledgeBase();
+            int smallestJustificationSize = Integer.MAX_VALUE;
+            for (KnowledgeBase candidate : justifications) {
+                if (candidate.size() < smallestJustificationSize) {
+                    justification = new KnowledgeBase();
+                    justification.addAll(candidate);
+                    smallestJustificationSize = candidate.size();
+                }
+            }
             //add current step to trace
-            trace.add(new EntailmentStep(i, currentUnion, true, antecedent + " is exceptional w.r.t. R∞ U R - removing Rank " + i, new KnowledgeBase(toRemove.getFormulas())));
+            trace.add(new EntailmentStep(i, currentUnion, true, antecedent + " is exceptional w.r.t. R∞ U R - removing Rank " + i, new KnowledgeBase(toRemove.getFormulas()), justification));
 
             /** 
              * Remove ranks type 1 - tweety code
@@ -103,9 +116,27 @@ public class RationalReasonerImpl implements ReasonerService {
         }
 
         boolean entailed = reasoner.query(currentUnion, queryFormula); //check if the query is entailed by the remaining ranks
+        // KnowledgeBase weakJustification = new KnowledgeBase();
+        // if (entailed) {
+        //     List<KnowledgeBase> weakJustifications = ClassicalJustificationService.computeJustification(currentUnion, queryFormula);
+        //     weakJustification = weakJustifications.stream().min(Comparator.comparingInt(kb -> kb.toStringList().size())).orElse(new KnowledgeBase());
+        // }
+        List<KnowledgeBase> weakJustifications = entailed
+            ? ClassicalJustificationService.computeJustification(currentUnion, queryFormula)
+            : new ArrayList<>();
+
+        KnowledgeBase weakJustification = new KnowledgeBase();
+        int smallestWeakJustificationSize = Integer.MAX_VALUE;
+        for (KnowledgeBase candidate : weakJustifications) {
+            if (candidate.size() < smallestWeakJustificationSize) {
+                weakJustification = new KnowledgeBase();
+                weakJustification.addAll(candidate);
+                smallestWeakJustificationSize = candidate.size();
+            }
+        }
 
         // add the final step to trace
-        trace.add(new EntailmentStep(i, currentUnion, false, antecedent + " is no longer exceptional, checking R∞ U R |=" + queryFormula, new KnowledgeBase()));
+        trace.add(new EntailmentStep(i, currentUnion, false, antecedent + " is no longer exceptional, checking R∞ U R |=" + queryFormula, new KnowledgeBase(), null, weakJustification));
 
         long endTime = System.nanoTime();
         double closureExecutionTime = (double) (endTime - startTime) / 1_000_000_000.0;

@@ -24,13 +24,13 @@ const AlgorithmView: React.FC<AlgorithmViewProps> =({highlightedLines}) => {
     return (
         <div className="h-full flex flex-col"> 
             
-                <h3 className="text-primary font-semibold mb-1 flex items-center gap-2">
-                    Algorithm
-                </h3>
+            <h3 className="text-primary font-semibold mb-1 flex items-center gap-2">
+                Algorithm
+            </h3>
 
-                <p className="text-xs text-muted-foreground mb-4">
-                    Rational Closure (pseudocode)
-                </p>
+            <p className="text-xs text-muted-foreground mb-4">
+                Rational Closure (pseudocode)
+            </p>
                 
             <div className="flex-1 min-h-0 pr-1 overflow-y-auto">
                 <div className="font-mono text-sm space-y-1">

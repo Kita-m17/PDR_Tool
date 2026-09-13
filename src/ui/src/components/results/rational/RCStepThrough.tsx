@@ -7,7 +7,7 @@ import Footer from '../../layout/Footer';
 import { buildDebuggerSteps, DebuggerStep, isDrowningProblemExample } from './rcSteps';
 import RankingVisualiser from './RankingVisualiser';
 import AlgorithmView from './AlgorithmView';
-import ExplanationView from '../ExplanationView';
+import ExplanationView from './ExplanationView';
 import StepControls from '../StepControls';
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import { Button } from '../../ui/Buttons';
