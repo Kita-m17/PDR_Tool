@@ -24,8 +24,15 @@ export const EXAMPLES: Example[] = [
     {
         label: 'Garfield',
         description: 'Garfield the cat: lazy and hates Mondays',
-        formulas: ['(cat|~active)','(cat|~likesMondays)','(garfield=>cat)','(garfield|~!active)','(garfield|~hatesMondays)'],
+        formulas: ['(cat|~active)','(cat|~likesMondays)','(cat|~hasFur)','(garfield=>cat)','(garfield|~!active)','(garfield|~!likesMondays)'],
         query: 'garfield|~!active',
+        algorithm: 'rational'
+    },
+    {
+        label: 'Garfield Drowning',
+        description: 'Same Garfield knowledge base, but asks whether Garfield has fur - a cat default that gets discarded along with the conflicting ones.',
+        formulas: ['(cat|~active)','(cat|~likesMondays)','(cat|~hasFur)','(garfield=>cat)','(garfield|~!active)','(garfield|~!likesMondays)'],
+        query: 'garfield|~hasFur',
         algorithm: 'rational'
     },
     {
