@@ -16,7 +16,6 @@ import org.tweetyproject.logics.pl.syntax.PlFormula;
 
 import java.util.ArrayList;
 import java.util.List;
-@Service
 public class PartitionUsingPowersetImpl implements PartitionService {
 
     private Partition partition;
