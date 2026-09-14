@@ -41,7 +41,11 @@ const LexicographicExplanationView: React.FC<LexicographicExplanationViewProps> 
         </div>
     );
 
-    const renderChecks = (checks: SubKnowledgeBaseCheckDTO[], testedLabel: string) => (
+    // `holds` carries opposite polarity in the two tables this renders. On the weakening
+    // steps it means "refutes the antecedent", which is the bad outcome, so Yes is amber.
+    // On the final step it means "entails the query", which is the good outcome. Pass
+    // holdsIsGood so the colours track what the answer means rather than its truth value.
+    const renderChecks = (checks: SubKnowledgeBaseCheckDTO[], testedLabel: string, holdsIsGood = false) => (
         <table className="w-full border-collapse">
             <thead>
                 <tr className="border-b border-border">
@@ -52,24 +56,28 @@ const LexicographicExplanationView: React.FC<LexicographicExplanationViewProps> 
             </thead>
 
             <tbody>
-                {checks.map((check, i) => (
-                    <tr key={i} className={`border-b border-border ${check.holds ? '' : 'bg-green-50'}`}>
-                        <td className="py-2 px-3 font-mono text-sm text-foreground">
-                            {check.subsetSize === 0 ? '{ }' : check.subsetString}
-                        </td>
+                {checks.map((check, i) => {
+                    const good = check.holds === holdsIsGood;
 
-                        <td className="py-2 px-3 font-mono text-xs text-muted-foreground">
-                            {'{ ' + check.subKnowledgeBase.join(', ') + ' }'}
-                        </td>
+                    return (
+                        <tr key={i} className={`border-b border-border ${good ? 'bg-green-50' : ''}`}>
+                            <td className="py-2 px-3 font-mono text-sm text-foreground">
+                                {check.subsetSize === 0 ? '{ }' : check.subsetString}
+                            </td>
 
-                        <td className="py-2 px-3 text-sm">
-                            <span className={`flex items-center gap-1 ${check.holds ? 'text-amber-600' : 'text-green-700'}`}>
-                                {check.holds ? <CheckCircledIcon className="h-3 w-3" /> : <CrossCircledIcon className="h-3 w-3" />}
-                                {check.holds ? 'Yes' : 'No'}
-                            </span>
-                        </td>
-                    </tr>
-                ))}
+                            <td className="py-2 px-3 font-mono text-xs text-muted-foreground">
+                                {'{ ' + check.subKnowledgeBase.join(', ') + ' }'}
+                            </td>
+
+                            <td className="py-2 px-3 text-sm">
+                                <span className={`flex items-center gap-1 ${good ? 'text-green-700' : 'text-amber-600'}`}>
+                                    {check.holds ? <CheckCircledIcon className="h-3 w-3" /> : <CrossCircledIcon className="h-3 w-3" />}
+                                    {check.holds ? 'Yes' : 'No'}
+                                </span>
+                            </td>
+                        </tr>
+                    );
+                })}
             </tbody>
         </table>
     );
@@ -193,7 +201,7 @@ const LexicographicExplanationView: React.FC<LexicographicExplanationViewProps> 
                     <p className="text-sm font-medium text-foreground mb-2">
                         Final check:
                     </p>
-                    {renderChecks(step.finalChecks, 'Entails query?')}
+                    {renderChecks(step.finalChecks, 'Entails query?', true)}
                 </div>
             )}
 
