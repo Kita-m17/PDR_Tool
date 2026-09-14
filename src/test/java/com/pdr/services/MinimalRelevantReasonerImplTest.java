@@ -31,7 +31,7 @@ class MinimalRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PartitionService partitionService = new ClassicalJustificationService(fixedKbService);
         PlFormula query = parser.parseFormula("(kittens|~!wild)");
         partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
@@ -51,7 +51,7 @@ class MinimalRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PartitionService partitionService = new ClassicalJustificationService(fixedKbService);
         PlFormula query = parser.parseFormula("(penguin|~!flies)");
         partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
@@ -70,7 +70,7 @@ class MinimalRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PartitionService partitionService = new ClassicalJustificationService(fixedKbService);
         PlFormula query = parser.parseFormula("(penguin|~flies)");
         partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
@@ -96,7 +96,7 @@ class MinimalRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PartitionService partitionService = new ClassicalJustificationService(fixedKbService);
         PlFormula query = parser.parseFormula("(robins|~wings)");
         partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
@@ -126,7 +126,7 @@ class MinimalRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PartitionService partitionService = new ClassicalJustificationService(fixedKbService);
         PlFormula query = parser.parseFormula("(penguins|~wings)");
         partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
@@ -156,7 +156,7 @@ class MinimalRelevantReasonerImplTest {
             public void setKnowledgeBase(KnowledgeBase newKb) {}
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PartitionService partitionService = new ClassicalJustificationService(fixedKbService);
         PlFormula query = parser.parseFormula("(specialpenguins~>fly)");
         partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
@@ -185,7 +185,7 @@ class MinimalRelevantReasonerImplTest {
             }
         };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+        PartitionService partitionService = new ClassicalJustificationService(fixedKbService);
         PlFormula query = parser.parseFormula("(kittens|~!wild)");
         partitionService.getPartition(kb, query, true);
         ReasonerService reasoner = new MinimalRelevantReasonerImpl(partitionService, fixedKbService);
