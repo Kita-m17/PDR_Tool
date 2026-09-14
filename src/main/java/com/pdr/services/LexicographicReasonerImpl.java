@@ -289,11 +289,17 @@ public class LexicographicReasonerImpl implements ReasonerService {
             return finalChecks;
         }
 
-        // ********************Otherwise re-form the sub-knowledge bases at the winning subset size and ask each one the query. The overall answer is true only if every one of them says yes.
-        for (SubKnowledgeBaseCheck check : weakenedStep.getsubKBs()) {
-            if (check.getSubsetSize() != weakenedStep.getFinalSubsetSize()) {
-                continue; // skip the sizes that were rejected
-            }
+        // Otherwise ask the query of the sub-knowledge bases that survived the weakening
+        // loop - the subsets at the winning size that stopped refuting the antecedent.
+        // The overall answer is true only if every one of them says yes.
+        //
+        // The subsets at that size that still refute the antecedent are deliberately left
+        // out. Each of them entails !a, so it entails the materialised query a => b for
+        // free, whatever b is. Including them would show a vacuous yes alongside the real
+        // one and read as extra support for the conclusion. Leaving them out does not
+        // change the answer either: they always say yes, so they contribute nothing to the
+        // conjunction. They still appear in the refutation trace on the weakening steps.
+        for (SubKnowledgeBaseCheck check : weakenedStep.getSurvivingsubKBs()) {
             KnowledgeBase subKnowledgeBase = check.getSubKnowledgeBase();
             finalChecks.add(new SubKnowledgeBaseCheck(check.getRankNumber(), check.getSubsetSize(),
                     check.getRankSize(), check.getSubset(), subKnowledgeBase, materialisedQuery,
