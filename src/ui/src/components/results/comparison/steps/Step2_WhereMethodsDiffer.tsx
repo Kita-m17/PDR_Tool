@@ -20,7 +20,7 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
                         Rational Closure
                     </h3>
 
-                    <p className="text-xs text-muted-foreground mb-4">
+                    <p className="text-sm text-muted-foreground mb-4">
                         (Exceptionality)
                     </p>
 
@@ -28,11 +28,11 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
                         <PersonIcon className="h-8 w-8 text-blue-700" />
                     </div>
 
-                    <p className="text-sm text-foreground mb-4">
+                    <p className="text-md text-foreground mb-4">
                         If the query's antecedent is exceptional at some rank, Rational Closure removes that entire rank from consideration - every statement in it, whether or not it's actually related to the query.
                     </p>
                     
-                    <p className="text-xs font-semibold text-primary">
+                    <p className="text-sm font-semibold text-primary">
                         Mechanism: removes the whole rank
                     </p>
                 </div>
@@ -43,7 +43,7 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
                         Lexicographic Closure
                     </h3>
 
-                    <p className="text-xs text-muted-foreground mb-4">
+                    <p className="text-sm text-muted-foreground mb-4">
                         (Preference)
                     </p>
 
@@ -51,11 +51,11 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
                         <BarChartIcon className="h-8 w-8 text-indigo-700" />
                     </div>
 
-                    <p className="text-sm text-foreground mb-4">
+                    <p className="text-md text-foreground mb-4">
                         Instead of deleting an entire exceptional rank outright, Lexicographic Closure looks for the largest subset of that rank that can stay, and combines the possibilities into a single weaker statement that goes back into the ranking in place of the original.
                     </p>
 
-                    <p className="text-xs font-semibold text-indigo-700">
+                    <p className="text-sm font-semibold text-indigo-700">
                         Mechanism: weakens the rank
                     </p>
                 </div>
@@ -66,7 +66,7 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
                         Relevant Closure
                     </h3>
 
-                    <p className="text-xs text-muted-foreground mb-4">
+                    <p className="text-sm text-muted-foreground mb-4">
                         (Relevance)
                     </p>
 
@@ -74,11 +74,11 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
                         <MagnifyingGlassIcon className="h-8 w-8 text-sky-700" />
                     </div>
 
-                    <p className="text-sm text-foreground mb-4">
+                    <p className="text-md text-foreground mb-4">
                         Relevant Closure first works out which statements are even relevant to the query, then only ever reasons over that relevant partition - anything irrelevant is set aside completely and can't be affected.
                     </p>
                     
-                    <p className="text-xs font-semibold text-sky-700">
+                    <p className="text-sm font-semibold text-sky-700">
                         Mechanism: filters to relevant ranks only
                     </p>
                 </div>
@@ -89,12 +89,12 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-6">
                 <div className="flex items-center mb-2">
                     <LightningBoltIcon className="h-5 w-5 text-blue-700 mr-2" />
-                    <span className="text-sm font-semibold text-blue-700">
+                    <span className="text-md font-semibold text-blue-700">
                         Insight
                     </span>
                 </div>
 
-                <p className="text-sm text-blue-700">
+                <p className="text-md text-blue-700">
                     All three start from the same Base Rank (Step 1). Where they diverge is what happens once a rank is found to be exceptional for the query. Rational Closure discards the whole rank - sometimes taking unrelated statements down with it, which is known as the{' '} <strong>drowning problem</strong>. Lexicographic Closure improves this by keeping a weaker version of the rank instead of deleting it outright. Relevant Closure sidesteps the issue entirely by only ever looking at the part of the knowledge base that's actually relevant to the query.
                 </p>
             </div>

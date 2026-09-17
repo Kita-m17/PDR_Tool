@@ -66,7 +66,7 @@ const Step5_FinalResults: React.FC<Step5Props> = ({ query, rcResult, lcResult, r
 
             {/* Query */}
             <div className="bg-white border border-border rounded-xl p-3 mb-6 text-center">
-                <span className="text-sm text-muted-foreground mr-2">Query</span>
+                <span className="text-md text-muted-foreground mr-2">Query</span>
                 <span className="font-mono font-medium">{query}</span>
             </div>
 
@@ -85,16 +85,16 @@ const Step5_FinalResults: React.FC<Step5Props> = ({ query, rcResult, lcResult, r
                                 <p className={`font-bold text-lg ${algo.result.entailed ? 'text-green-600' : 'text-red-600'}`}>
                                     {algo.result.entailed ? 'ENTAILED' : 'NOT ENTAILED'}
                                 </p>
-                                <p className="text-xs text-muted-foreground mt-2">
+                                <p className="text-sm text-muted-foreground mt-2">
                                     {algo.result.entailed ? 'The final KB supports the query.' : 'The final KB does NOT support the query.'}
 
-                                    <p className="text-xs text-muted-foreground mt-3 border-t border-border pt-2">
+                                    <p className="text-sm text-muted-foreground mt-3 border-t border-border pt-2">
                                         {algo.why}
                                     </p>
                                 </p>
                             </>
                         ) : (
-                            <p className="text-muted-foreground text-sm">Loading...</p>
+                            <p className="text-muted-foreground text-md">Loading...</p>
                         )}
                     </div>
                 ))}
@@ -102,7 +102,7 @@ const Step5_FinalResults: React.FC<Step5Props> = ({ query, rcResult, lcResult, r
 
             {/* Insight */}
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
-                <p className="text-sm text-amber-700">
+                <p className="text-md text-amber-700">
                     {allAgree
                         ? "All three methods agree on this query - even though they processed the ranking differently (Step 4), those differences weren't enough to change the final answer this time."
                         : 'The methods disagree here. Differences in how each one processed the ranking (Step 4) were enough to change whether the query is entailed.'}
