@@ -1,8 +1,11 @@
-package com.pdr.services;
 /*
+ * File: RationalReasonerImpTest.java
+ * Original Author: Nikita Martin (PDR Honours Project (University of Cape Town 2026))
  * Context: Used in PDR project for testing Rational Closure.
  * Purpose: Educational use only.
  */
+package com.pdr.services;
+
 import com.pdr.models.BaseRank;
 import com.pdr.models.Entailment;
 import com.pdr.models.EntailmentStep;
@@ -57,14 +60,12 @@ class RationalReasonerImplTest {
         ReasonerService reasoner = new RationalReasonerImpl();
         Entailment result = reasoner.getEntailment(baseRank, query);
 
-        // bird|~wings shares Rank 0 with bird|~flies. Removing the rank to
-        // resolve the penguin/flying conflict also removes wings, even
-        // though nothing challenged it - this is RC's known limitation.
+        // bird|~wings shares Rank 0 with bird|~flies. Removing the rank to resolve the penguin/flying conflict also removes wings, even though nothing challenged it - this is RC's known limitation.
         assertThat(result.getEntailed()).isFalse();
     }
 
     @Test
-    @DisplayName("The Drowning Problem: the whole exceptional rank is removed, culprit and innocent alike")
+    @DisplayName("The Drowning Problem: the whole exceptional rank is removed, culprit and unrelated/innocent together")
     void getEntailmentDrowningProblemRemovedRanking() throws Exception {
         KnowledgeBase kb = parser.parseFormulas("(bird|~flies),(bird|~wings),(penguin=>bird),(penguin|~!flies)");
         BaseRank baseRank = new BaseRankServiceImp().constructBaseRank(kb);
@@ -73,9 +74,7 @@ class RationalReasonerImplTest {
         ReasonerService reasoner = new RationalReasonerImpl();
         RationalEntailment result = (RationalEntailment) reasoner.getEntailment(baseRank, query);
 
-        List<String> removedFormulas = result.getRemovedRanking().stream()
-            .flatMap(rank -> rank.getFormulas().toStringList().stream())
-            .collect(Collectors.toList());
+        List<String> removedFormulas = result.getRemovedRanking().stream().flatMap(rank -> rank.getFormulas().toStringList().stream()).collect(Collectors.toList());
 
         assertThat(removedFormulas).containsExactlyInAnyOrder("(bird|~flies)", "(bird|~wings)");
     }
@@ -94,16 +93,10 @@ class RationalReasonerImplTest {
         ReasonerService reasoner = new RationalReasonerImpl();
         Entailment result = reasoner.getEntailment(baseRank, query);
 
-        EntailmentStep exceptionalStep = result.getTraceSteps().stream()
-            .filter(EntailmentStep::isAntecedentExceptional)
-            .findFirst()
-            .orElseThrow();
+        EntailmentStep exceptionalStep = result.getTraceSteps().stream().filter(EntailmentStep::isAntecedentExceptional).findFirst().orElseThrow();
 
-        // The smaller "swimming chain" justification, not the larger
-        // "flying chain" one - this is exactly the case that drove the
-        // min-size justification fix.
-        assertThat(exceptionalStep.getJustification().toStringList())
-            .containsExactlyInAnyOrder("(rockhopper=>penguin)", "(penguin|~swims)", "(rockhopper|~!swims)");
+        // The smaller "swimming chain" justification, not the larger/ "flying chain" one - this is exactly the case causef the min-size justification fix.
+        assertThat(exceptionalStep.getJustification().toStringList()).containsExactlyInAnyOrder("(rockhopper=>penguin)", "(penguin|~swims)", "(rockhopper|~!swims)");
     }
 
     @Test
