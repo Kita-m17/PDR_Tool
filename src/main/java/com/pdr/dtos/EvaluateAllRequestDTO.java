@@ -18,6 +18,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EvaluateAllRequestDTO {
-    private String query;
+    private InputDTO input;
     private List<String> algorithms;
 }

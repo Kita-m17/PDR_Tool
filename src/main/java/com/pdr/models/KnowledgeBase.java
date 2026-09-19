@@ -17,7 +17,10 @@ package com.pdr.models;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.pdr.dtos.KnowledgeBaseDTO;
+import com.pdr.utils.DefeasibleParser;
 import org.tweetyproject.logics.pl.syntax.Implication;
 import org.tweetyproject.logics.pl.syntax.PlBeliefSet;
 import org.tweetyproject.logics.pl.syntax.PlFormula;
@@ -241,5 +244,10 @@ public class KnowledgeBase extends PlBeliefSet {
         }
         return result;
     }
+
+
+
+
+
 
 }

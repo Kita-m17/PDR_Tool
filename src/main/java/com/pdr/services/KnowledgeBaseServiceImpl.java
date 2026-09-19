@@ -12,10 +12,14 @@
  */
 package com.pdr.services;
 
+import com.pdr.dtos.KnowledgeBaseDTO;
+import com.pdr.dtos.QueryDTO;
+import com.pdr.utils.DefeasibleParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tweetyproject.logics.pl.syntax.Implication;
 import org.tweetyproject.logics.pl.syntax.Negation;
+import org.tweetyproject.logics.pl.syntax.PlFormula;
 import org.tweetyproject.logics.pl.syntax.Proposition;
 
 import com.pdr.models.BaseRank;
@@ -24,19 +28,20 @@ import com.pdr.models.KnowledgeBase;
 
 import jakarta.annotation.PostConstruct;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class KnowledgeBaseServiceImpl implements KnowledgeBaseService{
 
-    @Autowired
-    private BaseRankService baseRankService;
 
     private KnowledgeBase knowledgeBase;
-    private BaseRank baseRank;
+    private DefeasibleImplication query;
 
     @PostConstruct
     public void init(){
         this.knowledgeBase = buildDefault();
-        this.baseRank = baseRankService.constructBaseRank(this.knowledgeBase);
     }
     /**
      * Build the default knowledge base
@@ -65,21 +70,71 @@ public class KnowledgeBaseServiceImpl implements KnowledgeBaseService{
         return this.knowledgeBase;
     }
 
+    @Override
+    public void setQuery(DefeasibleImplication query) {
+        this.query = new DefeasibleImplication(query.getFormula());
+    }
+
+    @Override
+    public DefeasibleImplication getQuery() {
+        return new DefeasibleImplication(query.getFormula());
+    }
+
     /**
      * @param kb set the kb and construct the base rank
      */
     @Override
     public void setKnowledgeBase(KnowledgeBase kb) {
         this.knowledgeBase = kb;
-        this.baseRank = baseRankService.constructBaseRank(kb);
+    }
+
+    @Override
+    public void clearKnowledgeBase() {
+        this.knowledgeBase =null;
+    }
+
+    @Override
+    public void clearQuery() {
+this.query=null;
+    }
+    public KnowledgeBase convertFromDTO(KnowledgeBaseDTO knowledgeBaseDTO){
+        DefeasibleParser parser = new DefeasibleParser();
+
+        List<PlFormula> formulas = knowledgeBaseDTO.getFormulas().stream().map(
+                        f -> {
+                            try {
+                                return (PlFormula) parser.parseFormula(f);
+                            } catch (Exception e) {
+                                throw new RuntimeException("Invalid formula: " + f, e);
+                            }
+                        })
+                .collect(Collectors.toList());
+        return new KnowledgeBase(formulas);
     }
 
     /**
-     * @return the base rank
+     * @Author Liam De Saldanha
      */
-    @Override
-    public BaseRank getBaseRank(){
-        return this.baseRank;
+    public KnowledgeBaseDTO convertToDTO(KnowledgeBase knowledgeBase){
+        List<PlFormula> list= new ArrayList<PlFormula>(knowledgeBase);
+        List<String> result = new ArrayList<>();
+        for(PlFormula pl:list){
+            result.add(pl.toString());
+        }
+        return new KnowledgeBaseDTO(result);
     }
 
+    @Override
+    public DefeasibleImplication convertFromDTO(QueryDTO queryDTO) throws Exception {
+        DefeasibleParser parser = new DefeasibleParser();
+        Implication formula = (Implication) parser.parseFormula(queryDTO.getFormula());
+        return new DefeasibleImplication(formula.getFormulas());
+    }
+
+    @Override
+    public QueryDTO convertToDTO(DefeasibleImplication defeasibleImplication) {
+            QueryDTO result = new QueryDTO();
+            result.setFormula(defeasibleImplication.toString());
+            return result;
+    }
 }

@@ -35,39 +35,15 @@ import com.pdr.models.Ranking;
 
 @Service
 public class BaseRankServiceImp implements BaseRankService{
-    /**
-        * Algorithm1.BaseRank 
-           Input: A knowledge base K 
-           Output: An ordered tuple (R0,...,Rn−1,R∞,n) 
-        1  i:=0; 
-        2  E0 := − →K; 
-        3  repeat 
-        4  Ei+1 := { α → β ∈ Ei | Ei |= ¬α}; 
-        5  Ri := Ei\Ei+1; 
-        6  i := i+1; 
-        7  until Ei−1 = Ei; 
-        8  R∞ := Ei−1; 
-        9  if Ei−1 = ∅then 
-        10    n := i−1; 
-        11 else 
-        12    n := i; 
-        13 return (R0,...,Rn−1,R∞,n)
-    */
 
 
-    public BaseRankServiceImp() {
-        // Default constructor
-    }
-    
     /**
      * Constructs a base rank given a knowledge base.
      * 
-     * @param knowledgeBase The knowledge base for which to construct a base rank.
      * @return The constructed base rank.
      */
     public BaseRank constructBaseRank(KnowledgeBase knowledgeBase) {
         long startTime = System.nanoTime();
-
         // Initialize the SAT solver and reasoner
         SatSolver.setDefaultSolver(new Sat4jSolver());
         SatReasoner reasoner = new SatReasoner();
@@ -150,6 +126,9 @@ public class BaseRankServiceImp implements BaseRankService{
                 .build();
     }
 
+
+
+
     /**
      * Gets the exceptionals from the previous knowledge base.
      * 
@@ -214,4 +193,5 @@ public class BaseRankServiceImp implements BaseRankService{
             }
         }
     }
+
 }

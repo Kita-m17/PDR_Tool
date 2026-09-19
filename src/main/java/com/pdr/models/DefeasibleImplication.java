@@ -13,11 +13,14 @@
  */
 package com.pdr.models;
 
+import com.pdr.dtos.QueryDTO;
 import org.tweetyproject.commons.util.Pair;
 import org.tweetyproject.logics.pl.syntax.Implication;
 import org.tweetyproject.logics.pl.syntax.PlFormula;
 
 import com.pdr.utils.Symbols;
+
+import javax.management.Query;
 
 /**
     * Represents a defeasible implication in propositional logic.
@@ -60,5 +63,6 @@ public class DefeasibleImplication extends Implication {
     {
         return this.getFormulas();
     }
+
 
 }

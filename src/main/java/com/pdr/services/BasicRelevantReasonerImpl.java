@@ -6,6 +6,8 @@ package com.pdr.services;
  * Purpose: Educational use only.
  */
 import com.pdr.models.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.tweetyproject.logics.pl.reasoner.SatReasoner;
 import org.tweetyproject.logics.pl.sat.Sat4jSolver;
 import org.tweetyproject.logics.pl.sat.SatSolver;
@@ -15,16 +17,16 @@ import org.tweetyproject.logics.pl.syntax.PlFormula;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Data
+@NoArgsConstructor
 public class BasicRelevantReasonerImpl implements ReasonerService {
-    private final PartitionService partitionService;
-    private final KnowledgeBaseService knowledgeBaseService;
+    private Partition partition;
+    private KnowledgeBase knowledgeBase;
 
 
-
-    public BasicRelevantReasonerImpl(PartitionService partitionService, KnowledgeBaseService knowledgeBaseService) {
-        this.partitionService = partitionService;
-        this.knowledgeBaseService = knowledgeBaseService;
+    public BasicRelevantReasonerImpl(Partition partition, KnowledgeBase knowledgeBase) {
+        this.partition = partition;
+        this.knowledgeBase = knowledgeBase;
 
 
     }
@@ -36,12 +38,11 @@ public class BasicRelevantReasonerImpl implements ReasonerService {
 
         PlFormula antecedent = ((Implication) queryFormula).getFirstFormula();
         PlFormula negation = new Negation(antecedent);
-        KnowledgeBase knowledgeBase = knowledgeBaseService.getKnowledgeBase();
-        Ranking baseRanking = knowledgeBaseService.getBaseRank().getRanking();
+        Ranking baseRanking = baseRank.getRanking();
         Ranking removedRanking = new Ranking();
 
         //specific input to relevant closure
-        Partition partition = partitionService.getInstance();
+
         KnowledgeBase relevantPartition = partition.getRelevantPartition();
         KnowledgeBase irrelevantPartition = partition.getIrrelevantPartition();
         SatSolver.setDefaultSolver(new Sat4jSolver());

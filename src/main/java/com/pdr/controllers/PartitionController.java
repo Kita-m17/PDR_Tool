@@ -41,7 +41,7 @@ public class PartitionController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
         }
 
-        return ResponseEntity.ok(partitionService.getPartition(kbService.getKnowledgeBase(), formula,false).toDTO());
+        return ResponseEntity.ok(partitionService.getPartition(kbService.getKnowledgeBase(), formula,null,false).toDTO());
     }
 
     @PostMapping("/create/minimal")
@@ -56,7 +56,7 @@ public class PartitionController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
         }
 
-        return ResponseEntity.ok(partitionService.getPartition(kbService.getKnowledgeBase(), formula,true).toDTO());
+        return ResponseEntity.ok(partitionService.getPartition(kbService.getKnowledgeBase(), formula,null,true).toDTO());
     }
 
 

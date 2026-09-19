@@ -3,6 +3,8 @@ package com.pdr.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.pdr.models.DefeasibleImplication;
+import com.pdr.services.BaseRankService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.tweetyproject.logics.pl.syntax.Implication;
 import org.tweetyproject.logics.pl.syntax.PlFormula;
 
 import com.pdr.dtos.BaseRankDTO;
@@ -28,9 +31,8 @@ import com.pdr.utils.DefeasibleParser;
 public class KnowledgeBaseController {
     private final KnowledgeBaseService kbService;
     private final DefeasibleParser parser;
-
     //Constructor injection of the service
-    public KnowledgeBaseController(KnowledgeBaseService kbService, DefeasibleParser parser){
+    public KnowledgeBaseController(KnowledgeBaseService kbService, DefeasibleParser parser, BaseRankService baseRankService){
         this.kbService = kbService;
         this.parser = parser;
     }
@@ -45,7 +47,7 @@ public class KnowledgeBaseController {
     //Endpoint: POST /api/knowledge-base/create-knowledge-base
     //Creates a new KB from formulas provided in the request body
     @PostMapping("/create-knowledge-base")
-    public ResponseEntity<BaseRankDTO> createKb(@RequestBody KnowledgeBaseDTO dto) {
+    public ResponseEntity<KnowledgeBaseDTO> createKb(@RequestBody KnowledgeBaseDTO dto) {
         // DefeasibleParser parser = new DefeasibleParser();
         List<PlFormula> formulas = dto.getFormulas().stream().map(
             f -> {
@@ -60,10 +62,24 @@ public class KnowledgeBaseController {
         //Build kb and save it in the service
         KnowledgeBase kb = new KnowledgeBase(formulas);
         kbService.setKnowledgeBase(kb);
-
-        return ResponseEntity.ok(kbService.getBaseRank().toDTO());
+        return ResponseEntity.ok(null);
     }
 
+    @PostMapping("/set-query")
+    public ResponseEntity<?> setQuery(@RequestBody String query) {
+        // Parse the incoming formula; return 400 with a helpful message instead of
+        // letting a parse failure bubble up as an opaque 500.
+        Implication formula;
+        try {
+            formula = (Implication) parser.parseFormula(query);
+            kbService.setQuery(new DefeasibleImplication(formula.getFormulas()));
+        } catch (Exception e) {
+            ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Bad Request", "Invalid query formula: " + query);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+        }
+
+        return ResponseEntity.ok("");
+    }
     
     //Endpoint: POST /api/knowledge-base/create-knowledge-base
     //Creates a new KB from formulas provided in the request body
@@ -76,7 +92,7 @@ public class KnowledgeBaseController {
             
             KnowledgeBase kb = parser.parseInputStream(file.getInputStream());
             kbService.setKnowledgeBase(kb);
-            return ResponseEntity.ok(kbService.getBaseRank().toDTO());
+            return ResponseEntity.ok("");
             
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400, "Bad Request", "Invalid knowledge base file."));

@@ -16,21 +16,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ReasonerFactory {
-    private final PartitionService partitionService;
-    private final KnowledgeBaseService knowledgeBaseService;
 
-    public ReasonerFactory(PartitionService partitionService, KnowledgeBaseService knowledgeBaseService) {
-        this.partitionService = partitionService;
-        this.knowledgeBaseService = knowledgeBaseService;
-    }
+
 
     public ReasonerService createReasoner(String type) {
 
         return switch (type) {
             case "rational" -> new RationalReasonerImpl();
             case "lexicographic" -> new LexicographicReasonerImpl();
-            case "basic relevant" -> new BasicRelevantReasonerImpl(partitionService,knowledgeBaseService);
-            case "minimal relevant" -> new MinimalRelevantReasonerImpl(partitionService,knowledgeBaseService);
+            case "basic relevant" -> new BasicRelevantReasonerImpl();
+            case "minimal relevant" -> new MinimalRelevantReasonerImpl();
             default -> throw new IllegalArgumentException("Unknown reasoner: " + type);
         };
     }
