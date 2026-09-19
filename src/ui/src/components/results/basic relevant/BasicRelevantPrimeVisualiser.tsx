@@ -38,7 +38,7 @@ const PrimeVisualiser: React.FC<PrimeVisualiserProps> = ({ currentRankIndex,irre
             </div>
 
             <p className="text-xs text-muted-foreground mb-3">
-                shrinks as relevant statements are removed from exceptional ranks.
+                R' shrinks as relevant statements are removed from exceptional ranks.
             </p>
 
             <div className="rounded-lg border border-border bg-muted/40 p-4">

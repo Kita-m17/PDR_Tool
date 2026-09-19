@@ -108,11 +108,11 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
                         </p>
 
                         <p className="text-sm text-foreground mt-2 max-w-2xl">
-                            Every subset of the defeasible knowledge base unioned with the classical statements is checked for classical entailment of the negation of the query's antecedent in this case {"!"+getAntecedent(query)}.
-                             This is done to find the set of defeasible statements that us the knowledge base conclude no {getAntecedent(query)} exists.
+                            A sample of sets (inclusive of all justifications of the negation of the antecedent) is checked for classical entailment of the negation of the query's antecedent in this case {"!"+getAntecedent(query)}.
+                             This is done to find the set of defeasible statements that lead the knowledge base to conclude that no {getAntecedent(query)} exists.
                             Minimal entailing subsets are called justifications. The statements that appear in at
                             least one justification form part of the relevant partition, everything else forms part of the irrelevant partition. The relevant partition is used in addition to the base rank in the Relevant Closure Algorithm
-                            to provide a inferentially more powerful query check.
+                            to provide an inferentially more powerful query check.
                         </p>
                     </div>
 

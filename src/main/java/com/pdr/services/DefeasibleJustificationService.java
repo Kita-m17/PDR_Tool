@@ -1,5 +1,9 @@
 package com.pdr.services;
-
+/*
+ * Original Author: Liam De Saldanha , Honours Project (2026), University of Cape Town
+ *
+ * Context: Used in PDR project for relevant closure reasoning.
+ */
 import com.pdr.models.BaseRank;
 import com.pdr.models.KnowledgeBase;
 import com.pdr.models.Rank;

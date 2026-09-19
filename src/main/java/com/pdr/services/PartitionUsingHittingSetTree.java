@@ -114,9 +114,9 @@ public class PartitionUsingHittingSetTree implements PartitionService{
                         .withIsEntailed(true)
                         .withIsMinimal(true)
                         .withJustificationsSoFar(new ArrayList<>(justificationSoFar))
-                        .withMinimalSet(just)
+                        .withMinimalSet(new KnowledgeBase(minimalJustificationStatement))
                         .withReason("")
-                        .withSet(new KnowledgeBase( just))
+                        .withSet(new KnowledgeBase( justification))
                         .build()
 
                 );

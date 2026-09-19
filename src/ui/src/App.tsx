@@ -7,7 +7,7 @@ import QueryInput from './components/input/QueryInput';
 import EntailmentQueryCard from './components/input/EntailmentQueryCard';
 import { Button } from './components/ui/Buttons';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
-import { submitKnowledgeBase, submitEvaluateAll, EvaluateAllResponseDTO } from './api/api';
+import { evaluate, EvaluateAllResponseDTO } from './api/api';
 import RCStepThrough from './components/results/rational/RCStepThrough';
 import BasicRelevantStepThrough from './components/results/basic relevant/BasicRelevantStepThrough';
 import BasicRelevantPartitionStepThrough from './components/results/basic relevant/BasicRelevantPartitionStepThrough';
@@ -79,8 +79,8 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
     setError(null);
 
     try {
-      await submitKnowledgeBase(formulas);
-      const result = await submitEvaluateAll(query, selectedAlgorithms);
+      // Stateless: the knowledge base, query and algorithms all travel in one request.
+      const result = await evaluate(formulas, query, selectedAlgorithms);
       setEvaluation(result);
     } catch (err) {
       setError('Something went wrong. Make sure the backend is running.');
@@ -90,9 +90,14 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
 
   };
 
-  const handleCompare = async () => {
+  const handleCompare = () => {
     if (formulas.length === 0) {
         setError('Please enter a knowledge base');
+        return;
+    }
+
+    if (!kbValid) {
+        setError('Please fix the invalid formula(s) in your knowledge base');
         return;
     }
 
@@ -101,17 +106,16 @@ function InputPage({formulas, setFormulas, query, setQuery, selectedAlgorithms, 
         return;
     }
 
-    setLoading(true);
+    if (!queryValid) {
+        setError('Please fix the invalid antecedent/consequent in your query');
+        return;
+    }
+
     setError(null);
 
-    try {
-        const baseRank = await submitKnowledgeBase(formulas);
-        navigate('/results/comparison', { state: { baseRank, query } });
-    } catch (err) {
-        setError('Something went wrong. Make sure the backend is running.');
-    } finally {
-        setLoading(false);
-    }
+    // The comparison page makes its own single evaluate call, so all it needs
+    // from here is the knowledge base and the query.
+    navigate('/results/comparison', { state: { formulas, query } });
   };
 
   const handleReset = () => {

@@ -100,7 +100,7 @@ public class ReasonerController {
             if (algorithm.equals("basic relevant") || algorithm.equals("minimal relevant")) {
 
                 boolean isMinimalRelevantClosure = algorithm.equals("minimal relevant");
-                Partition partition = partitionService.getPartition(knowledgeBase, query,baseRank, isMinimalRelevantClosure);
+                Partition partition = partitionService.getPartition(knowledgeBase, query,baseRank, isMinimalRelevantClosure); //Note for Future Contributors: This can be shared by Basic and Minimal Relevant Closure
                 partitionDTO = partition.toDTO();
                 if (reasonerService instanceof BasicRelevantReasonerImpl){
                     ((BasicRelevantReasonerImpl) reasonerService).setPartition(partition);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BaseRankDTO, EntailmentDTO, LexicographicEntailmentDTO, RankDTO } from '../../../api/api';
+import { BaseRankDTO, EntailmentDTO, LexicographicEntailmentDTO, PartitionDTO, evaluate } from '../../../api/api';
 import Header from '../../layout/Header';
 import Footer from '../../layout/Footer';
 import StepControls from '../StepControls';
@@ -12,81 +12,98 @@ import Step5_FinalResults from './steps/Step5_FinalResults';
 import { Button } from '../../ui/Buttons';
 import { ArrowLeftIcon,ArrowRightIcon } from '@radix-ui/react-icons';
 
+// Algorithms compared on this page. One evaluate call covers all of them.
+const COMPARED_ALGORITHMS = ['rational', 'lexicographic', 'minimal relevant'];
+
+// Where the page can be reached from:
+//  - the input page, which passes the raw `formulas` and the `query`;
+//  - the step-through pages (via "Back to Comparison" / "Compare all three"),
+//    which pass the `baseRank` they were given. baseRank.knowledgeBase holds
+//    the knowledge base, so the evaluation can be repeated statelessly.
 interface ComparisonState {
-    baseRank: BaseRankDTO;
+    formulas?: string[];
+    baseRank?: BaseRankDTO;
     query: string;
-    rcEntailment: EntailmentDTO;
-    lcEntailment: EntailmentDTO;
-    relcEntailment: EntailmentDTO;
 };
 
 const ComparisonPage: React.FC = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
-    const {baseRank, query} = location.state as ComparisonState;
+    const state = (location.state ?? {}) as Partial<ComparisonState>;
+    const query = state.query ?? '';
+    const knowledgeBase: string[] = state.formulas ?? state.baseRank?.knowledgeBase ?? [];
+    const knowledgeBaseKey = knowledgeBase.join('\n');
 
     const [currentStep, setCurrentStep] = useState(0);
+    const [baseRank, setBaseRank] = useState<BaseRankDTO | null>(state.baseRank ?? null);
     const [rcResult, setRcResult] = useState<EntailmentDTO | null>(null);
     const [lcResult, setLcResult] = useState<LexicographicEntailmentDTO | null>(null);
     const [relcResult, setRelcResult] = useState<EntailmentDTO | null>(null);
-    const [partition, setPartition] = useState<RankDTO | null>(null);
+    const [partition, setPartition] = useState<PartitionDTO | null>(null);
 
     const [loading, setLoading] = useState(true);
-
-
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (!query || knowledgeBase.length === 0) {
+            setError('No knowledge base or query to compare. Go back and enter them first.');
+            setLoading(false);
+            return;
+        }
+
+        let cancelled = false;
+
         const fetchResults = async () => {
             try{
                 setLoading(true);
+                setError(null);
 
-                //rc
-                const rcResults = await fetch('http://localhost:8080/api/entailment/rational', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'text/plain'},
-                    body: query,
-                });
+                // One stateless call: the response carries the shared base rank
+                // plus each algorithm's entailment (and the minimal relevant
+                // closure's partition).
+                const response = await evaluate(knowledgeBase, query, COMPARED_ALGORITHMS);
+                if (cancelled) return;
 
-                const rc = await rcResults.json();
-                setRcResult(rc);
+                const find = (algorithm: string) => response.results.find(r => r.algorithm === algorithm);
 
-                //lc
-                const lcResults = await fetch('http://localhost:8080/api/entailment/lexicographic', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'text/plain'},
-                    body: query,
-                });
-
-                const lc = await lcResults.json();
-                setLcResult(lc);
-
-                //Minimal RelC - partition first, then entailment
-                const partitionRes = await fetch('http://localhost:8080/api/partition/relevant/create/minimal', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: query,
-                });
-                const partitionData = await partitionRes.json();
-                setPartition(partitionData); 
-
-                const relcResults = await fetch('http://localhost:8080/api/entailment/minimal relevant', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'text/plain'},
-                    body: query,
-                });
-                const relc = await relcResults.json();
-                setRelcResult(relc);
+                setBaseRank(response.baseRank);
+                setRcResult(find('rational')?.entailment ?? null);
+                setLcResult((find('lexicographic')?.entailment ?? null) as LexicographicEntailmentDTO | null);
+                setRelcResult(find('minimal relevant')?.entailment ?? null);
+                setPartition(find('minimal relevant')?.partition ?? null);
 
             } catch (error) {
                 console.error('Error fetching entailment results:', error);
+                if (!cancelled) setError('Something went wrong. Make sure the backend is running.');
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         };
 
         fetchResults();
-    }, [query]);
+        return () => { cancelled = true; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [query, knowledgeBaseKey]);
+
+    if(loading || error || !baseRank){
+        return (
+            <div className="min-h-screen bg-accent flex flex-col">
+                <Header />
+                <main className="flex-1 flex flex-col items-center justify-center gap-4">
+                    <p className={error ? 'text-red-500' : 'text-muted-foreground'}>
+                        {error ?? 'Loading comparison...'}
+                    </p>
+                    {error && (
+                        <Button variant="outline" size="default" onClick={() => navigate('/')}>
+                            Back to input
+                        </Button>
+                    )}
+                </main>
+                <Footer />
+            </div>
+        );
+    }
 
     const steps = [
         <Step1_CommonBaseRank 
@@ -125,21 +142,6 @@ const ComparisonPage: React.FC = () => {
     ];
 
     const totalSteps = steps.length;
-
-    if(loading){
-        return (
-            <div className="min-h-screen bg-accent flex flex-col">
-                <Header />
-                <main className="flex-1 flex items-center justify-center">
-                    <p className="text-muted-foreground">
-                        Loading comparison...
-                    </p>
-                </main>
-                <Footer />
-            </div>
-        );
-    }
-
 
     return(
         <div className="min-h-screen bg-accent flex flex-col">

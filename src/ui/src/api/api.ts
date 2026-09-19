@@ -126,8 +126,13 @@ export interface AlgorithmEvaluationDTO {
     partition: PartitionDTO | null;
 }
 
-export interface EvaluateAllRequestDTO {
-    query: string;
+// Request body for POST /api/entailment/evaluate. Field names mirror the
+// backend's EvaluateAllRequestDTO -> InputDTO -> KnowledgeBaseDTO / QueryDTO.
+export interface EvaluateRequestDTO {
+    input: {
+        knowledgeBaseDTO: { formulas: string[] };
+        queryDTO: { formula: string };
+    };
     algorithms: string[];
 }
 
@@ -136,67 +141,46 @@ export interface EvaluateAllResponseDTO {
     results: AlgorithmEvaluationDTO[];
 }
 
-// POST /api/knowledge-base/create-knowledge-base
-export const submitKnowledgeBase = async (formulas: string[]): Promise<BaseRankDTO> => {
-    const response = await fetch(`${BASE_URL}/knowledge-base/create-knowledge-base`, {
+// Fixed display order for results, regardless of the order the caller (or the
+// user) selected algorithms in, so the result button row is always laid out
+// the same way. The backend returns results in request order, so we send the
+// algorithms in this order and sort the response by it as well.
+export const ALGORITHM_ORDER = ['rational', 'lexicographic', 'basic relevant', 'minimal relevant'];
+
+const byCanonicalOrder = (a: string, b: string) => {
+    const ia = ALGORITHM_ORDER.indexOf(a);
+    const ib = ALGORITHM_ORDER.indexOf(b);
+    return (ia === -1 ? ALGORITHM_ORDER.length : ia) - (ib === -1 ? ALGORITHM_ORDER.length : ib);
+};
+
+// POST /api/entailment/evaluate
+// The single endpoint the frontend uses. It is stateless: the knowledge base,
+// query and algorithms travel in the request, and the response carries the
+// base rank plus, per algorithm, the entailment result and (for the relevant
+// closures) the partition.
+export const evaluate = async (
+    formulas: string[],
+    query: string,
+    algorithms: string[]
+): Promise<EvaluateAllResponseDTO> => {
+    const body: EvaluateRequestDTO = {
+        input: {
+            knowledgeBaseDTO: { formulas },
+            queryDTO: { formula: query },
+        },
+        algorithms: [...algorithms].sort(byCanonicalOrder),
+    };
+
+    const response = await fetch(`${BASE_URL}/entailment/evaluate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ formulas }),
-    });
-    
-    if (!response.ok) 
-        throw new Error('Failed to submit knowledge base');
-    return response.json();
-};
-
-// POST /api/entailment/{algorithm}
-export const submitQuery = async (algorithm: string, query: string): Promise<EntailmentDTO> => {
-    const response = await fetch(`${BASE_URL}/entailment/${algorithm}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: query,
-    });
-
-    if (!response.ok)
-        throw new Error('Failed to submit query');
-    return response.json();
-};
-
-// POST /api/partition/relevant/basic/create
-export const submitPartitionQuery = async (query: string): Promise<PartitionDTO> => {
-    const response = await fetch(`${BASE_URL}/partition/relevant/create/basic`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: query,
-    });
-
-    if (!response.ok)
-        throw new Error('Failed to submit partition query');
-    return response.json();
-};
-
-// POST /api/partition/relevant/create/minimal
-export const submitMinimalPartitionQuery = async (query: string): Promise<PartitionDTO> => {
-    const response = await fetch(`${BASE_URL}/partition/relevant/create/minimal`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: query,
-    });
-
-    if (!response.ok)
-        throw new Error('Failed to submit minimal partition query');
-    return response.json();
-};
-
-// POST /api/entailment/evaluate-all
-export const submitEvaluateAll = async (query: string, algorithms: string[]): Promise<EvaluateAllResponseDTO> => {
-    const response = await fetch(`${BASE_URL}/entailment/evaluate-all`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, algorithms }),
+        body: JSON.stringify(body),
     });
 
     if (!response.ok)
         throw new Error('Failed to evaluate selected algorithms');
-    return response.json();
+
+    const data: EvaluateAllResponseDTO = await response.json();
+    data.results = [...data.results].sort((a, b) => byCanonicalOrder(a.algorithm, b.algorithm));
+    return data;
 };

@@ -3,7 +3,6 @@ package com.pdr.services;
  * Original Author: Liam De Saldanha , Honours Project (2026), University of Cape Town
  *
  * Context: Used in PDR project for relevant closure reasoning.
- * Purpose: Educational use only.
  */
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +47,7 @@ public class MinimalRelevantReasonerImpl implements ReasonerService {
         PlFormula negation = new Negation(antecedent);
         Ranking baseRanking = baseRank.getRanking();
         Ranking removedRanking = new Ranking();
+        //specific to Minimal Relevant Closure
 
         //specific input to relevant closure
         KnowledgeBase relevantPartition = partition.getRelevantPartition();

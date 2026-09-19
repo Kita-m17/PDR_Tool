@@ -111,12 +111,12 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                         </p>
 
                         <p className="text-sm text-foreground mt-2 max-w-4xl">
-                        Every subset of the defeasible knowledge base unioned with the classical statements is checked for classical entailment of the negation of the query's antecedent in this case {"!"+getAntecedent(query)}.
-                                                     This is done to find the set of defeasible statements that us the knowledge base conclude no {getAntecedent(query)} exists.
-                                                    Minimal entailing subsets are called justifications. Unlike Basic Justifications, Minimal Justifications keeps only its lowest-ranked statement
+                        A sample of sets (inclusive of all justifications of the negation of the antecedent) is checked for classical entailment of the negation of the query's antecedent in this case {"!"+getAntecedent(query)}.
+                                                     This is done to find the set of defeasible statements that lead the knowledge base to conclude that no {getAntecedent(query)} exists.
+                                                    Minimal entailing subsets are called justifications. Unlike Basic Justifications, Minimal Justifications keep only their lowest-ranked statement
                                                     in the justification. Statements that appear in at
                                                     least one Minimal Justification form part of the relevant partition, everything else forms part of the irrelevant partition. The relevant partition is used in addition to the base rank in the Relevant Closure Algorithm
-                                                    to provide a inferentially more powerful query check. The Minimal Justifications lead us to perform Minimal Relevant Closure which is inferentially stronger than Basic Relevant Closure.
+                                                    to provide an inferentially more powerful query check. The Minimal Justifications lead us to perform Minimal Relevant Closure which is inferentially stronger than Basic Relevant Closure.
 
 
                         </p>

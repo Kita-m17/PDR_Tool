@@ -43,14 +43,14 @@ export function buildMinimalPartitionSteps(partition: PartitionDTO): MinimalPart
         if (step.minimal) {
             explanation =
 
-                `This DOES subset classically entails the negation of the query's antecedent and is IS minimal making it a justification. No proper subset of it also entails the query. ` +
-                `Minimal Justification doesn't keep every statement in this justification, only the one that matters most for the entailment. We look at the rank of each statement  and take only the statement with the LOWEST rank.`
+                `This subset DOES classically entail the negation of the query's antecedent and IS minimal, making it a justification. No proper subset of it also entails the negation of the query's antecedent. ` +
+                `Minimal Justifications don't keep every statement in a justification, only the one that matters most for the entailment. We look at the rank of each statement and take only the statement with the LOWEST rank.`
 
 
         } else if (step.entailed) {
             explanation =
 
-                `This subset DOES classically entails the negation of the query's antecedent, but it is NOT minimal therefore it is not a justification. A proper subset of it already entails the query, so it is not added ot the set of justification`;
+                `This subset DOES classically entail the negation of the query's antecedent, but it is NOT minimal, therefore it is not a justification. A proper subset of it already entails the negation of the query's antecedent, so it is not added to the set of justifications.`;
         } else {
             explanation = `This subset does NOT classically entail the negation of the query's antecedent.`;
         }

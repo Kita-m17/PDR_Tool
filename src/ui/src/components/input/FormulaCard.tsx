@@ -100,33 +100,35 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
         onSubmit(formulas);
     };
 
+    // Reads the uploaded .txt file in the browser (one formula per line, the
+    // same format the backend's file parser used) and drops the formulas into
+    // the textarea. No backend call: the knowledge base is sent along with the
+    // query when the user evaluates, and the per-formula validation below
+    // reports any malformed lines straight away.
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
+        const input = e.target;
+        const file = input.files?.[0];
         if (!file) return;
 
-        const formData = new FormData();
-        formData.append('file', file);
-
         try {
-            const response = await fetch('http://localhost:8080/api/knowledge-base/file', {
-                method: 'POST',
-                body: formData,
-            });
+            const text = await file.text();
+            const formulas = text
+                .replace(/^\uFEFF/, '') // strip a UTF-8 byte order mark if present
+                .split(/\r?\n/)
+                .map((line) => line.trim())
+                .filter((line) => line.length > 0);
 
-            if (!response.ok) throw new Error('Upload failed');
-
-            // const baseRank = await response.json();
-            const data = await response.json();
-            console.log('Response from file upload:', data);  // ← add this
-            console.log('KB:', data.knowledgeBase);  
+            if (formulas.length === 0) throw new Error('File contains no formulas');
 
             // update the textarea with the uploaded KB
-            const formulaString = data.knowledgeBase.join(',');
-            reset({ input: formulaString });
-            onSubmit(data.knowledgeBase);
+            reset({ input: formulas.join(',') });
+            onSubmit(formulas);
 
         } catch (err) {
             console.error('File upload failed', err);
+        } finally {
+            // allow re-selecting the same file
+            input.value = '';
         }
     };
 
