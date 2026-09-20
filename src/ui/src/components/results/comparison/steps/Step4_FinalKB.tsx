@@ -1,6 +1,6 @@
 import React from 'react';
 import { EntailmentDTO, LexicographicEntailmentDTO, RankDTO } from '../../../../api/api';
-import {ArrowRightIcon} from '@radix-ui/react-icons';
+import {CheckIcon, Cross2Icon, ArrowRightIcon } from '@radix-ui/react-icons';
 
 interface Step4Props {
     baseRanking: RankDTO[];
@@ -105,20 +105,23 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
                                         return (
                                             <div key={i} className="flex items-center gap-2 text-sm font-mono">
 
-                                                <span className={isRemoved ? 'text-red-500' : isWeakened ? 'text-amber-500' : 'text-green-600'}>
-                                                    {isRemoved ? '✗' : isWeakened ? '≈' : '✓'}
+                                                <span className={`shrink-0 ${isRemoved ? 'text-red-500' : isWeakened ? 'text-amber-500' : 'text-green-600'}`}>
+                                                    {isRemoved ? (<Cross2Icon className="h-4 w-4" aria-label="Removed" />) : 
+                                                        isWeakened ? (<span aria-label="Weakened">≈</span>) : 
+                                                        (<CheckIcon className="h-4 w-4" aria-label="Retained" />)
+                                                    }
                                                 </span>
 
-                                                <span className={(isRemoved || isWeakened) ? 'line-through text-gray-400' : 'text-foreground'}>
+                                                <span className={`min-w-0 break-words ${(isRemoved || isWeakened) ? 'line-through text-gray-400' : 'text-foreground'}`}>
                                                     {formula}
                                                 </span>
 
                                                 {isRemoved && (
-                                                    <span className="text-red-400">Removed</span>
+                                                    <span className="shrink-0 whitespace-nowrap text-red-400">Removed</span>
                                                 )}
 
                                                 {isWeakened && (
-                                                    <span className="text-amber-500">Weakened</span>
+                                                    <span className="shrink-0 whitespace-nowrap text-amber-500">Weakened</span>
                                                 )}
                                             </div>
                                         );
