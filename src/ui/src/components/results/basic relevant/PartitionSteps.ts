@@ -1,10 +1,5 @@
 import { PartitionDTO } from '../../../api/api';
 
-// One entry per powerset subset that PartitionUsingPowersetImpl checked, in
-// the order the backend checked them. Each step already carries a snapshot
-// of justificationsSoFar as it stood right after that subset was checked,
-// so we don't need to reconstruct the running justification list on the
-// frontend - we just read it straight off the step.
 export interface PartitionDebuggerStep {
     stepNumber: number;
     totalSteps: number;
@@ -15,8 +10,6 @@ export interface PartitionDebuggerStep {
     justificationsSoFar: string[][];
     explanation: string;
     isFinalStep: boolean;
-    // Only populated on the final step - the completed partition, taken
-    // from the top-level PartitionDTO rather than any single trace step.
     relevantPartition?: string[];
     irrelevantPartition?: string[];
     classicalStatements?: string[];

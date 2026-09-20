@@ -20,19 +20,11 @@ export interface DebuggerStep {
     removed: string[];
     currentRankIndex: number;
     currentRPrime: string[];
-    // Only set on the dedicated Result step at the very end - the smallest
-    // weak justification (proof) for the entailment, straight from the
-    // backend's RelevantEntailment.smallestWeakJustification.
     weakJustification?: string[];
-    // Marks the dedicated final "Entailed? / Proof" page, distinct from the
-    // preceding final classical-entailment-check step.
     isResultStep?: boolean;
 }
 
-// A single formula within a rank, with its own removal status - relevant
-// closure only removes the relevant formulas of a rank (relevantPartition
-// intersected with that rank), not the rank as a whole, so removal has to
-// be tracked per-statement rather than per-rank.
+
 export interface RankStatement {
     formula: string;
     isRemoved: boolean;
@@ -42,8 +34,6 @@ export interface RankStatement {
 export interface RankState{
     rankName: string;
     rankNumber: number;
-    // true when this rank is the one currently being examined (i.e.
-    // rank.rankNumber === traceStep.iteration for the active step)
     isCurrent: boolean;
     statements: RankStatement[];
 }
@@ -54,26 +44,13 @@ function getAntecedent(formula: string): string {
 export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
     const steps: DebuggerStep[] = [];
     const { traceSteps, baseRanking, entailed, queryFormula, smallestWeakJustification } = entailment;
-
     // Get R_infinity
     const rInfinity = baseRanking.find(r => r.rankNumber === 2147483647)?.knowledgeBase || [];
-
     // Get finite ranks
     const finiteRanks = baseRanking.filter(r => r.rankNumber !== 2147483647);
-
-    // Track which individual formulas have been removed so far (relevant
-    // closure removes statements out of a rank, not the whole rank - there's
-    // no removedRanking on this endpoint's response to match against, but we
-    // don't need it: traceStep.iteration tells us which rank is under
-    // consideration and traceStep.removed tells us exactly which formulas
-    // left R' at that step).
     const removedFormulas = new Set<string>();
 
-    // Reconstruct the starting R' (before any removal happens): remaining ∪
-    // removed of the first trace step, since removal only ever takes
-    // formulas out of R'. If the loop never actually runs, the only trace
-    // step is the final non-exceptional one and its `remaining` already IS
-    // the untouched starting R'.
+
     const firstTraceStep = traceSteps[0];
     let currentRPrime: string[] = firstTraceStep
         ? Array.from(new Set([...firstTraceStep.remaining, ...firstTraceStep.removed]))
@@ -133,10 +110,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
     // Steps for each trace step
     traceSteps.forEach((traceStep, index) => {
         if (traceStep.antecedentExceptional) {
-            // Step - check while condition (exceptional). traceStep.iteration
-            // is the rank currently under consideration (i in the algorithm).
-            // R' shown here is still the value from BEFORE this iteration's
-            // removal - nothing has left it yet at check time.
+            // Step - check while condition (exceptional).
             steps.push({
                 stepNumber: steps.length + 1,
                 totalSteps: 0,
@@ -153,10 +127,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 currentRPrime: currentRPrime.map(f => f.replace('|~', '=>')),
             });
 
-            // Step - remove statements. traceStep.removed is exactly the
-            // relevant formulas of rank `traceStep.iteration` that leave R'
-            // this iteration; traceStep.remaining is R' immediately after -
-            // show that as the new, smaller R'.
+            // Step - remove statements.
             steps.push({
                 stepNumber: steps.length + 1,
                 totalSteps: 0,
@@ -179,8 +150,8 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
             currentRPrime = traceStep.remaining;
         }else {
 
-            // Step - check while condition (not exceptional) - loop is done,
-            // no specific rank is under consideration any more.
+            // Step - check while condition (not exceptional)
+
             steps.push({
                 stepNumber: steps.length + 1,
                 totalSteps: 0,
@@ -198,8 +169,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 currentRPrime: traceStep.remaining.map(f => f.replace('|~', '=>')),
             });
 
-            // Final classical entailment check - no longer the last page, the
-            // dedicated Result step below is.
+            // Final classical entailment check
             steps.push({
                 stepNumber: steps.length + 1,
                 totalSteps: 0,
@@ -218,11 +188,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 currentRPrime: traceStep.remaining.map(f => f.replace('|~', '=>')),
             });
 
-            // Result step (dedicated last page) - states the verdict and,
-            // when entailed, the weak justification (proof) for it. Shared by
-            // Basic and Minimal Relevant Closure, since both algorithms
-            // navigate to this same step-through component and both populate
-            // smallestWeakJustification on their RelevantEntailment response.
+            // Result step (last page)
             steps.push({
                 stepNumber: steps.length + 1,
                 totalSteps: 0,

@@ -1,16 +1,6 @@
 import { PartitionDTO } from '../../../api/api';
 
-// One entry per powerset subset that PartitionUsingPowersetImpl checked, in
-// the order the backend checked them - same trace shape as Basic Relevant
-// Closure's PartitionSteps.ts, but for Minimal Relevant Closure.
-//
-// The difference only matters once a subset is entailed AND minimal: the
-// backend (see PartitionUsingPowersetImpl.getPartition, isMinimalRelevantClosure
-// branch) doesn't add the whole subset to the justification list. Instead it
-// walks the base ranking and keeps only the single statement from that
-// subset with the lowest rank - `minimalSet` - and it's that minimalSet,
-// not the full subset, which is what actually gets pushed into
-// justificationsSoFar for Minimal Relevant Closure.
+
 export interface MinimalPartitionDebuggerStep {
     stepNumber: number;
     totalSteps: number;
@@ -22,8 +12,6 @@ export interface MinimalPartitionDebuggerStep {
     justificationsSoFar: string[][];
     explanation: string;
     isFinalStep: boolean;
-    // Only populated on the final step - the completed partition, taken
-    // from the top-level PartitionDTO rather than any single trace step.
     relevantPartition?: string[];
     irrelevantPartition?: string[];
     classicalStatements?: string[];
@@ -55,10 +43,6 @@ export function buildMinimalPartitionSteps(partition: PartitionDTO): MinimalPart
             explanation = `This subset does NOT classically entail the negation of the query's antecedent.`;
         }
 
-        /** if (isFinalStep) {
-            explanation +=
-                `\n\nAll subsets of the knowledge base have now been checked. The relevant partition is made up of every statement that was picked as a minimalSet along the way - the lowest-ranked statement out of each justification; everything else, including the higher-ranked statements from those same justifications, is irrelevant to the query.`;
-        }*/
 
         const debugStep: MinimalPartitionDebuggerStep = {
             stepNumber: index + 1,

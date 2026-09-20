@@ -18,8 +18,12 @@ import java.util.List;
 
 public class DefeasibleJustificationService {
 
+    /*
+    Algorithm used to efficiently compute weak justifications for Relevant Closure.
+    @link https://doi.org/10.1007/978-3-030-95070-5_13
+     */
     public static List<KnowledgeBase> getJustificationsForRelevantClosure(KnowledgeBase knowledgeBase, PlFormula query){
-        SatSolver.setDefaultSolver(new Sat4jSolver());
+        SatSolver.setDefaultSolver(new Sat4jSolver());//Future contributors can use dependency injection
         SatReasoner reasoner = new SatReasoner();
         KnowledgeBase materialisedKnowledgeBase = knowledgeBase.materialisedKnowledgeBase();
         List<KnowledgeBase> justifications = ClassicalJustificationService.computeJustification(materialisedKnowledgeBase,query);
@@ -41,10 +45,6 @@ public class DefeasibleJustificationService {
             R = R.difference(rankToRemove);
             i=i+1;
         }
-
-
-
-
 
         return ClassicalJustificationService.computeJustification(R.union(irrelaventPartition),query);
     }

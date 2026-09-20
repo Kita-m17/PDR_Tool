@@ -24,7 +24,6 @@ interface ResultsState {
 const RCStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    // const { entailment, query } = location.state as ResultsState;
     const { baseRank, entailment, partition, query, algorithm, fromComparison } = location.state as ResultsState;
 
     const steps = buildDebuggerSteps(entailment);

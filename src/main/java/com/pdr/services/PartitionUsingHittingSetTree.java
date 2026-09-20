@@ -19,6 +19,16 @@ import java.util.Queue;
 import static com.pdr.services.ClassicalJustificationService.computeSingleJustification;
 @Service
 public class PartitionUsingHittingSetTree implements PartitionService{
+    /**
+     * Exposes internal states of Steve Wangs Classical Justification implementation
+     * @link http://hdl.handle.net/11427/39922
+     *Original
+     * @author stevewang
+     * Modified by
+     * @author Liam De Saldanha
+     * @param baseRank, query ,knowledgeBase,isMinimalRelevantClosure
+     * @return Partition
+     */
     @Override
     public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query,BaseRank baseRank, boolean isMinimalRelevantClosure) {
         query = new Negation(((Implication) query).getFirstFormula());

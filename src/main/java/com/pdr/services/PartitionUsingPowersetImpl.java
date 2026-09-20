@@ -16,8 +16,13 @@ import org.tweetyproject.logics.pl.syntax.PlFormula;
 
 import java.util.ArrayList;
 import java.util.List;
+@Deprecated
 public class PartitionUsingPowersetImpl implements PartitionService {
-
+/*
+Generates all subsets of the defeasible statements in the knowledgebase to find justifications. Concluded to b
+too inefficient
+@author Liam De Saldanha
+ */
     @Override
     public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query,BaseRank baseRank, boolean isMinimalRelevantClosure) {
         long startTime = System.nanoTime();

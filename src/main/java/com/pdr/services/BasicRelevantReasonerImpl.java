@@ -5,6 +5,7 @@ package com.pdr.services;
  * Context: Used in PDR project for relevant closure reasoning.
  * Purpose: Educational use only.
  */
+
 import com.pdr.models.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,9 +34,9 @@ public class BasicRelevantReasonerImpl implements ReasonerService {
 
     @Override
     public Entailment getEntailment(BaseRank baseRank, PlFormula queryFormula) {
-        // Get inputs
+        //Performance Tracking
         long startTime = System.nanoTime();
-
+        // Get inputs
         PlFormula antecedent = ((Implication) queryFormula).getFirstFormula();
         PlFormula negation = new Negation(antecedent);
         Ranking baseRanking = baseRank.getRanking();
@@ -79,12 +80,14 @@ public class BasicRelevantReasonerImpl implements ReasonerService {
         }
 
         boolean entailment = reasoner.query((relevantInf).union(relevantPrime).union(irrelevantPartition),queryFormula);
+        //Only include justification if entailed
         if(!entailment){
             smallestJustification = new KnowledgeBase();
         }
         long endTime = System.nanoTime();
         long durationNs = endTime - startTime;
 
+        //Format Execution time
         double durationSeconds = (double) durationNs / 1_000_000_000.0;
 
 

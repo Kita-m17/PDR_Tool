@@ -94,6 +94,7 @@ public class MinimalRelevantReasonerImpl implements ReasonerService {
                 smallestJustificationSize = justification.size();
             }
         }
+        //Only include justification if entailed
         if(!entailment){
             smallestJustification = new KnowledgeBase();
         }

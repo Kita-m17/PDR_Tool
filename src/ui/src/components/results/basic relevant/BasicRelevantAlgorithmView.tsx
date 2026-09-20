@@ -6,9 +6,9 @@ interface AlgorithmViewProps{
     highlightedLines: number[];
 }
 
-// Same 6 conceptual steps as before (num 1-6 must stay in sync with the
-// highlightedLines values produced in BasicRelevantSteps.ts), just authored
-// as LaTeX and rendered through TexFormula instead of plain unicode text.
+/**
+High level algorithm for Relevant Closure
+*/
 const lines = [
     { num: 1, tex: "\\text{Input: A defeasible knowledge base } \\mathcal{K} \\text{, a defeasible query } \\alpha \\vsim \\beta \\text{ and a partition } \\langle \\mathcal{R}, \\mathcal{R}^- \\rangle \\text{ of } \\mathcal{K}" },
     { num: 2, tex: "\\text{Output: If } \\mathcal{K} \\models_{RelC} \\alpha \\vsim \\beta \\text{, then return true otherwise false}" },

@@ -11,9 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-// Request body for POST /api/entailment/evaluate-all - the query to check, and
-// which of the 4 algorithms ("rational", "lexicographic", "basic relevant",
-// "minimal relevant") to evaluate it under.
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

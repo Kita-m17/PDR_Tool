@@ -16,19 +16,11 @@ import com.pdr.dtos.*;
 import com.pdr.models.*;
 import com.pdr.services.*;
 import com.pdr.utils.DefeasibleParser;
-
-import org.tweetyproject.logics.pl.syntax.Implication;
-import org.tweetyproject.logics.pl.syntax.PlFormula;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController //Marks this as a REST controller
 @RequestMapping("/api/entailment") //Base url for the reasoner endpoints
@@ -40,9 +32,7 @@ public class ReasonerController {
     private final KnowledgeBaseService knowledgeBaseService;
     private final PartitionService partitionService;
 
-    // Fixed display order for the combined evaluate-all endpoint, regardless of
-    // what order the user selected algorithms in - so the resulting button row
-    // is always laid out the same way, left to right.
+    // List of defeasible entailment algorithms handled by services
     private static final List<String> ALGORITHM_ORDER = List.of("rational", "lexicographic", "basic relevant", "minimal relevant");
 
     //Constructor injection of the services
@@ -56,10 +46,12 @@ public class ReasonerController {
 
 
 
-    // Endpoint: POST /api/entailment/evaluate-all
-    // Evaluates the query under every algorithm the user selected in one call,
-    // reusing the single already-cached base rank (knowledgeBaseService.getBaseRank())
-    // for all of them instead of recomputing it per algorithm.
+    /**
+     * Uses a list of defeasible entailment algorithms to query check
+     * @param request
+     * @return intermediate computations of query checking EvaluateAllResponseDTO
+     *
+     */
     @PostMapping("/evaluate")
     public ResponseEntity<?> evaluateAll(@RequestBody EvaluateAllRequestDTO request) throws Exception {
 
@@ -70,17 +62,18 @@ public class ReasonerController {
 
         InputDTO inputDTO = request.getInput();
 
-        // 1) build the KB from the request body
+        // Extract KnowledgeBase and Query information
         KnowledgeBaseDTO knowledgeBaseDTO = inputDTO.getKnowledgeBaseDTO();
         QueryDTO queryDTO = inputDTO.getQueryDTO();
 
-        //Build kb and save it in the service
+        //Build kb and query from DTOs
         KnowledgeBase knowledgeBase = knowledgeBaseService.convertFromDTO(knowledgeBaseDTO);
         DefeasibleImplication query = knowledgeBaseService.convertFromDTO(queryDTO);
 
-        // 2a) construct the base rank model from the KB
+        //Compute BaseRank (shared if multiple algorithms)
         BaseRank baseRank = baseRankService.constructBaseRank(knowledgeBase);
 
+        //iterate through all algorithms in list
         List<String> algorithms = request.getAlgorithms();
         List<AlgorithmEvaluationDTO> results = new ArrayList<>();
         for (String algorithm : algorithms) {
@@ -90,15 +83,16 @@ public class ReasonerController {
 
             ReasonerService reasonerService;
             try {
+                //FInd service to handle algorithm
                 reasonerService = reasonerFactory.createReasoner(algorithm);
             } catch (IllegalArgumentException e) {
                 ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Bad Request", "Invalid reasoner: " + algorithm);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
             }
-
+            //if Relevant Closure compute the partition
             PartitionDTO partitionDTO = null;
             if (algorithm.equals("basic relevant") || algorithm.equals("minimal relevant")) {
-
+                //check if Minimal Relevant Closure
                 boolean isMinimalRelevantClosure = algorithm.equals("minimal relevant");
                 Partition partition = partitionService.getPartition(knowledgeBase, query,baseRank, isMinimalRelevantClosure); //Note for Future Contributors: This can be shared by Basic and Minimal Relevant Closure
                 partitionDTO = partition.toDTO();
@@ -114,8 +108,9 @@ public class ReasonerController {
 
 
             }
-
+            //Check Query
             Entailment entailment = reasonerService.getEntailment(baseRank, query);
+            //Append to result list
             results.add(new AlgorithmEvaluationDTO(algorithm, entailment, partitionDTO));
         }
 

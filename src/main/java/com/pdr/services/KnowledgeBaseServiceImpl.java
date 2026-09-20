@@ -123,7 +123,7 @@ this.query=null;
         }
         return new KnowledgeBaseDTO(result);
     }
-
+    
     @Override
     public DefeasibleImplication convertFromDTO(QueryDTO queryDTO) throws Exception {
         DefeasibleParser parser = new DefeasibleParser();

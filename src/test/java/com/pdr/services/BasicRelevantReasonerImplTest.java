@@ -17,6 +17,11 @@ import org.tweetyproject.logics.pl.syntax.PlFormula;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 class BasicRelevantReasonerImplTest {
+    /*
+    Tests to ensure entailment algorithm for Basic Relevant Closure works. Uses worked exmaples in literature
+    from Chipo Hamayobe and Steve Wang
+    @author Liam De Saldanha
+     */
     private final DefeasibleParser parser = new DefeasibleParser();
     PartitionService partitionService = new PartitionUsingHittingSetTree();
 

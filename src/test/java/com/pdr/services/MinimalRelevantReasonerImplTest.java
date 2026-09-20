@@ -15,6 +15,11 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class MinimalRelevantReasonerImplTest {
+    /*
+ Tests to ensure entailment algorithm for Minimal Relevant Closure works. Uses worked exmaples in literature
+ from Chipo Hamayobe and Steve Wang
+ @author Liam De Saldanha
+  */
     private final DefeasibleParser parser = new DefeasibleParser();
     PartitionService partitionService = new PartitionUsingHittingSetTree();
 
