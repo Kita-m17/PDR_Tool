@@ -71,7 +71,7 @@ const Step1_CommonBaseRank: React.FC<Step1Props> = ({ baseRanking, query, onInsp
                                 {name}
                             </div>
  
-                            <span className="text-xs text-muted-foreground mt-1 text-center max-w-[9rem]">
+                            <span className="text-sm text-muted-foreground mt-1 text-center max-w-[9rem]">
                                 {tag}
                             </span>
                         </div>

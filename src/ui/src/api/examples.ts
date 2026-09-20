@@ -29,13 +29,6 @@ export const EXAMPLES: Example[] = [
         algorithm: 'rational'
     },
     {
-        label: 'Garfield Drowning',
-        description: 'Same Garfield knowledge base, but asks whether Garfield has fur - a cat default that gets discarded along with the conflicting ones.',
-        formulas: ['(cat|~active)','(cat|~likesMondays)','(cat|~hasFur)','(garfield=>cat)','(garfield|~!active)','(garfield|~!likesMondays)'],
-        query: 'garfield|~hasFur',
-        algorithm: 'rational'
-    },
-    {
         label: 'Kittens ',
         description: 'Demonstrating Basic RelC vs. Minimal RelC example by Chipo Hamayobe',
         formulas: ['(pets=>animals)','(kittens=>cats)','(cats|~trainable)','(kittens|~!trainable)','(animals|~legs)','(animals|~wild)','(cats=>animals)','(cats|~!wild)'],

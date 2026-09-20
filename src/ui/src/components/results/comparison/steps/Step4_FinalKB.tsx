@@ -66,7 +66,7 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
             </p>
 
             {/* Legend */}
-            <div className="flex gap-4 mb-4 text-xs">
+            <div className="flex gap-4 mb-4 text-sm">
                 <span className="flex items-center gap-1">
                     <span className="text-green-600">✓</span> Retained
                 </span>
@@ -84,7 +84,7 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
             <div className="grid grid-cols-3 gap-4">
                 {algorithms.map((algo) => (
                     <div key={algo.name} className={`bg-white border-2 ${algo.borderClass} rounded-xl p-4`}>
-                        <h3 className={`font-bold ${algo.headingClass} text-sm mb-3 text-center`}>
+                        <h3 className={`font-bold ${algo.headingClass} text-md mb-3 text-center`}>
                             {algo.name}
                         </h3>
 
@@ -93,7 +93,7 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
 
                             return (
                                 <div key={rank.rankNumber} className="mb-3">
-                                    <p className={`text-xs font-semibold ${algo.rankLabelClass} mb-1`}>
+                                    <p className={`text-sm font-semibold ${algo.rankLabelClass} mb-1`}>
                                         Rank {rank.rankName}
                                     </p>
 
@@ -103,7 +103,7 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
                                     
                                         {/* If the formula is weakened, we want to show it as removed (with a strikethrough) and then show the replacement formula below it. */}
                                         return (
-                                            <div key={i} className="flex items-center gap-2 text-xs font-mono">
+                                            <div key={i} className="flex items-center gap-2 text-sm font-mono">
 
                                                 <span className={isRemoved ? 'text-red-500' : isWeakened ? 'text-amber-500' : 'text-green-600'}>
                                                     {isRemoved ? '✗' : isWeakened ? '≈' : '✓'}
@@ -125,7 +125,7 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
                                     })}
 
                                     {weakenedFormula !== undefined && (
-                                        <div className="mt-1 pl-5 text-xs font-mono text-amber-600">
+                                        <div className="mt-1 pl-5 text-sm font-mono text-amber-600">
                                             <ArrowRightIcon className="ml-2 h-4 w-4" /> replaced by: {weakenedFormula}
                                         </div>
                                     )}
@@ -137,7 +137,7 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-4">
-                <p className="text-sm text-blue-700">
+                <p className="text-md text-blue-700">
                     💡 Same initial ranking, different final knowledge bases. Rational Closure removes whole exceptional ranks outright, Lexicographic Closure weakens them into a disjunction instead of dropping them, and Relevant Closure only ever touches formulas inside the relevant partition.
                 </p>
             </div>

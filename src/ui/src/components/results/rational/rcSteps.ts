@@ -20,6 +20,8 @@ export interface DebuggerStep {
         culprit: string;
         innocent: string[];
     };
+    justification?: string[];
+    weakJustification?: string[];
 }
 
 export interface RankState{
@@ -154,6 +156,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 queryAntecedent,
                 queryConsequent,
                 workingSetIncludesRInfinity: true,
+                justification: traceStep.justification,
             });
 
             // Step - remove rank
@@ -189,6 +192,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 queryAntecedent,
                 queryConsequent,
                 workingSetIncludesRInfinity: true,
+                justification: traceStep.justification,
             });
 
             // Final step - return
@@ -205,6 +209,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 queryAntecedent,
                 queryConsequent,
                 workingSetIncludesRInfinity: true,
+                weakJustification: traceStep.weakJustification,
             });
         }
     });
