@@ -4,7 +4,7 @@
  *
  * Original Author: Thabo Vincent Moloi , Honours Project (2024), University of Cape Town
  * Adapted by: Julia Cotterrell (2025 Honours Project, University of Cape Town)
- * Adapted by: Nikita Martin, Liam De Saldanha (2026 Honours Project, University of Cape Town)
+ * Adapted by: Nikita Martin, Liam De Saldanha, Samukelisiwe Zwane (2026 Honours Project, University of Cape Town)
  *
  * Status: Modified – replaced BaseRankService with KnowledgeBaseService.
  * Context: Used in PDT project for the entailment algorithms.

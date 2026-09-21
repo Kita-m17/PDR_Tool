@@ -2,7 +2,7 @@ package com.pdr.services;
 /*
  * Original Author: Liam De Saldanha , Honours Project (2026), University of Cape Town
  *
- * Context: Used in PDR project for relevant closure reasoning.
+ * Context: Used in PDR project for relevantand lexicographic closure reasoning.
  */
 import com.pdr.models.BaseRank;
 import com.pdr.models.KnowledgeBase;
