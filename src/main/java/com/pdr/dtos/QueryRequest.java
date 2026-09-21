@@ -1,5 +1,5 @@
 package com.pdr.dtos;
-
+@Deprecated
 public class QueryRequest {
     private String formula; //eg. "penguin |~ !flies"
     private String algorithm; //eg. "rational"

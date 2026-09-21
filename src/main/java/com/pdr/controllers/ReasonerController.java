@@ -4,7 +4,7 @@
  *
  * Original Author: Thabo Vincent Moloi , Honours Project (2024), University of Cape Town
  * Adapted by: Julia Cotterrell (2025 Honours Project, University of Cape Town)
- * Adapted by: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Adapted by: Nikita Martin, Liam De Saldanha, Samukelisiwe Zwane (2026 Honours Project, University of Cape Town)
  *
  * Status: Modified – replaced BaseRankService with KnowledgeBaseService.
  * Context: Used in PDT project for the entailment algorithms.
@@ -12,31 +12,13 @@
  */
 package com.pdr.controllers;
 
-import com.pdr.dtos.AlgorithmEvaluationDTO;
-import com.pdr.dtos.BaseRankDTO;
-import com.pdr.dtos.EvaluateAllRequestDTO;
-import com.pdr.dtos.EvaluateAllResponseDTO;
-import com.pdr.dtos.PartitionDTO;
-import com.pdr.models.BaseRank;
-import com.pdr.models.ErrorResponse;
-import com.pdr.models.KnowledgeBase;
-import com.pdr.models.Entailment;
-import com.pdr.models.Partition;
-import com.pdr.services.PartitionService;
-import com.pdr.services.ReasonerFactory;
-import com.pdr.services.ReasonerService;
-import com.pdr.services.KnowledgeBaseService;
+import com.pdr.dtos.*;
+import com.pdr.models.*;
+import com.pdr.services.*;
 import com.pdr.utils.DefeasibleParser;
-import com.pdr.dtos.QueryRequest;
-
-import org.tweetyproject.logics.pl.syntax.PlFormula;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,119 +26,91 @@ import java.util.List;
 @RequestMapping("/api/entailment") //Base url for the reasoner endpoints
 @CrossOrigin(origins = "http://localhost:3000") //Allow cross-origin requests from the frontend
 public class ReasonerController {
-
+    private final BaseRankService baseRankService;
     private final ReasonerFactory reasonerFactory;
     private final DefeasibleParser parser;
     private final KnowledgeBaseService knowledgeBaseService;
     private final PartitionService partitionService;
 
-    // Fixed display order for the combined evaluate-all endpoint, regardless of
-    // what order the user selected algorithms in - so the resulting button row
-    // is always laid out the same way, left to right.
+    // List of defeasible entailment algorithms handled by services
     private static final List<String> ALGORITHM_ORDER = List.of("rational", "lexicographic", "basic relevant", "minimal relevant");
 
     //Constructor injection of the services
-    public ReasonerController(ReasonerFactory reasonerFactory, DefeasibleParser parser, KnowledgeBaseService knowledgeBaseService, PartitionService partitionService) {
+    public ReasonerController(BaseRankService baseRankService, ReasonerFactory reasonerFactory, DefeasibleParser parser, KnowledgeBaseService knowledgeBaseService, PartitionService partitionService) {
+        this.baseRankService = baseRankService;
         this.reasonerFactory = reasonerFactory;
         this.knowledgeBaseService = knowledgeBaseService;
         this.parser = parser;
         this.partitionService = partitionService;
     }
 
-    //Endpoint:POST /api/entailment/{reasoner}
-    @PostMapping("/{reasoner}")
-    public ResponseEntity<?> getEntailment(
-            @PathVariable String reasoner, //chosen reasoner type (e.g., "rational")
-            @RequestBody String queryFormula //the formula to be queried for entailment
-            )
-    { //KB provided in the request body
 
-        // 1) build the KB from the request body
-        // KnowledgeBase kb;
-        // try{
-        //     String joined = String.join("\n", dto.getKnowledgeBase());
-        //     ByteArrayInputStream inputStream = new ByteArrayInputStream(joined.getBytes(StandardCharsets.UTF_8));
-        //     kb = parser.parseInputStream(inputStream);
-        // } catch (Exception e) {
-        //     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse( HttpStatus.BAD_REQUEST.value(), "Bad Request", "Invalid request body or knowledge base"));
-        // }
 
-        // 2a) construct the base rank model from the KB
-        BaseRank baseRank = knowledgeBaseService.getBaseRank();
-
-        //2b) resolve the request reasoner
-        ReasonerService svc;
-        try{
-            svc = reasonerFactory.createReasoner(reasoner);
-        } catch (IllegalArgumentException e){
-            ErrorResponse err = new ErrorResponse( HttpStatus.BAD_REQUEST.value(), "Bad Request", "Invalid reasoner: " + reasoner);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
-        }
-
-        // 3) parse the query formula into a PlFormula object
-        PlFormula formula;
-        try{
-            formula = parser.parseFormula(queryFormula);
-        } catch (Exception e){
-            ErrorResponse err = new ErrorResponse( HttpStatus.BAD_REQUEST.value(), "Bad Request", "Invalid query formula: " + queryFormula);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
-        }
-
-        // 4) get the entailment result from the reasoner service
-        Entailment result = svc.getEntailment(baseRank, formula);
-        System.out.println("Entailment result: " + result);
-        // 5) return the result to the client
-        return ResponseEntity.ok(result);
-    }
-
-    // Endpoint: POST /api/entailment/evaluate-all
-    // Evaluates the query under every algorithm the user selected in one call,
-    // reusing the single already-cached base rank (knowledgeBaseService.getBaseRank())
-    // for all of them instead of recomputing it per algorithm.
-    @PostMapping("/evaluate-all")
-    public ResponseEntity<?> evaluateAll(@RequestBody EvaluateAllRequestDTO request) {
+    /**
+     * Uses a list of defeasible entailment algorithms to query check
+     * @param request
+     * @return intermediate computations of query checking EvaluateAllResponseDTO
+     *
+     */
+    @PostMapping("/evaluate")
+    public ResponseEntity<?> evaluateAll(@RequestBody EvaluateAllRequestDTO request) throws Exception {
 
         if (request.getAlgorithms() == null || request.getAlgorithms().isEmpty()) {
             ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Bad Request", "Select at least one algorithm to evaluate");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
         }
 
-        PlFormula formula;
-        try {
-            formula = parser.parseFormula(request.getQuery());
-        } catch (Exception e) {
-            ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Bad Request", "Invalid query formula: " + request.getQuery());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
-        }
+        InputDTO inputDTO = request.getInput();
 
-        // Already-cached - not recomputed here, and not recomputed again inside
-        // partitionService.getPartition() below either (see PartitionUsingPowersetImpl).
-        BaseRank baseRank = knowledgeBaseService.getBaseRank();
-        KnowledgeBase knowledgeBase = knowledgeBaseService.getKnowledgeBase();
+        // Extract KnowledgeBase and Query information
+        KnowledgeBaseDTO knowledgeBaseDTO = inputDTO.getKnowledgeBaseDTO();
+        QueryDTO queryDTO = inputDTO.getQueryDTO();
 
+        //Build kb and query from DTOs
+        KnowledgeBase knowledgeBase = knowledgeBaseService.convertFromDTO(knowledgeBaseDTO);
+        DefeasibleImplication query = knowledgeBaseService.convertFromDTO(queryDTO);
+
+        //Compute BaseRank (shared if multiple algorithms)
+        BaseRank baseRank = baseRankService.constructBaseRank(knowledgeBase);
+
+        //iterate through all algorithms in list
+        List<String> algorithms = request.getAlgorithms();
         List<AlgorithmEvaluationDTO> results = new ArrayList<>();
-        for (String algorithm : ALGORITHM_ORDER) {
+        for (String algorithm : algorithms) {
             if (!request.getAlgorithms().contains(algorithm)) {
                 continue;
             }
 
-            ReasonerService svc;
+            ReasonerService reasonerService;
             try {
-                svc = reasonerFactory.createReasoner(algorithm);
+                //FInd service to handle algorithm
+                reasonerService = reasonerFactory.createReasoner(algorithm);
             } catch (IllegalArgumentException e) {
                 ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Bad Request", "Invalid reasoner: " + algorithm);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
             }
-
+            //if Relevant Closure compute the partition
             PartitionDTO partitionDTO = null;
             if (algorithm.equals("basic relevant") || algorithm.equals("minimal relevant")) {
-
+                //check if Minimal Relevant Closure
                 boolean isMinimalRelevantClosure = algorithm.equals("minimal relevant");
-                Partition partition = partitionService.getPartition(knowledgeBase, formula, isMinimalRelevantClosure);
+                Partition partition = partitionService.getPartition(knowledgeBase, query,baseRank, isMinimalRelevantClosure); //Note for Future Contributors: This can be shared by Basic and Minimal Relevant Closure
                 partitionDTO = partition.toDTO();
-            }
+                if (reasonerService instanceof BasicRelevantReasonerImpl){
+                    ((BasicRelevantReasonerImpl) reasonerService).setPartition(partition);
+                    ((BasicRelevantReasonerImpl) reasonerService).setKnowledgeBase(knowledgeBase);
+                }
 
-            Entailment entailment = svc.getEntailment(baseRank, formula);
+                if (reasonerService instanceof MinimalRelevantReasonerImpl){
+                    ((MinimalRelevantReasonerImpl) reasonerService).setPartition(partition);
+                    ((MinimalRelevantReasonerImpl) reasonerService).setKnowledgeBase(knowledgeBase);
+                }
+
+
+            }
+            //Check Query
+            Entailment entailment = reasonerService.getEntailment(baseRank, query);
+            //Append to result list
             results.add(new AlgorithmEvaluationDTO(algorithm, entailment, partitionDTO));
         }
 

@@ -5,10 +5,9 @@ package com.pdr.services;
  * Context: Used in PDR project for testing basic relevant closure.
  * Purpose: Educational use only.
  */
-import com.pdr.models.BaseRank;
-import com.pdr.models.Entailment;
-import com.pdr.models.KnowledgeBase;
-import com.pdr.models.RelevantEntailment;
+import com.pdr.dtos.KnowledgeBaseDTO;
+import com.pdr.dtos.QueryDTO;
+import com.pdr.models.*;
 import com.pdr.utils.DefeasibleParser;
 import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.junit.jupiter.api.DisplayName;
@@ -18,23 +17,23 @@ import org.tweetyproject.logics.pl.syntax.PlFormula;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 class BasicRelevantReasonerImplTest {
+    /*
+    Tests to ensure entailment algorithm for Basic Relevant Closure works. Uses worked exmaples in literature
+    from Chipo Hamayobe and Steve Wang
+    @author Liam De Saldanha
+     */
     private final DefeasibleParser parser = new DefeasibleParser();
+    PartitionService partitionService = new PartitionUsingHittingSetTree();
 
     @Test
     void getEntailmentExample1() throws Exception {
         KnowledgeBase kb = parser.parseFormulas("(pets=>animals),(kittens=>cats), (cats|~trainable), (kittens|~!trainable), (animals|~legs), (animals|~wild), (cats=>animals), (cats|~!wild)");
         BaseRank baseRank = new BaseRankServiceImp().constructBaseRank(kb);
 
-        KnowledgeBaseService fixedKbService = new KnowledgeBaseService() {
-            public KnowledgeBase getKnowledgeBase() { return kb; }
-            public BaseRank getBaseRank() { return baseRank; }
-            public void setKnowledgeBase(KnowledgeBase newKb) {}
-        };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
         PlFormula query = parser.parseFormula("(kittens|~!wild)");
-        partitionService.getPartition(kb,query,false);
-        ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
+        Partition partition = partitionService.getPartition(kb,query,baseRank,false);
+        BasicRelevantReasonerImpl reasoner = new BasicRelevantReasonerImpl(partition,kb);
 
         Entailment result = reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isFalse();
@@ -45,16 +44,11 @@ class BasicRelevantReasonerImplTest {
         KnowledgeBase kb = parser.parseFormulas("(bird|~flies),(penguin=>bird),(penguin|~!flies),(bird|~wings)");
         BaseRank baseRank = new BaseRankServiceImp().constructBaseRank(kb);
 
-        KnowledgeBaseService fixedKbService = new KnowledgeBaseService() {
-            public KnowledgeBase getKnowledgeBase() { return kb; }
-            public BaseRank getBaseRank() { return baseRank; }
-            public void setKnowledgeBase(KnowledgeBase newKb) {}
-        };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+
         PlFormula query = parser.parseFormula("(penguin|~!flies)");
-        partitionService.getPartition(kb, query, false);
-        ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
+        Partition partition = partitionService.getPartition(kb, query,baseRank, false);
+        ReasonerService reasoner = new BasicRelevantReasonerImpl(partition, kb);
 
         Entailment result = reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isTrue();
@@ -64,17 +58,11 @@ class BasicRelevantReasonerImplTest {
         KnowledgeBase kb = parser.parseFormulas("(bird|~flies),(penguin=>bird),(penguin|~!flies),(bird|~wings)");
         BaseRank baseRank = new BaseRankServiceImp().constructBaseRank(kb);
 
-        KnowledgeBaseService fixedKbService = new KnowledgeBaseService() {
-            public KnowledgeBase getKnowledgeBase() { return kb; }
-            public BaseRank getBaseRank() { return baseRank; }
-            public void setKnowledgeBase(KnowledgeBase newKb) {}
-        };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
+
         PlFormula query = parser.parseFormula("(penguin|~flies)");
-        partitionService.getPartition(kb, query, false);
-        ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
-
+        Partition partition = partitionService.getPartition(kb, query,baseRank, false);
+        ReasonerService reasoner = new BasicRelevantReasonerImpl(partition, kb);
         Entailment result = reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isFalse();
     }
@@ -91,17 +79,10 @@ class BasicRelevantReasonerImplTest {
                 "(specialpenguins~>fly)");
         BaseRank baseRank = new BaseRankServiceImp().constructBaseRank(kb);
 
-        KnowledgeBaseService fixedKbService = new KnowledgeBaseService() {
-            public KnowledgeBase getKnowledgeBase() { return kb; }
-            public BaseRank getBaseRank() { return baseRank; }
-            public void setKnowledgeBase(KnowledgeBase newKb) {}
-        };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
         PlFormula query = parser.parseFormula("(robins|~wings)");
-        partitionService.getPartition(kb, query, false);
-        ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
-
+        Partition partition = partitionService.getPartition(kb, query,baseRank, false);
+        ReasonerService reasoner = new BasicRelevantReasonerImpl(partition, kb);
         RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isTrue();
         assertThat(result.getWeakJustification()).containsExactly("(birds|~wings)","(robins=>birds)");
@@ -121,17 +102,10 @@ class BasicRelevantReasonerImplTest {
                 "(specialpenguins~>fly)");
         BaseRank baseRank = new BaseRankServiceImp().constructBaseRank(kb);
 
-        KnowledgeBaseService fixedKbService = new KnowledgeBaseService() {
-            public KnowledgeBase getKnowledgeBase() { return kb; }
-            public BaseRank getBaseRank() { return baseRank; }
-            public void setKnowledgeBase(KnowledgeBase newKb) {}
-        };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
         PlFormula query = parser.parseFormula("(penguins|~wings)");
-        partitionService.getPartition(kb, query, false);
-        ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
-
+        Partition partition = partitionService.getPartition(kb, query,baseRank, false);
+        ReasonerService reasoner = new BasicRelevantReasonerImpl(partition, kb);
         RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, query);
 
         assertThat(result.getEntailed()).isTrue();
@@ -151,17 +125,10 @@ class BasicRelevantReasonerImplTest {
                 "(specialpenguins~>fly)");
         BaseRank baseRank = new BaseRankServiceImp().constructBaseRank(kb);
 
-        KnowledgeBaseService fixedKbService = new KnowledgeBaseService() {
-            public KnowledgeBase getKnowledgeBase() { return kb; }
-            public BaseRank getBaseRank() { return baseRank; }
-            public void setKnowledgeBase(KnowledgeBase newKb) {}
-        };
 
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
         PlFormula query = parser.parseFormula("(specialpenguins~>fly)");
-        partitionService.getPartition(kb, query, false);
-        ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
-
+        Partition partition = partitionService.getPartition(kb, query,baseRank, false);
+        ReasonerService reasoner = new BasicRelevantReasonerImpl(partition, kb);
         RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isTrue();
         assertThat(result.getWeakJustification()).containsExactly("(specialpenguins|~fly)");
@@ -172,24 +139,10 @@ class BasicRelevantReasonerImplTest {
         KnowledgeBase kb = parser.parseFormulas("(pets=>animals),(kittens=>cats), (cats|~trainable), (kittens|~!trainable), (animals|~legs), (animals|~wild), (cats=>animals), (cats|~!wild)");
         BaseRank baseRank = new BaseRankServiceImp().constructBaseRank(kb);
 
-        KnowledgeBaseService fixedKbService = new KnowledgeBaseService() {
-            public KnowledgeBase getKnowledgeBase() {
-                return kb;
-            }
 
-            public BaseRank getBaseRank() {
-                return baseRank;
-            }
-
-            public void setKnowledgeBase(KnowledgeBase newKb) {
-            }
-        };
-
-        PartitionService partitionService = new PartitionUsingPowersetImpl(fixedKbService);
         PlFormula query = parser.parseFormula("(kittens|~!wild)");
-        partitionService.getPartition(kb, query, false);
-        ReasonerService reasoner = new BasicRelevantReasonerImpl(partitionService, fixedKbService);
-
+        Partition partition = partitionService.getPartition(kb, query,baseRank, false);
+        ReasonerService reasoner = new BasicRelevantReasonerImpl(partition, kb);
         RelevantEntailment result = (RelevantEntailment) reasoner.getEntailment(baseRank, query);
         assertThat(result.getEntailed()).isFalse();
         AssertionsForInterfaceTypes.assertThat(result.getWeakJustification()).isEmpty();

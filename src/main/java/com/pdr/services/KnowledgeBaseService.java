@@ -13,23 +13,33 @@
 package com.pdr.services;
 
 
+import com.pdr.dtos.KnowledgeBaseDTO;
+import com.pdr.dtos.QueryDTO;
 import com.pdr.models.BaseRank;
+import com.pdr.models.DefeasibleImplication;
 import com.pdr.models.KnowledgeBase;
+import com.pdr.utils.DefeasibleParser;
+import org.tweetyproject.logics.pl.syntax.PlFormula;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public interface KnowledgeBaseService{
     /**
      * @return the default knowledgebase
      */
     public KnowledgeBase getKnowledgeBase();
-
-    /**
-     * @return the base rank
-     */
-    public BaseRank getBaseRank();
+    void setQuery(DefeasibleImplication query);
+    DefeasibleImplication getQuery();
     
     /**
      * @param kb
      */
     public void setKnowledgeBase(KnowledgeBase kb);
-
+    void clearKnowledgeBase();
+    void clearQuery();
+    KnowledgeBase convertFromDTO(KnowledgeBaseDTO knowledgeBaseDTO);
+    KnowledgeBaseDTO convertToDTO(KnowledgeBase knowledgeBase);
+    DefeasibleImplication convertFromDTO(QueryDTO queryDTO) throws Exception;
+    QueryDTO convertToDTO(DefeasibleImplication defeasibleImplication);
 }

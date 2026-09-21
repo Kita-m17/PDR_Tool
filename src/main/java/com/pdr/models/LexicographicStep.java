@@ -7,12 +7,9 @@
  * Purpose: Used for educational purposes
  */
 package com.pdr.models;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.tweetyproject.logics.pl.syntax.PlFormula;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -38,20 +35,6 @@ public class LexicographicStep {
     private final KnowledgeBase remainingAfter;         // remainingRanks after this step
     private final String stepDetails;                        // one line summary
 
-    /**
-     * Creates a new LexicographicStep.
-     *
-     * @param iteration       The iteration number
-     * @param rankNumber      The rank processed in this step
-     * @param originalRank    The rank before weakening
-     * @param remainingRanks The knowledge base after the rank was removed from R
-     * @param subKBs          Every sub-knowledge base tested, largest subset first
-     * @param finalSubsetSize The subset size the inner loop stopped at
-     * @param combinedFormula The disjunction that replaced the rank, or null if dropped
-     * @param rankRemoved     True if no subset worked and the rank was dropped
-     * @param remainingAfter  The knowledge base at the end of this step
-     * @param stepDetails          A short summary of what happened
-     */
     public LexicographicStep(int iteration, int rankNumber, KnowledgeBase originalRank,
             KnowledgeBase remainingRanks, List<SubKnowledgeBaseCheck> subKBs, int finalSubsetSize,
             PlFormula combinedFormula, boolean rankRemoved, KnowledgeBase remainingAfter, String stepDetails) {

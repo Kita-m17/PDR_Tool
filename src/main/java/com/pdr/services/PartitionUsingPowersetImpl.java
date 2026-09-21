@@ -16,28 +16,20 @@ import org.tweetyproject.logics.pl.syntax.PlFormula;
 
 import java.util.ArrayList;
 import java.util.List;
-@Service
+@Deprecated
 public class PartitionUsingPowersetImpl implements PartitionService {
-
-    private Partition partition;
-    private final KnowledgeBaseService knowledgeBaseService;
-
-    // Constructor injection - Spring wires this in automatically since it's the
-    // only constructor. Lets us reuse the base rank the app already computed
-    // once (via KnowledgeBaseService) instead of reconstructing it from scratch
-    // on every partition request.
-    public PartitionUsingPowersetImpl(KnowledgeBaseService knowledgeBaseService) {
-        this.knowledgeBaseService = knowledgeBaseService;
-    }
-
+/*
+Generates all subsets of the defeasible statements in the knowledgebase to find justifications. Concluded to b
+too inefficient
+@author Liam De Saldanha
+ */
     @Override
-    public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query, boolean isMinimalRelevantClosure) {
+    public Partition getPartition(KnowledgeBase knowledgeBase, PlFormula query,BaseRank baseRank, boolean isMinimalRelevantClosure) {
         long startTime = System.nanoTime();
         // Was: (new BaseRankServiceImp()).constructBaseRank(knowledgeBase) - recomputed
         // the base rank from scratch on every call. The caller always passes the
         // current knowledgeBaseService.getKnowledgeBase() here anyway, so its
         // already-cached base rank is exactly the right one to reuse.
-        BaseRank baseRank = knowledgeBaseService.getBaseRank();
 
         List<KnowledgeBase> list = getPowerSets(knowledgeBase);
 
@@ -153,7 +145,7 @@ public class PartitionUsingPowersetImpl implements PartitionService {
 
         String formattedTime = String.format("%.3fs", durationSeconds);
         //System.out.println("Execution time: " + formattedTime);
-        this.partition = Partition.builder()
+        return Partition.builder()
                 .withIrrelevantPartition(irrelevantString)
                 .withRelevantPartition(relevantString)
                 .withTraceSteps(traceSteps)
@@ -163,11 +155,9 @@ public class PartitionUsingPowersetImpl implements PartitionService {
                 .withClassicalStatements(classicalKnowledgeBase)
                 .withKnowledgeBase(knowledgeBase)
                 .build();
-        return this.partition;
+
     }
-    public Partition getInstance(){
-        return partition;
-    }
+
 
     public static List<KnowledgeBase> getPowerSets(KnowledgeBase kb){
 

@@ -1,24 +1,24 @@
 package com.pdr.services;
 
-import com.pdr.models.HittingSetTree;
-import com.pdr.models.KnowledgeBase;
-import com.pdr.models.Node;
+import com.pdr.models.*;
 import com.pdr.utils.Utils;
+import org.springframework.stereotype.Service;
 import org.tweetyproject.logics.pl.reasoner.SatReasoner;
 import org.tweetyproject.logics.pl.sat.Sat4jSolver;
 import org.tweetyproject.logics.pl.sat.SatSolver;
-import org.tweetyproject.logics.pl.syntax.PlBeliefSet;
-import org.tweetyproject.logics.pl.syntax.PlFormula;
-import org.tweetyproject.logics.pl.syntax.Proposition;
-
+import org.tweetyproject.logics.pl.syntax.*;
 import java.util.*;
 
 /**
  *
  * @author stevewang
  */
+
 public class ClassicalJustificationService
 {
+
+
+
     public static List<KnowledgeBase> computeJustification(PlBeliefSet knowledgeBase, PlFormula query)
     {
         SatSolver.setDefaultSolver(new Sat4jSolver());
@@ -65,12 +65,13 @@ public class ClassicalJustificationService
             just.addAll(justification);
             allJustifications.add(just);
 
-
         }
         return allJustifications;
     }
+
+
     
-    private static List<PlFormula> computeSingleJustification(PlBeliefSet knowledgeBase, PlFormula query, SatReasoner reasoner)
+    static List<PlFormula> computeSingleJustification(PlBeliefSet knowledgeBase, PlFormula query, SatReasoner reasoner)
     {  
         List<PlFormula> result = new ArrayList<PlFormula>();
         
@@ -197,5 +198,8 @@ public class ClassicalJustificationService
         
         return result;
     }
-    
+
+
+
+
 }

@@ -3,7 +3,7 @@ package com.pdr.models;
  * File: TraceStep.java
  * Package: com.pdr.models
  *
- * Original Author: Nikita Martin, Liam De Saldanha (2026 Honours Project, University of Cape Town)
+ * Original Author: Nikita Martin, Liam De Saldanha, Samukelisiwe Zwane (2026 Honours Project, University of Cape Town)
  * Context: Used in PDR project for the BaseRank algorithm.
  * Purpose: Used for educational purposes
  */

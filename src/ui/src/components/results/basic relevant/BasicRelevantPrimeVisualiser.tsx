@@ -7,11 +7,7 @@ interface PrimeVisualiserProps {
     irrelevantPartition: string[];
 }
 var lastRankIndex = 0;
-// Deliberately minimal - just R' and which rank (i) is currently under
-// consideration. The per-rank ranking table and the relevant/irrelevant
-// partition now live in ExplanationView, shown only on the removal step
-// (highlighted lines 7-8), since that's the only step where they add
-// context beyond "R' is now this".
+
 const PrimeVisualiser: React.FC<PrimeVisualiserProps> = ({ currentRankIndex,irrelevantPartition, currentRPrime }) => {
     const parts = [...irrelevantPartition, ...currentRPrime];
      const lastRankIndexRef = useRef(0);
@@ -38,7 +34,7 @@ const PrimeVisualiser: React.FC<PrimeVisualiserProps> = ({ currentRankIndex,irre
             </div>
 
             <p className="text-xs text-muted-foreground mb-3">
-                shrinks as relevant statements are removed from exceptional ranks.
+                R' shrinks as relevant statements are removed from exceptional ranks.
             </p>
 
             <div className="rounded-lg border border-border bg-muted/40 p-4">

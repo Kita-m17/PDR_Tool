@@ -11,9 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-// Response body for POST /api/entailment/evaluate-all. baseRank is computed
-// once (it's already cached in KnowledgeBaseService, not recomputed per
-// algorithm) and shared by every entry in results.
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

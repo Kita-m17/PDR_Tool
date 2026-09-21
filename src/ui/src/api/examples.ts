@@ -24,7 +24,7 @@ export const EXAMPLES: Example[] = [
     {
         label: 'Garfield',
         description: 'Garfield the cat: lazy and hates Mondays',
-        formulas: ['(cat|~active)','(cat|~likesMondays)','(garfield=>cat)','(garfield|~!active)','(garfield|~hatesMondays)'],
+        formulas: ['(cat|~active)','(cat|~likesMondays)','(cat|~hasFur)','(garfield=>cat)','(garfield|~!active)','(garfield|~!likesMondays)'],
         query: 'garfield|~!active',
         algorithm: 'rational'
     },

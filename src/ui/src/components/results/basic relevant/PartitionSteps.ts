@@ -1,10 +1,5 @@
 import { PartitionDTO } from '../../../api/api';
 
-// One entry per powerset subset that PartitionUsingPowersetImpl checked, in
-// the order the backend checked them. Each step already carries a snapshot
-// of justificationsSoFar as it stood right after that subset was checked,
-// so we don't need to reconstruct the running justification list on the
-// frontend - we just read it straight off the step.
 export interface PartitionDebuggerStep {
     stepNumber: number;
     totalSteps: number;
@@ -15,8 +10,6 @@ export interface PartitionDebuggerStep {
     justificationsSoFar: string[][];
     explanation: string;
     isFinalStep: boolean;
-    // Only populated on the final step - the completed partition, taken
-    // from the top-level PartitionDTO rather than any single trace step.
     relevantPartition?: string[];
     irrelevantPartition?: string[];
     classicalStatements?: string[];
@@ -32,9 +25,9 @@ export function buildPartitionSteps(partition: PartitionDTO): PartitionDebuggerS
 
         let explanation: string;
         if (step.minimal) {
-            explanation = `This subset classically entails the negation of the query's antecedent and IS minimal making it a justification, meaning no proper subset of it also entails the query's antecedent. It is added to the set of justifications.`;
+            explanation = `This subset classically entails the negation of the query's antecedent and IS minimal, making it a justification, meaning no proper subset of it also entails the negation of the query's antecedent. It is added to the set of justifications.`;
         } else if (step.entailed) {
-            explanation = `This subset classically entails the negation of the query's antecedent, but it is NOT minimal therefore it is not a justification, meaning a proper subset of it already entails the negation of the query's antecedent, so it is not added ot the set of justification.`;
+            explanation = `This subset classically entails the negation of the query's antecedent, but it is NOT minimal, therefore it is not a justification, meaning a proper subset of it already entails the negation of the query's antecedent, so it is not added to the set of justifications.`;
         } else {
             explanation = `This subset does NOT classically entail the negation of the query's antecedent.`;
         }

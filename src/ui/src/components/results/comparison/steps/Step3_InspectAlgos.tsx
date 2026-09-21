@@ -81,7 +81,7 @@ const Step3_InspectAlgos: React.FC<Step3Props> = ({baseRank, query, rcResult, lc
                             {algo.name}
                         </h3>
 
-                        <p className={`text-sm font-semibold ${algo.subtitleClass} mb-4`}>
+                        <p className={`text-md font-semibold ${algo.subtitleClass} mb-4`}>
                             ({algo.subtitle})
                         </p>
 

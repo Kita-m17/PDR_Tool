@@ -4,7 +4,6 @@
  *
  * Original Author: Samukelisiwe Zwane (2026 Honours Project, University of Cape Town)
  * Context: Used in PDR project for the LexicographicClosure algorithm.
- * Purpose: Used for educational purposes
  */
 package com.pdr.models;
 
@@ -29,17 +28,6 @@ public class SubKnowledgeBaseCheck {
     private final PlFormula testedFormula;     
     private final boolean holds;               // whether subKnowledgeBase entails testedFormula
 
-    /**
-     * Creates a new SubKnowledgeBaseCheck.
-     *
-     * @param rankNumber       The rank the subset came from
-     * @param subsetSize       The number of statements kept (m)
-     * @param rankSize         The size of the rank the subset came from
-     * @param subset           The statements kept
-     * @param subKnowledgeBase The sub-knowledge base that was tested
-     * @param testedFormula    The formula that was asked of it
-     * @param holds            True if the sub-knowledge base entails the tested formula
-     */
     public SubKnowledgeBaseCheck(int rankNumber, int subsetSize, int rankSize, List<PlFormula> subset, KnowledgeBase subKnowledgeBase, PlFormula testedFormula, boolean holds) {
         this.rankNumber = rankNumber;
         this.subsetSize = subsetSize;

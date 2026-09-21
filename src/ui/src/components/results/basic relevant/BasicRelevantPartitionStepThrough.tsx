@@ -26,27 +26,16 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     
-    // location.state is only populated when this page is reached via
-    // navigate(path, { state }) - a refresh, pasted URL, or bookmark lands
-    // here with state === null, which used to crash buildPartitionSteps
-    // trying to read .traceSteps off undefined. Guarded below instead of
-    // crashing - but ALL hooks still have to run on every render regardless
-    // of resultsState, so the guard's early return comes after them, not
-    // before. Hooks conditionally called (only when resultsState exists)
-    // violate React's rules-of-hooks and break hook state across renders.
+
     const resultsState = location.state as ResultsState | null;
 
     const [filter, setFilter] = useState<PartitionFilter>('all');
     const [currentStep, setCurrentStep] = useState(0);
 
-    // Plain derived value, not a hook - fine to compute conditionally.
+
     const steps = resultsState ? buildPartitionSteps(resultsState.partition) : [];
 
-    // Filtering only changes which subsets you page through - the underlying
-    // data (justificationsSoFar per step, and the completed relevantPartition/
-    // irrelevantPartition on `partition` itself) is unaffected, so the number
-    // of Next/Back clicks needed to reach the end matches whatever's filtered
-    // in, not the full unfiltered powerset.
+
     const filteredSteps = useMemo(() => {
         switch (filter) {
             case 'entailed': return steps.filter(s => s.entailed);
@@ -108,11 +97,11 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
                         </p>
 
                         <p className="text-sm text-foreground mt-2 max-w-2xl">
-                            Every subset of the defeasible knowledge base unioned with the classical statements is checked for classical entailment of the negation of the query's antecedent in this case {"!"+getAntecedent(query)}.
-                             This is done to find the set of defeasible statements that us the knowledge base conclude no {getAntecedent(query)} exists.
+                            A sample of sets (inclusive of all justifications of the negation of the antecedent) is checked for classical entailment of the negation of the query's antecedent in this case {"!"+getAntecedent(query)}.
+                             This is done to find the set of defeasible statements that lead the knowledge base to conclude that no {getAntecedent(query)} exists.
                             Minimal entailing subsets are called justifications. The statements that appear in at
                             least one justification form part of the relevant partition, everything else forms part of the irrelevant partition. The relevant partition is used in addition to the base rank in the Relevant Closure Algorithm
-                            to provide a inferentially more powerful query check.
+                            to provide an inferentially more powerful query check.
                         </p>
                     </div>
 
@@ -146,7 +135,7 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
                     </div>
                 )}
 
-                {/* Powerset (left, owns the subset filter so it's always reachable)
+                {/* Powerset
                     + Explanation (right) side by side */}
                 <div className="flex gap-4 mb-4">
                     <div className="bg-white border border-border rounded-xl p-6 flex-1">

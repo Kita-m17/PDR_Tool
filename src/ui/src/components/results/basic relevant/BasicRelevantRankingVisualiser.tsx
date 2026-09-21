@@ -47,9 +47,7 @@ const RankingVisualiser: React.FC<RankingVisualiserProps> = ({ rankingState, cur
                 </div>
             </div>
 
-            {/* Relevant / Irrelevant partition, computed by the powerset-based
-                justification search - static for the whole trace, shown here
-                as context for what the removal loop is working towards. */}
+            {/* Relevant / Irrelevant partition */}
             <div className="mb-4 grid grid-cols-2 gap-3">
                 <div className="rounded-lg border border-sky-200 bg-sky-50 p-3">
                     <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-sky-900">

@@ -34,22 +34,11 @@ function getAntecedent(formula: string): string {
 const MinimalRelevantPartitionStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    // location.state is only populated when this page is reached via
-    // navigate(path, { state }) - a refresh, pasted URL, or bookmark lands
-    // here with state === null. Guarded below instead of crashing - but ALL
-    // hooks still have to run on every render regardless of resultsState, so
-    // the guard's early return comes after them, not before.
     const resultsState = location.state as ResultsState | null;
-
     const [filter, setFilter] = useState<PartitionFilter>('all');
     const [currentStep, setCurrentStep] = useState(0);
-    //const steps = baseRankSteps(baseRank);
-    // Plain derived value, not a hook - fine to compute conditionally.
     const steps = resultsState ? buildMinimalPartitionSteps(resultsState.partition) : [];
 
-    // Filtering only changes which subsets you page through - the underlying
-    // data (justificationsSoFar per step, and the completed relevantPartition/
-    // irrelevantPartition on `partition` itself) is unaffected.
     const filteredSteps = useMemo(() => {
         switch (filter) {
             case 'entailed': return steps.filter(s => s.entailed);
@@ -111,12 +100,12 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                         </p>
 
                         <p className="text-sm text-foreground mt-2 max-w-4xl">
-                        Every subset of the defeasible knowledge base unioned with the classical statements is checked for classical entailment of the negation of the query's antecedent in this case {"!"+getAntecedent(query)}.
-                                                     This is done to find the set of defeasible statements that us the knowledge base conclude no {getAntecedent(query)} exists.
-                                                    Minimal entailing subsets are called justifications. Unlike Basic Justifications, Minimal Justifications keeps only its lowest-ranked statement
+                        A sample of sets (inclusive of all justifications of the negation of the antecedent) is checked for classical entailment of the negation of the query's antecedent in this case {"!"+getAntecedent(query)}.
+                                                     This is done to find the set of defeasible statements that lead the knowledge base to conclude that no {getAntecedent(query)} exists.
+                                                    Minimal entailing subsets are called justifications. Unlike Basic Justifications, Minimal Justifications keep only their lowest-ranked statement
                                                     in the justification. Statements that appear in at
                                                     least one Minimal Justification form part of the relevant partition, everything else forms part of the irrelevant partition. The relevant partition is used in addition to the base rank in the Relevant Closure Algorithm
-                                                    to provide a inferentially more powerful query check. The Minimal Justifications lead us to perform Minimal Relevant Closure which is inferentially stronger than Basic Relevant Closure.
+                                                    to provide an inferentially more powerful query check. The Minimal Justifications lead us to perform Minimal Relevant Closure which is inferentially stronger than Basic Relevant Closure.
 
 
                         </p>
@@ -140,9 +129,7 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                                        <span className="font-mono text-foreground">{"!"+getAntecedent(query)}</span>
                 </div>
 
-                {/* Justification visualiser, full width - only meaningful once a step exists.
-                    justificationsSoFar already holds minimalSet entries (not full subsets)
-                    for this algorithm, straight from the backend. */}
+                {/* Justification visualiser */}
                 {step && (
                     <div className="bg-white border border-border rounded-xl p-6 mb-4">
                         <JustificationVisualiser
@@ -155,11 +142,7 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                 )}
 
                 {/* Powerset (left, owns the subset filter so it's always reachable)
-                    + Explanation (right) side by side. PowersetView is fed the full
-                    subset (step.currentSet) unchanged - it always shows the set being
-                    checked as normal, the same way it does for Basic Relevant Closure.
-                    The lowest-rank reduction to minimalSet is explained in the
-                    Explanation panel, not in the powerset display itself. */}
+                    + Explanation (right) side by side.  */}
                 <div className="flex gap-4 mb-4">
                     <div className="bg-white border border-border rounded-xl p-6 flex-1">
                         <PowersetView
@@ -184,10 +167,7 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                                     {step.explanation}
                                 </p>
 
-                                {/* Final base rank - only shown once this subset is both
-                                    entailed and minimal, i.e. it's a genuine minimal
-                                    justification, so the finished ranking is meaningful
-                                    context right above it. */}
+                                {/* Final base rank  */}
                                 {step.entailed && step.minimal && (
                                     <div className="mb-4">
                                         <h3 className="text-primary font-semibold mb-3">
@@ -226,9 +206,7 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                                     </div>
                                 )}
 
-                                {/* Only meaningful once a subset has actually been reduced
-                                    to a minimalSet - not shown for non-minimal or
-                                    non-entailed subsets. */}
+
                                 {step.minimal && step.minimalSet.length > 0 && (
                                     <div className="rounded-lg border border-sky-200 bg-sky-50 p-3 mb-4">
                                         <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-sky-900">

@@ -5,9 +5,7 @@
  * Original Author: Samukelisiwe Zwane(2026 Honours Project, University of Cape Town)
  * Reference: LexC - LexicographicClosure algorithm Chipo Hamayobe and Thabo Vincent Moloi's LexicalReasonerImpl (2024).
  *
- * Status: sub-knowledge base approach with algorithm trace.
  * Context: Used in PDR's project for lexicographic closure reasoning.
- * Purpose: Educational use only.
  */
 package com.pdr.services;
 
@@ -37,37 +35,13 @@ import com.pdr.models.Rank;
 import com.pdr.models.Ranking;
 import com.pdr.models.SubKnowledgeBaseCheck;
 
-/**
- * Implementation of the Lexicographic Closure reasoning algorithm, using the
- * sub-knowledge base approach.
- *
- * <pre>
- *  Algorithm 3.5. LexC - LexicographicClosure
- *    Input : a defeasible knowledge base K and a defeasible query a |~ b
- *    Output: true if K entails the query under Lexicographic Closure
- *
- *  1  (R0,...,Rn-1,R_inf,n) := BaseRank(K)
- *  2  R := union of R0 ... Rn-1                  (everything except R_inf)
- *  3  i := 0
- *  4  m := 0
- *  5  while R_inf u R |= !a and R != {} do
- *  6      R := R \ Ri                            (take the current rank out)
- *  7      m := |Ri| - 1                          (start by dropping one statement)
- *  8      Ri,m := OR over X in Subsets(Ri,m) of (AND over x in X of x)
- *  9      while R_inf u R u {Ri,m} |= !a and m &gt; 0 do
- * 10          m := m - 1
- * 11          Ri,m := OR over X in Subsets(Ri,m) of (AND over x in X of x)
- * 12      end
- * 13      R := R u {Ri,m}                        (put the weakened rank back)
- * 14      i := i + 1
- * 15  end
- * 16  return R_inf u R |= a -&gt; b
- * </pre>
- */
-
 public class LexicographicReasonerImpl implements ReasonerService {
 
-    private final SatReasoner reasoner; 
+    // Weakening a rank enumerates its subsets, so the work doubles with every extra
+    // statement in that rank. Twenty caps the worst case at about a million subsets
+    private static final int MAX_RANK_SIZE = 20;
+
+    private final SatReasoner reasoner;
     public LexicographicReasonerImpl() {
         SatSolver.setDefaultSolver(new Sat4jSolver());
         this.reasoner = new SatReasoner();
@@ -106,14 +80,22 @@ public class LexicographicReasonerImpl implements ReasonerService {
         }
 
         int i = 0;
-
+        // Lexicographic Closure Algorithm
         // Exits when the antecedent stops being refuted or contradicts the strict statements 
         while (i < finiteRanks.size() && entails(rankInfKB.union(r), negation)) {
             Rank currentRank = finiteRanks.get(i);
             KnowledgeBase originalRank = new KnowledgeBase(currentRank.getFormulas());
             List<PlFormula> rankFormulas = orderedFormulas(currentRank.getFormulas());
 
-            // Line 6: R := R \ Ri removes Ri from the other ranks  
+            if (rankFormulas.size() > MAX_RANK_SIZE) {
+                throw new IllegalArgumentException(
+                        "Lexicographic Closure cannot weaken Rank " + currentRank.getRankNumber()
+                        + ": it has " + rankFormulas.size() + " statements and the limit is "
+                        + MAX_RANK_SIZE + ". Weakening a rank tests its subsets one size at a time,"
+                        + " so the work doubles with every extra statement in the rank.");
+            }
+
+            // R := R \ Ri removes Ri from the other ranks
             r = r.difference(new KnowledgeBase(rankFormulas));
             KnowledgeBase otherRanks = rankInfKB.union(r);
             List<SubKnowledgeBaseCheck> subKBs = new ArrayList<>();
@@ -123,7 +105,7 @@ public class LexicographicReasonerImpl implements ReasonerService {
 
             PlFormula combined = buildCombinedFormula(currentRank.getRankNumber(), rankFormulas, m,otherRanks, negation, subKBs);
 
-            // check antecedent with agaignst subknowledge bases
+            // check antecedent agaignst subknowledge bases
             boolean stillRefuted = entails(otherRanks.union(single(combined)), negation);
 
             while (stillRefuted && m > 0) {
@@ -170,13 +152,9 @@ public class LexicographicReasonerImpl implements ReasonerService {
                 antecedent + " is no longer refuted, so we check whether R∞ ∪ R entails " + materialisedQuery + ".",
                 new KnowledgeBase()));
 
+        // The justification is worked out after the clock has stopped
         long endTime = System.nanoTime();
         double closureExecutionTime = (double) (endTime - startTime) / 1_000_000_000.0;
-
-        // The justification is worked out after the clock has stopped. Building the
-        // hitting set tree is expensive and is not part of LexC itself, so timing it
-        // as closure time would make the algorithm look slower than it is on the
-        // comparison page.
         KnowledgeBase weakJustification = computeWeakJustification(finalKnowledgeBase, materialisedQuery, entailed, knowledgeBase);
 
         return new LexicographicEntailment.LexicographicEntailmentBuilder()
@@ -195,68 +173,41 @@ public class LexicographicReasonerImpl implements ReasonerService {
                 .build();
     }
 
-    // =================================================================================
+    
+    
     // Helpers
-    // =================================================================================
 
     /**
      * The smallest justification for the query in the knowledge base that survived
-     * the weakening loop - that is, the smallest subset of R∞ ∪ R that on its own
-     * still entails the query. This is the same notion of proof Basic and Minimal
-     * Relevant Closure show, computed with the same service.
-     *
-     * <p>Nothing is returned when the query is not entailed, since there is then no
-     * entailment to justify.</p>
-     *
-     * @param finalKnowledgeBase The materialised R∞ ∪ R the answer was read off
-     * @param materialisedQuery  The query, materialised
-     * @param entailed           Whether the query was entailed
-     * @param originalKnowledgeBase The knowledge base as the user wrote it
-     * @return The smallest justification, in the user's own notation
+     * the weakening loop, computed with the same service as relevant closure
      */
     private KnowledgeBase computeWeakJustification(KnowledgeBase finalKnowledgeBase, PlFormula materialisedQuery, boolean entailed, KnowledgeBase originalKnowledgeBase) {
         if (!entailed) {
             return new KnowledgeBase();
         }
-
         List<KnowledgeBase> justifications = ClassicalJustificationService.computeJustification(finalKnowledgeBase, materialisedQuery);
-
         KnowledgeBase smallest = new KnowledgeBase();
         int smallestSize = Integer.MAX_VALUE;
-
         for (KnowledgeBase justification : justifications) {
             if (justification.size() < smallestSize) {
                 smallestSize = justification.size();
                 smallest = justification;
             }
         }
-
         return presentJustification(smallest, originalKnowledgeBase);
     }
 
-    /**
-     * Rewrites a justification in the notation the user typed.
-     *
-     * <p>Everything in the final knowledge base has been materialised, so a statement
-     * that started life as a |~ b is sitting there as a => b and would be shown that
-     * way. Utils.dematerialise cannot be used here because, once materialised, a
-     * defeasible statement is indistinguishable from a genuinely classical implication.
-     * Looking each formula up by what it materialises to avoids the guesswork.</p>
-     *
-     * <p>Anything with no original is left alone - in particular the combined formula
-     * Ri,m, which was built by the algorithm and was never in the knowledge base.</p>
-     */
+    //Rewrites a justification in original notation, that once materialised, a defeasible statement is indistinguishable from classical implication
     private KnowledgeBase presentJustification(KnowledgeBase justification, KnowledgeBase originalKnowledgeBase) {
         Map<String, PlFormula> byMaterialised = new HashMap<>();
         originalKnowledgeBase.forEach(formula -> byMaterialised.put(KnowledgeBase.materialise(formula).toString(), formula));
-
         KnowledgeBase result = new KnowledgeBase();
         justification.forEach(formula -> result.add(byMaterialised.getOrDefault(formula.toString(), formula)));
 
         return result;
     }
 
-    //  Builds every subset as a sub-knowledge base check against {@code context}, and returns the disjunction of their conjunctions.
+    // Builds Ri,m into one disjunction.
     private PlFormula buildCombinedFormula(int rankNumber, List<PlFormula> rankFormulas, int m, KnowledgeBase otherRanks, PlFormula negation, List<SubKnowledgeBaseCheck> subKBs) {
         List<List<PlFormula>> subsets = subsetsOfSize(rankFormulas, m);
         List<PlFormula> disjuncts = new ArrayList<>();
@@ -271,7 +222,6 @@ public class LexicographicReasonerImpl implements ReasonerService {
         return toDisjunction(disjuncts);
     }
 
-    
     private List<SubKnowledgeBaseCheck> buildFinalChecks(List<LexicographicStep> steps,KnowledgeBase rankInfKB, KnowledgeBase r, PlFormula materialisedQuery) {
         List<SubKnowledgeBaseCheck> finalChecks = new ArrayList<>();
         KnowledgeBase finalKnowledgeBase = rankInfKB.union(r);
@@ -288,12 +238,9 @@ public class LexicographicReasonerImpl implements ReasonerService {
             finalChecks.add(new SubKnowledgeBaseCheck(Integer.MAX_VALUE, 0, 0, List.of(), finalKnowledgeBase, materialisedQuery, entails(finalKnowledgeBase, materialisedQuery)));
             return finalChecks;
         }
-
-        // ********************Otherwise re-form the sub-knowledge bases at the winning subset size and ask each one the query. The overall answer is true only if every one of them says yes.
-        for (SubKnowledgeBaseCheck check : weakenedStep.getsubKBs()) {
-            if (check.getSubsetSize() != weakenedStep.getFinalSubsetSize()) {
-                continue; // skip the sizes that were rejected
-            }
+        
+        // Only the surviving subsets are asked. 
+        for (SubKnowledgeBaseCheck check : weakenedStep.getSurvivingsubKBs()) {
             KnowledgeBase subKnowledgeBase = check.getSubKnowledgeBase();
             finalChecks.add(new SubKnowledgeBaseCheck(check.getRankNumber(), check.getSubsetSize(),
                     check.getRankSize(), check.getSubset(), subKnowledgeBase, materialisedQuery,
@@ -303,22 +250,6 @@ public class LexicographicReasonerImpl implements ReasonerService {
         return finalChecks;
     }
 
-    /**
-     * Every subset of exactly {@code m} formulas, in a stable order.
-     *
-     * <p>A subset of an n element list is an n bit number: bit j means "formula j is in".
-     * Counting from 0 to 2^n - 1 enumerates every subset, and Integer.bitCount gives its
-     * size, so keeping the numbers whose bit count is m gives exactly what is wanted. This
-     * is the same technique as the 2024 weakenRank(), except the subsets are returned
-     * rather than immediately collapsed, so the trace can show them.</p>
-     *
-     * <p>For m = 0 this returns one empty subset, which is correct: dropping every
-     * statement is a single way of doing it.</p>
-     *
-     * @param formulas The formulas to choose from
-     * @param m        The subset size
-     * @return List of subsets, each an ordered list
-     */
     private List<List<PlFormula>> subsetsOfSize(List<PlFormula> formulas, int m) {
         List<List<PlFormula>> subsets = new ArrayList<>();
         int n = formulas.size();
@@ -370,7 +301,7 @@ public class LexicographicReasonerImpl implements ReasonerService {
         return formulas;
     }
 
-    //statement to knowledge base
+    //formula to knowledge base
     private KnowledgeBase single(PlFormula formula) {
         KnowledgeBase knowledgeBase = new KnowledgeBase();
         knowledgeBase.add(formula);
