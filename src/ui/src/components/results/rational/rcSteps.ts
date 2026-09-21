@@ -20,6 +20,8 @@ export interface DebuggerStep {
         culprit: string;
         innocent: string[];
     };
+     justification?: string[];
+    weakJustification?: string[];
 }
 
 export interface RankState{
@@ -102,24 +104,6 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
         : queryFormula?.replace(/[()]/g, '')?.split('=>')[1];
 
     const queryConsequent = rawConsequent?.replace('!', '').trim() || '';
-
-    // Step 1: Show BaseRank and materialisation BEFORE the loop
-    // steps.push({
-    //     stepNumber: 1,
-    //     totalSteps: 0,
-    //     highlightedLines: [2, 3, 4],
-    //     explanation: `Before beginning the entailment check, we materialise the ranked knowledge base.\n\nEach defeasible statement α |~ β is converted to a classical implication α → β. This allows us to use classical entailment checking (via a SAT solver) throughout the algorithm.\n\nThe finite ranks form the working set R, while R∞ contains the classical statements that always remain.`,
-    //     workingSet: finiteRanks.flatMap(r => r.knowledgeBase),
-    //     rInfinity,
-    //     materialisedWorking: finiteRanks.flatMap(r =>
-    //         r.knowledgeBase.map(f => f.replace('|~', '=>'))
-    //     ),
-    //     rankingState: buildRankingState(baseRanking, new Set<number>(), -1),
-    //     isFinalStep: false,
-    //     isInitialStep: true,
-    //     queryAntecedent,
-    //     queryConsequent,
-    // });
 
     // Step 1 -Initialise
     steps.push({
