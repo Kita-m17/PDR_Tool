@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BaseRankDTO, EntailmentDTO, LexicographicEntailmentDTO, RankDTO } from '../../../api/api';
+import { BaseRankDTO, EntailmentDTO, LexicographicEntailmentDTO, PartitionDTO, evaluate } from '../../../api/api';
 import Header from '../../layout/Header';
 import Footer from '../../layout/Footer';
 import StepControls from '../StepControls';
@@ -13,80 +13,102 @@ import { Button } from '../../ui/Buttons';
 import { ArrowLeftIcon,ArrowRightIcon } from '@radix-ui/react-icons';
 
 interface ComparisonState {
-    baseRank: BaseRankDTO;
+    formulas: string[];
     query: string;
-    rcEntailment: EntailmentDTO;
-    lcEntailment: EntailmentDTO;
-    relcEntailment: EntailmentDTO;
+};
+
+const STORAGE_KEY = 'pdr-comparison-context';
+
+const loadSaved = (): (ComparisonState & { step: number }) | null => {
+    try {
+        const raw = sessionStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
 };
 
 const ComparisonPage: React.FC = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
-    const {baseRank, query} = location.state as ComparisonState;
+    // Fresh entry from the input page carries {formulas, query}. When returning
+    // from an inspect page ("Back to Comparison") the router state only has
+    // {baseRank, query, ...}, so the comparison context is restored from
+    // sessionStorage, which also survives a refresh.
+    // Resolved ONCE on mount. Re-reading storage every render would create a new
+    // `formulas` array each time and re-trigger the fetch effect in a loop.
+    const [ctx] = useState(() => {
+        const state = location.state as Partial<ComparisonState> | null;
+        const saved = loadSaved();
+        const isFresh = !!state?.formulas;
+        return {
+            formulas: (isFresh ? state!.formulas : saved?.formulas) as string[] | undefined,
+            query: (isFresh ? state!.query : saved?.query) ?? state?.query ?? '',
+            step: isFresh ? 0 : saved?.step ?? 0,
+        };
+    });
+    const { formulas, query } = ctx;
 
-    const [currentStep, setCurrentStep] = useState(0);
+    const [currentStep, setCurrentStep] = useState(ctx.step);
+
+    useEffect(() => {
+        if (!formulas) return;
+        try {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ formulas, query, step: currentStep }));
+        } catch { /* storage unavailable - ignore */ }
+    }, [formulas, query, currentStep]);
+
+    const [baseRank, setBaseRank] = useState<BaseRankDTO | null>(null);
     const [rcResult, setRcResult] = useState<EntailmentDTO | null>(null);
     const [lcResult, setLcResult] = useState<LexicographicEntailmentDTO | null>(null);
     const [relcResult, setRelcResult] = useState<EntailmentDTO | null>(null);
-    const [partition, setPartition] = useState<RankDTO | null>(null);
-
+    const [partition, setPartition] = useState<PartitionDTO | null>(null);
     const [loading, setLoading] = useState(true);
-
-
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (!formulas || !query) {
+            setLoading(false);
+            return;
+        }
         const fetchResults = async () => {
-            try{
+            try {
                 setLoading(true);
-
-                //rc
-                const rcResults = await fetch('http://localhost:8080/api/entailment/rational', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'text/plain'},
-                    body: query,
-                });
-
-                const rc = await rcResults.json();
-                setRcResult(rc);
-
-                //lc
-                const lcResults = await fetch('http://localhost:8080/api/entailment/lexicographic', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'text/plain'},
-                    body: query,
-                });
-
-                const lc = await lcResults.json();
-                setLcResult(lc);
-
-                //Minimal RelC - partition first, then entailment
-                const partitionRes = await fetch('http://localhost:8080/api/partition/relevant/create/minimal', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: query,
-                });
-                const partitionData = await partitionRes.json();
-                setPartition(partitionData); 
-
-                const relcResults = await fetch('http://localhost:8080/api/entailment/minimal relevant', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'text/plain'},
-                    body: query,
-                });
-                const relc = await relcResults.json();
-                setRelcResult(relc);
-
-            } catch (error) {
-                console.error('Error fetching entailment results:', error);
+                setError(null);
+                const res = await evaluate(formulas, query, ['rational', 'lexicographic', 'minimal relevant']);
+                const find = (name: string) => res.results.find(r => r.algorithm === name);
+                setBaseRank(res.baseRank);
+                setRcResult(find('rational')?.entailment ?? null);
+                setLcResult((find('lexicographic')?.entailment ?? null) as LexicographicEntailmentDTO | null);
+                setRelcResult(find('minimal relevant')?.entailment ?? null);
+                setPartition(find('minimal relevant')?.partition ?? null);
+            } catch (e) {
+                console.error('Error fetching entailment results:', e);
+                setError('Something went wrong. Make sure the backend is running.');
             } finally {
                 setLoading(false);
             }
         };
-
         fetchResults();
-    }, [query]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    if (loading || !baseRank) {
+        return (
+            <div className="min-h-screen bg-accent flex flex-col">
+                <Header />
+                <main className="flex-1 flex flex-col items-center justify-center gap-4">
+                    <p className="text-muted-foreground">
+                        {loading ? 'Loading comparison...'
+                            : error ?? 'No comparison to show. Go back and enter a knowledge base and query.'}
+                    </p>
+                    {!loading && <Button variant="outline" size="lg" onClick={() => navigate('/')}>Back to input</Button>}
+                </main>
+                <Footer />
+            </div>
+        );
+    }
 
     const steps = [
         <Step1_CommonBaseRank 
@@ -125,21 +147,6 @@ const ComparisonPage: React.FC = () => {
     ];
 
     const totalSteps = steps.length;
-
-    if(loading){
-        return (
-            <div className="min-h-screen bg-accent flex flex-col">
-                <Header />
-                <main className="flex-1 flex items-center justify-center">
-                    <p className="text-muted-foreground">
-                        Loading comparison...
-                    </p>
-                </main>
-                <Footer />
-            </div>
-        );
-    }
-
 
     return(
         <div className="min-h-screen bg-accent flex flex-col">
