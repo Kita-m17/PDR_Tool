@@ -1,8 +1,16 @@
+/*
+ * File: ExplanationView.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: explanation view of rc closure - contains actual explanations
+ * Purpose: Educational use only.
+ */
 import React, {useState} from 'react';
 import { DebuggerStep } from './rcSteps';
 import { InfoCircledIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import {Button} from '../../ui/Buttons'
 
+//explanation steps
 interface ExplanationViewProps {
     step: DebuggerStep;
 }
@@ -14,15 +22,15 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
     React.useEffect(() =>{
         setShowDetails(false);
     }, [step.stepNumber]);
-
+    
     const isWhileStep = step.highlightedLines.includes(5) && !step.isInitialStep;
 
     return(
         <div className="h-full flex flex-col"> 
             
-                <h3 className="text-primary font-semibold mb-4 flex items-center gap-2">
-                    Explanation
-                </h3>
+            <h3 className="text-primary font-semibold mb-4 flex items-center gap-2">
+                Explanation
+            </h3>
 
             <div className="flex-1 min-h-0 pr-1 overflow-y-auto">
 
@@ -33,7 +41,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
                 {/* drowning-problem-only: the removed rank, split into what actually caused the contradiction vs. what was innocent and just drowned alongside it for sharing a rank. */}
                 {step.drowningHighlight && (
                     <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4">
-                        <p className="text-xs font-semibold text-red-700 mb-3">
+                        <p className="text-sm font-semibold text-red-700 mb-3">
                             {step.drowningHighlight.rankLabel} - removed in full
                         </p>
  
@@ -77,17 +85,17 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
                 {/* details panel */}
                 {isWhileStep && showDetails && (
                     <div className="mb-4 border border-border rounded-lg p-4 bg-accent">
-                        <p className="text-xs font-medium text-foreground mb-2">
+                        <p className="text-sm font-medium text-foreground mb-2">
                             Justification - formulas that caused the contradiction:
                         </p>
 
-                        <div className="font-mono text-xs text-foreground bg-white border border-border rounded p-2 mb-3">
+                        <div className="font-mono text-sm text-foreground bg-white border border-border rounded p-2 mb-3">
                             {step.justification && step.justification.length > 0
                                 ? '{ ' + step.justification.join(', ') + ' }'
                                 : 'No justification computed for this step.'}
                         </div>
 
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm text-muted-foreground">
                             {step.justification && step.justification.length > 0
                                 ? `This is the unsatisfiable core: the smallest set of formulas that, together with '${step.queryAntecedent}', leads to a contradiction.`
                                 : ''}
@@ -116,7 +124,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
                 {!step.isInitialStep && step.workingSet.length > 0 && (
                     <div className="mb-4">
                         <p className="text-sm font-medium text-foreground mb-2">
-                            {step.workingSetIncludesRInfinity ? 'Working set R ∪ R∞:' : 'Working set R:'}
+                            {step.workingSetIncludesRInfinity ? 'R ∪ R∞:' : 'Working set R:'}
                         </p>
 
                         <div className="bg-accent border border-border rounded-lg p-3 font-mono text-sm text-foreground">
@@ -193,7 +201,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
                             Note: Limitation of the Rational Closure
                         </p>
 
-                        <p className="text-xs text-blue-600">
+                        <p className="text-sm text-blue-600">
                             Since the Rational Closure removes the entire rank, it may remove rules that are unrelated to the conflict. This is known as the "drowning problem". Lexicographic and Relevant Closure address this limitation.
                         </p>
                     </div>

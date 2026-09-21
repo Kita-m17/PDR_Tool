@@ -1,12 +1,20 @@
+/*
+ * File: AlgorithmView.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: algo view of rc closure - contains pseudocode
+ * Purpose: Educational use only.
+ */
 import React from 'react';
 import { TriangleRightIcon } from '@radix-ui/react-icons';
 import { TexFormula } from '../../ui/TexFormula';
 
-
+//show highlighted step
 interface AlgorithmViewProps{
     highlightedLines: number[];
 }
 
+//pseudocode algo - ref: Taking Defeasible Entailment beyond Rational Closure (Casini et al.)
 const lines: { num: number; tex: string; indent?: boolean }[] = [
     { num: 0, tex: "\\text{Input: A knowledge base } \\mathcal{K} \\text{ and a query } \\alpha \\mid \\! \\sim \\beta" },
     { num: 1, tex: "\\text{Output: } \\textbf{true} \\text{ if } \\mathcal{K} \\mid \\! \\approx_{RC} \\alpha  \\mid \\! \\sim \\beta \\text{, } \\textbf{false} \\text{ otherwise}" },
@@ -20,6 +28,7 @@ const lines: { num: number; tex: string; indent?: boolean }[] = [
     { num: 9, tex: "\\textbf{return}\\ \\mathcal{R}_\\infty \\cup \\mathcal{R} \\models \\alpha \\rightarrow \\beta" },
 ];
 
+//actual view
 const AlgorithmView: React.FC<AlgorithmViewProps> =({highlightedLines}) => {
     return (
         <div className="h-full flex flex-col"> 
@@ -31,10 +40,13 @@ const AlgorithmView: React.FC<AlgorithmViewProps> =({highlightedLines}) => {
             <p className="text-xs text-muted-foreground mb-4">
                 Rational Closure (pseudocode)
             </p>
-                
+
+            {/* Actual Algo pseudocode */} 
             <div className="flex-1 min-h-0 pr-1 overflow-y-auto">
                 <div className="font-mono text-sm space-y-1">
                     {lines.map((line) => {
+
+                        {/* highlight curr step we're on */}
                         const isHighlighted = highlightedLines.includes(line.num);
                         return (
                             <div

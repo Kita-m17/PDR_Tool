@@ -1,5 +1,14 @@
+/*
+ * File: rcSteps.ts
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: rational closure info - for ui
+ * Purpose: Educational use only.
+ */
+
 import { EntailmentDTO, EntailmentStepDTO, RankDTO } from '../../../api/api';
 
+// inferface for steps
 export interface DebuggerStep {
     stepNumber: number;
     totalSteps: number;
@@ -24,6 +33,7 @@ export interface DebuggerStep {
     weakJustification?: string[];
 }
 
+//inferfaace for rank state
 export interface RankState{
     rankName: string;
     rankNumber: number;
@@ -205,6 +215,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
         const removedRankNumbers = new Set(removedRanking.filter(r => r.knowledgeBase.length > 0).map(r => r.rankNumber));
         const revealRankingState = lastAlgorithmStep.rankingState.map(r => ({ ...r,isBeingRemoved: removedRankNumbers.has(r.rankNumber),}));
 
+        //show what caused dp
         steps.push({
             stepNumber: steps.length + 1,
             totalSteps: 0,
@@ -221,6 +232,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
             workingSetIncludesRInfinity: true,
         });
 
+        //show consequence of dp
         steps.push({
             stepNumber: steps.length + 1,
             totalSteps: 0,
