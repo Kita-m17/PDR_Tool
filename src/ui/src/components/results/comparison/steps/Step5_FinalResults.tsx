@@ -1,5 +1,14 @@
+/*
+ * File: Step5_FinalResults.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: React component for displaying a step five of the comparison.
+ * Purpose: Educational use only.
+ */
+
 import React from 'react';
 import { EntailmentDTO, LexicographicEntailmentDTO } from '../../../../api/api';
+import { format } from 'path';
 
 interface Step5Props {
     query: string;
@@ -16,6 +25,7 @@ const Step5_FinalResults: React.FC<Step5Props> = ({ query, rcResult, lcResult, r
     const lcWeakenedCount = lcResult?.weakenedRanking?.length ?? 0;
     const relcRemovedCount = relcResult?.removedRanking?.length ?? 0;
 
+    //reasons for why results are obtained
     const rcWhy = rcRemovedCount > 0 ? `Removed ${rcRemovedCount} rank${rcRemovedCount === 1 ? '' : 's'} as exceptional.` : 'No ranks needed to be removed.';
  
     const lcWhy = lcRemovedCount > 0 && lcWeakenedCount > 0 ? `Removed ${lcRemovedCount} rank${lcRemovedCount === 1 ? '' : 's'} outright and weakened ${lcWeakenedCount} other${lcWeakenedCount === 1 ? '' : 's'}.` : lcWeakenedCount > 0
@@ -26,6 +36,7 @@ const Step5_FinalResults: React.FC<Step5Props> = ({ query, rcResult, lcResult, r
  
     const relcWhy = relcRemovedCount > 0 ? `Excluded ${relcRemovedCount} rank${relcRemovedCount === 1 ? '' : 's'} from the relevant partition.` : 'Every relevant statement was kept.';
 
+    //formating
     const algorithms = [
         {
             name: 'Rational Closure',
@@ -50,6 +61,7 @@ const Step5_FinalResults: React.FC<Step5Props> = ({ query, rcResult, lcResult, r
         },
     ];
 
+    //get results
     const results = [rcResult, lcResult, relcResult];
     const allEntailed = results.every((r) => r?.entailed === true);
     const allNotEntailed = results.every((r) => r?.entailed === false);
@@ -64,12 +76,7 @@ const Step5_FinalResults: React.FC<Step5Props> = ({ query, rcResult, lcResult, r
                 Each method now tests the query against its final knowledge base.
             </p>
 
-            {/* Query */}
-            <div className="bg-white border border-border rounded-xl p-3 mb-6 text-center">
-                <span className="text-md text-muted-foreground mr-2">Query</span>
-                <span className="font-mono font-medium">{query}</span>
-            </div>
-
+            {/*final resulys and explanation */}
             <div className="grid grid-cols-3 gap-4 mb-6">
                 {algorithms.map((algo) => (
                     <div key={algo.name} className={`bg-white border-2 ${algo.borderClass} rounded-xl p-6 text-center`}>
@@ -93,16 +100,14 @@ const Step5_FinalResults: React.FC<Step5Props> = ({ query, rcResult, lcResult, r
                                     </p>
                                 </p>
                             </>
-                        ) : (
-                            <p className="text-muted-foreground text-md">Loading...</p>
-                        )}
+                        ) : (<p className="text-muted-foreground text-md">Loading...</p>)}
                     </div>
                 ))}
             </div>
 
-            {/* Insight */}
+            {/* Insight - explanation*/}
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
-                <p className="text-md text-amber-700">
+                <p className="text-sm text-amber-700">
                     {allAgree
                         ? "All three methods agree on this query - even though they processed the ranking differently (Step 4), those differences weren't enough to change the final answer this time."
                         : 'The methods disagree here. Differences in how each one processed the ranking (Step 4) were enough to change whether the query is entailed.'}

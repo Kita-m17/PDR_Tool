@@ -1,3 +1,11 @@
+/*
+ * File: Step1_CommonBaseRank.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: React component for displaying a step one of the comparison.
+ * Purpose: Educational use only.
+ */
+
 import React from 'react';
 import { RankDTO } from '../../../../api/api';
 import { RankState } from '../../rational/rcSteps';
@@ -42,7 +50,7 @@ const Step1_CommonBaseRank: React.FC<Step1Props> = ({ baseRanking, query, onInsp
             </div>
 
             {/* Ranking - full width, with heading + inspect button */}
-            <div className="bg-white border border-border rounded-xl p-6 mb-8 text-sm">
+            <div className="bg-white border border-border rounded-xl p-6 mb-8">
                 <RankingVisualiser rankingState={rankingState} />
                 {/* Inspect button */}
                 <div className="flex justify-center">

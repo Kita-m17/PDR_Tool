@@ -1,3 +1,11 @@
+/*
+ * File: Step3_InspectAlgos.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: React component for displaying a step three of the comparison.
+ * Purpose: Educational use only.
+ */
+
 import React from 'react';
 import { BaseRankDTO, EntailmentDTO } from '../../../../api/api';
 import { Button } from '../../../ui/Buttons';
@@ -16,6 +24,7 @@ interface Step3Props {
 
 const Step3_InspectAlgos: React.FC<Step3Props> = ({baseRank, query, rcResult, lcResult, relcResult,onInspectRC, onInspectLC, onInspectRelC}) => {
 
+    //algo formating
     const algorithms = [
         { 
             name: 'Rational Closure', 
@@ -65,7 +74,7 @@ const Step3_InspectAlgos: React.FC<Step3Props> = ({baseRank, query, rcResult, lc
                         Key idea:
                     </strong> 
                     
-                    <p className="text-md text-foreground">
+                    <p className="text-sm text-foreground">
                         Each algorithm processes the same Base Rank differently. Click <strong>Inspect</strong> on any algorithm to step through its execution and observe exactly how it handles the ranked knowledge base to answer your query. You can inspect them in any order and return here to continue.
                     </p>
                 </p>
@@ -81,11 +90,11 @@ const Step3_InspectAlgos: React.FC<Step3Props> = ({baseRank, query, rcResult, lc
                             {algo.name}
                         </h3>
 
-                        <p className={`text-md font-semibold ${algo.subtitleClass} mb-4`}>
+                        <p className={`text-sm font-semibold ${algo.subtitleClass} mb-4`}>
                             ({algo.subtitle})
                         </p>
 
-                        <p className="text-md text-foreground mb-6">
+                        <p className="text-sm text-foreground mb-6">
                             {algo.description}
                         </p>
                         
@@ -99,7 +108,7 @@ const Step3_InspectAlgos: React.FC<Step3Props> = ({baseRank, query, rcResult, lc
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-4">
-                <p className="text-md text-blue-700">
+                <p className="text-sm text-blue-700">
                     💡 Tip: You can inspect any method in any order. Come back here to continue.
                 </p>
             </div>

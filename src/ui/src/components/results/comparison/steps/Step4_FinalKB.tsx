@@ -1,6 +1,14 @@
+/*
+ * File: Step4_FinalKB.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: React component for displaying a step four of the comparison.
+ * Purpose: Educational use only.
+ */
+
 import React from 'react';
 import { EntailmentDTO, LexicographicEntailmentDTO, RankDTO } from '../../../../api/api';
-import {CheckIcon, Cross2Icon, ArrowRightIcon } from '@radix-ui/react-icons';
+import {ArrowRightIcon, Cross2Icon, CheckIcon} from '@radix-ui/react-icons';
 
 interface Step4Props {
     baseRanking: RankDTO[];
@@ -28,6 +36,7 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
         }
     }); 
 
+    //Algo formattings
     const algorithms = [
         { 
             name: 'Rational Closure', 
@@ -68,7 +77,8 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
             {/* Legend */}
             <div className="flex gap-4 mb-4 text-sm">
                 <span className="flex items-center gap-1">
-                    <span className="text-green-600">✓</span> Retained
+                    <span className="text-green-600">
+                        <CheckIcon className="h-4 w-4"/></span> Retained
                 </span>
 
                 <span className="flex items-center gap-1">
@@ -76,7 +86,7 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
                 </span>
 
                 <span className="flex items-center gap-1">
-                    <span className="text-red-600">✗</span> Removed
+                    <span className="text-red-600"> <Cross2Icon className="h-4 w-4"/></span> Removed
                 </span>
             </div>
 
@@ -88,6 +98,7 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
                             {algo.name}
                         </h3>
 
+                        {/*formulas */}
                         {baseRanking.map((rank) => {
                             const weakenedFormula = algo.weakenedByRank?.get(rank.rankNumber);
 
@@ -140,7 +151,7 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-4">
-                <p className="text-md text-blue-700">
+                <p className="text-sm text-blue-700">
                     💡 Same initial ranking, different final knowledge bases. Rational Closure removes whole exceptional ranks outright, Lexicographic Closure weakens them into a disjunction instead of dropping them, and Relevant Closure only ever touches formulas inside the relevant partition.
                 </p>
             </div>
