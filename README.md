@@ -19,3 +19,6 @@ The other method is to use docker.
 - Liam De Saldanha (Relevant Closure)
 - Nikita Martin (Rational Closure + Comparison)
 - Samukelisiwe Zwane (Lexicographical Closure)
+
+# AI Ackownledgement
+Claude was used in the development of this application.
