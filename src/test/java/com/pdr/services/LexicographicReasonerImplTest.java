@@ -2,7 +2,6 @@ package com.pdr.services;
 /*
  * Original Author: Samukelisiwe Zwane, Honours Project (2026), University of Cape Town
  *
- * AI was used to assist making this class
  * Context: Used in PDR project for testing lexicographic closure.
  * Purpose: Educational use only.
  */
