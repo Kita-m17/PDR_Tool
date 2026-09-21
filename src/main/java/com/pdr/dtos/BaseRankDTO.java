@@ -1,7 +1,7 @@
 package com.pdr.dtos;
 /**
- * File: TraceStep.java
- * Package: com.pdr.models
+ * File: BaseRankDTO.java
+ * Package: com.pdr.dtos
  *
  * Original Author: Nikita Martin, Liam De Saldanha, Samukelisiwe Zwane (2026 Honours Project, University of Cape Town)
  * Context: Used in PDR project for the BaseRank algorithm.
@@ -21,6 +21,6 @@ public class BaseRankDTO {
     private List<RankDTO> sequence; //sequence of ranks
     private List<RankDTO> ranking; //final ranking of the formulas
     private List<BaseRankStepDTO> traceSteps; //trace of the algorithm
-    private double executionTime;
+    private double executionTime; //execution time of algo
 
 }

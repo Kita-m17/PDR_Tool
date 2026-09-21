@@ -1,4 +1,7 @@
 package com.pdr.dtos;
+/**
+ * Contains Query and algo
+ */
 @Deprecated
 public class QueryRequest {
     private String formula; //eg. "penguin |~ !flies"

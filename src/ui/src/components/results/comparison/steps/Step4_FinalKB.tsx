@@ -1,6 +1,14 @@
+/*
+ * File: Step4_FinalKB.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: React component for displaying a step four of the comparison.
+ * Purpose: Educational use only.
+ */
+
 import React from 'react';
 import { EntailmentDTO, LexicographicEntailmentDTO, RankDTO } from '../../../../api/api';
-import {ArrowRightIcon} from '@radix-ui/react-icons';
+import {ArrowRightIcon, Cross2Icon, CheckIcon} from '@radix-ui/react-icons';
 
 interface Step4Props {
     baseRanking: RankDTO[];
@@ -28,6 +36,7 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
         }
     }); 
 
+    //Algo formattings
     const algorithms = [
         { 
             name: 'Rational Closure', 
@@ -68,7 +77,8 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
             {/* Legend */}
             <div className="flex gap-4 mb-4 text-xs">
                 <span className="flex items-center gap-1">
-                    <span className="text-green-600">✓</span> Retained
+                    <span className="text-green-600">
+                        <CheckIcon className="h-4 w-4"/></span> Retained
                 </span>
 
                 <span className="flex items-center gap-1">
@@ -76,7 +86,7 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
                 </span>
 
                 <span className="flex items-center gap-1">
-                    <span className="text-red-600">✗</span> Removed
+                    <span className="text-red-600"> <Cross2Icon className="h-4 w-4"/></span> Removed
                 </span>
             </div>
 
@@ -88,6 +98,7 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
                             {algo.name}
                         </h3>
 
+                        {/*formulas */}
                         {baseRanking.map((rank) => {
                             const weakenedFormula = algo.weakenedByRank?.get(rank.rankNumber);
 
@@ -105,20 +116,23 @@ const Step4_FinalKB: React.FC<Step4Props> = ({ baseRanking, rcResult, lcResult, 
                                         return (
                                             <div key={i} className="flex items-center gap-2 text-xs font-mono">
 
-                                                <span className={isRemoved ? 'text-red-500' : isWeakened ? 'text-amber-500' : 'text-green-600'}>
-                                                    {isRemoved ? '✗' : isWeakened ? '≈' : '✓'}
+                                                <span className={`shrink-0 ${isRemoved ? 'text-red-500' : isWeakened ? 'text-amber-500' : 'text-green-600'}`}>
+                                                    {isRemoved ? (<Cross2Icon className="h-4 w-4" aria-label="Removed" />) : 
+                                                        isWeakened ? (<span aria-label="Weakened">≈</span>) : 
+                                                        (<CheckIcon className="h-4 w-4" aria-label="Retained" />)
+                                                    }
                                                 </span>
 
-                                                <span className={(isRemoved || isWeakened) ? 'line-through text-gray-400' : 'text-foreground'}>
+                                                <span className={`min-w-0 break-words ${(isRemoved || isWeakened) ? 'line-through text-gray-400' : 'text-foreground'}`}>
                                                     {formula}
                                                 </span>
 
                                                 {isRemoved && (
-                                                    <span className="text-red-400">Removed</span>
+                                                    <span className="shrink-0 whitespace-nowrap text-red-400">Removed</span>
                                                 )}
 
                                                 {isWeakened && (
-                                                    <span className="text-amber-500">Weakened</span>
+                                                    <span className="shrink-0 whitespace-nowrap text-amber-500">Weakened</span>
                                                 )}
                                             </div>
                                         );

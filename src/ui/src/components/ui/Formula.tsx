@@ -1,5 +1,6 @@
 /*
  * File: Formula.tsx
+ * Original Author: Nikita Martin (2026 Honours Project - University of Cape Town)
  * Purpose: Educational use only.
  */
 import React from 'react';

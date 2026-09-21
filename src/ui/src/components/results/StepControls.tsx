@@ -1,3 +1,11 @@
+/*
+ * File: StepControls.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: React component for displaying the step-through controls.
+ * Purpose: Educational use only.
+ */
+
 import React from 'react';
 import { Button } from '../ui/Buttons';
 import {TrackPreviousIcon, TrackNextIcon,ChevronLeftIcon,ChevronRightIcon} from '@radix-ui/react-icons';
@@ -27,6 +35,7 @@ const StepControls: React.FC<StepControlsProps> = ({current, total, onStart, onB
                 </Button>
             </div>
 
+            {/* curr step*/}
             <span className="text-sm text-muted-foreground font-medium">
                 {current + 1} / {total}
             </span>

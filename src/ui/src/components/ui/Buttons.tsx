@@ -1,3 +1,10 @@
+/*
+ * File: Button.tsx
+ * Original Author: Thabo Moloi (2024 Honours Project - University of Cape Town)
+ * Used by: Nikita Martin (2026 Honours Project - University of Cape Town)
+ * Purpose: Educational use only.
+ */
+
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";

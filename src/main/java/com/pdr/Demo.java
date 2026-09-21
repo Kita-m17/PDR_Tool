@@ -1,5 +1,15 @@
 package com.pdr;
 
+/*
+ * File: Demo.java
+ * Package: com.pdr
+ *
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original Author
+ * 
+ * Context: Used for PDR project to test code
+ * Purpose: Educational use only.
+ */
 import org.tweetyproject.logics.pl.syntax.Implication;
 import org.tweetyproject.logics.pl.syntax.Negation;
 import org.tweetyproject.logics.pl.syntax.Proposition;

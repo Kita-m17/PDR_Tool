@@ -1,3 +1,11 @@
+/*
+ * File: BaseRankStepThrough.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: React component for displaying the base rank step through.
+ * Purpose: Educational use only.
+ */
+
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BaseRankDTO, EntailmentDTO, PartitionDTO } from '../../api/api';
@@ -18,6 +26,7 @@ interface ResultsState {
     algorithm: string;
     fromComparison?: boolean;
 }
+
 const BaseRankStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -47,6 +56,7 @@ const BaseRankStepThrough: React.FC = () => {
     // highlightedLines currently targets, so the highlighted line won't line
     // up 1:1 with the old scheme until that file's highlightedLines values
     // are remapped to match.
+    ////pseudocode algo - ref: Taking Defeasible Entailment Beyond Rational Closure (Casini et al.)
     const pseudocode: { num: number; tex: string; indent?: boolean }[] = [
         { num: 0, tex: "\\text{Input: A knowledge base } \\mathcal{K}" },
         { num: 1, tex: "\\text{Output: An ordered tuple } (\\mathcal{R}_0, \\dots, \\mathcal{R}_{n-1}, \\mathcal{R}_\\infty, n)" },
@@ -70,7 +80,8 @@ const BaseRankStepThrough: React.FC = () => {
         <div className="min-h-screen bg-accent flex flex-col">
             <Header />
             <main className = "flex-1 px-8 py-6">
-
+                
+                {/* Algo phase */}
                 <AlgorithmProgress currentPhase="baserank" phases={progressPhases} closureLabel={closureLabel} />
 
                 {/* page header */}
@@ -103,6 +114,7 @@ const BaseRankStepThrough: React.FC = () => {
                         Current Ranking
                     </h3>
 
+                    {/*Actual Ranking*/}
                     <div className="h-32 overflow-y-auto">
                         <table className="w-full border-collapse">
                             <tbody>
@@ -149,21 +161,22 @@ const BaseRankStepThrough: React.FC = () => {
                 </div>
 
                 {/* algorithm + explanation side by side */}
-                <div className="flex gap-4 mb-4">
+                <div className="flex flex-col lg:flex-row gap-4 mb-4">
 
-                    {/* algorithm */}
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px]">
+                    {/* algorithm box */}
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 min-w-0 min-h-[400px] lg:h-[450px]">
 
                         <h3 className="text-primary font-semibold mb-1">
                             Algorithm
                         </h3>
 
-                        <p className="text-xs text-muted-foreground mb-4">
+                        <p className="text-sm text-muted-foreground mb-4">
                             BaseRank (pseudocode)
                         </p>
 
                         <div className="text-sm space-y-1 h-[350px] overflow-y-auto">
-
+                            
+                            {/* highlight current step */}
                             {pseudocode.map((line) => {
                                 const isHighlighted = step.highlightedLines.includes(line.num);
                                 return (
@@ -197,7 +210,7 @@ const BaseRankStepThrough: React.FC = () => {
                     </div>
 
                     {/* Explanation */}
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[450px]">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 min-w-0 min-h-[400px] lg:h-[450px]">
                             <h3 className="text-primary font-semibold mb-4">
                                 Explanation
                             </h3>
@@ -208,6 +221,7 @@ const BaseRankStepThrough: React.FC = () => {
                                 {step.explanation}
                             </p>
 
+                            {/* show kb of initial step */}
                             {step.isInitialStep &&(
                                 <div className="mb-4">
                                     <p className="text-sm font-medium text-foreground mb-2">
@@ -240,6 +254,7 @@ const BaseRankStepThrough: React.FC = () => {
                                         Materialisation:
                                     </p>
 
+                                    {/*show materialisation of the defeasible queries */}
                                     <div className="space-y-1">
                                         {step.originalFormulas.map((original, i) => (
                                             <div key={i} className="flex items-center gap-3 font-mono text-sm">
@@ -262,10 +277,6 @@ const BaseRankStepThrough: React.FC = () => {
                                             </div>
                                         ))}
                                     </div>
-
-                                    {/* <p className="text-xs text-muted-foreground mt-2">
-                                        E₀ = {'{ ' + step.materialisedFormulas.join(', ') + ' }'}
-                                    </p> */}
 
                                     {/* E₀ in a box */}
                                     <p className="mt-8 text-sm font-medium text-foreground mb-2">
@@ -308,13 +319,6 @@ const BaseRankStepThrough: React.FC = () => {
                                                     '{check.antecedent}' is {check.isExceptional ? 'EXCEPTIONAL' : 'NOT exceptional'}
                                                 </p>
 
-                                                {/* <p className="text-xs text-muted-foreground mb-1">
-                                                    Materialised KB: 
-                                                    <span className="font-mono">
-                                                        {check.reason}
-                                                    </span>
-                                                </p> */}
-
                                                 <p className="text-xs text-muted-foreground">
                                                     {check.isExceptional
                                                         ? `→ ${check.affectedRules.join(', ')} carries forward`
@@ -333,10 +337,9 @@ const BaseRankStepThrough: React.FC = () => {
                             {step.isFinalStep && (
                                 <div className="mt-4 rounded-lg p-4 border bg-green-50 border-green-200">
                                     <p className="font-bold text-green-700 mb-1">
+                                        
                                         ✓ BaseRank Construction Complete
                                     </p>
-
-
                                 </div>
                             )}
                         </div>

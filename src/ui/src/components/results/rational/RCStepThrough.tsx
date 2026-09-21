@@ -1,3 +1,11 @@
+/*
+ * File: RCStepThrough.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: UI of the full RC step-through page
+ * Purpose: Educational use only.
+ */
+
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BaseRankDTO, EntailmentDTO } from '../../../api/api';
@@ -12,6 +20,7 @@ import StepControls from '../StepControls';
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import { Button } from '../../ui/Buttons';
 
+//result state interface
 interface ResultsState {
     baseRank: BaseRankDTO;
     entailment: EntailmentDTO;
@@ -20,6 +29,7 @@ interface ResultsState {
     fromComparison?: boolean;
 }
 
+//page
 const RCStepThrough: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -40,6 +50,7 @@ const RCStepThrough: React.FC = () => {
             {/* Page Body */}
             <main className="flex-1 px-8 py-6">
 
+                {/* phase of algo */}
                 <AlgorithmProgress currentPhase="closure" phases={['baserank', 'closure']} closureLabel="Rational Closure" />
 
                 {/* Page header */}
@@ -54,13 +65,14 @@ const RCStepThrough: React.FC = () => {
                         </p>
 
                         {/* Brief explanation of the RC algorithm */}
-                        <p className="text-sm text-foreground mt-2 max-w-2xl">
+                        <p className="text-md text-foreground mt-2 max-w-2xl">
                             Rational Closure evaluates whether a query is entailed by
                             progressively removing exceptional ranks from the knowledge
                             base until the query antecedent is no longer exceptional.
                         </p>
                     </div>
 
+                    {/* allow go back to base rank */}
                     <Button className="text-sm text-muted-foreground border border-border rounded-lg px-4 py-2 hover:bg-white transition"
                         onClick={() => navigate('/baserank', {
                             state: { baseRank, entailment, query, algorithm }
@@ -85,15 +97,16 @@ const RCStepThrough: React.FC = () => {
                 </div>
 
                 {/* Algorithm + Explanation side by side */}
-                <div className="flex gap-4 mb-4">
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[605px]">
+                <div className="flex flex-col lg:flex-row gap-4 mb-4">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 min-w-0 min-h-[400px] lg:h-[605px]">
                         <AlgorithmView highlightedLines={step.highlightedLines} />
                     </div>
 
-                    <div className="bg-white border border-border rounded-xl p-6 flex-1 h-[605px]">
+                    <div className="bg-white border border-border rounded-xl p-6 flex-1 min-w-0 min-h-[400px] lg:h-[605px]">
                         <div className="flex-1 min-h-0 h-[500px]">
                             <ExplanationView step={step}/>
                         </div>
+
                         {/* Drowning-problem-only: hint at the other closures and offer to compare, right above the Done button. */}
                         {showDrowningCompareButton && (
                             <div className="flex justify-end mt-4">

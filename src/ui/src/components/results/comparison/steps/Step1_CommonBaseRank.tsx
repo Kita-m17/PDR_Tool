@@ -1,3 +1,11 @@
+/*
+ * File: Step1_CommonBaseRank.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: React component for displaying a step one of the comparison.
+ * Purpose: Educational use only.
+ */
+
 import React from 'react';
 import { RankDTO } from '../../../../api/api';
 import { RankState } from '../../rational/rcSteps';
@@ -87,14 +95,6 @@ const Step1_CommonBaseRank: React.FC<Step1Props> = ({ baseRanking, query, onInsp
                     </strong> All three methods begin with the same Base Rank. They differ in how they process the ranks when answering the query.
                 </p>
             </div>
-
-            {/* Inspect button
-            <div className="flex justify-center">
-                <Button onClick={onInspect}>
-                    Inspect BaseRank Step-Through
-                    <ArrowRightIcon className="ml-2 h-4 w-4" />
-                </Button>
-            </div> */}
         </div>
     );
 };

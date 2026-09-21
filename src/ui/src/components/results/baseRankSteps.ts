@@ -1,5 +1,14 @@
+/*
+ * File: baseRankSteps.ts
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context:base rank info - for ui
+ * Purpose: Educational use only.
+ */
+
 import { BaseRankDTO, BaseRankStepDTO } from '../../api/api';
 
+//common interface for all steps
 export interface BaseRankDebuggerStep {
     stepNumber: number;
     totalSteps: number;
@@ -17,6 +26,7 @@ export interface BaseRankDebuggerStep {
     originalFormulas?: string[]; //for materialisation step
 }
 
+//exceptionality check
 export interface CheckDisplay {
     antecedent: string;
     isExceptional: boolean;
@@ -25,6 +35,7 @@ export interface CheckDisplay {
     rankNumber: number;
 }
 
+//state of base rank
 export interface BaseRankState {
     rankName: string;
     rankNumber: number;
@@ -147,6 +158,7 @@ export function baseRankSteps(baseRank: BaseRankDTO): BaseRankDebuggerStep[]{
             assignedSoFar.add(traceStep.iteration);
         }
 
+        //rank assignment
         steps.push({
             stepNumber: steps.length + 1,
             totalSteps: 0,
@@ -170,6 +182,7 @@ export function baseRankSteps(baseRank: BaseRankDTO): BaseRankDebuggerStep[]{
 
 }
 
+//ranking state - show when formulas are assigned
 function buildBaseRankState(ranking: any[], assignedSoFar: Set<number>, currentIteration: number): BaseRankState[] {
     return ranking.map(rank => ({
         rankName: rank.rankName,

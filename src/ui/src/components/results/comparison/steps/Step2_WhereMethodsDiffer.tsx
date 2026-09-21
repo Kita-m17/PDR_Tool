@@ -1,3 +1,12 @@
+/*
+ * File: Step2_WhereMethodsDiffer.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: React component for displaying a step two of the comparison.
+ * Purpose: Educational use only.
+ */
+
+
 import React from 'react';
 import { PersonIcon, BarChartIcon, MagnifyingGlassIcon, LightningBoltIcon } from '@radix-ui/react-icons';
 
@@ -37,7 +46,7 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
                     </p>
                 </div>
 
-                {/* LC */}
+                {/* LC - explanation box*/}
                 <div className="bg-white border-2 border-indigo-300 rounded-xl p-6 text-center shadow-sm">
                     <h3 className="font-bold text-indigo-700 mb-1">
                         Lexicographic Closure
@@ -60,7 +69,7 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
                     </p>
                 </div>
 
-                {/* RelC */}
+                {/* RelC - explanation box*/}
                 <div className="bg-white border-2 border-sky-300 rounded-xl p-6 text-center shadow-sm">
                     <h3 className="font-bold text-sky-700 mb-1">
                         Relevant Closure
@@ -85,7 +94,7 @@ const Step2_WhereMethodsDiffer: React.FC = () => {
 
             </div>
 
-            {/* Insight box */}
+            {/* Insight box - more info*/}
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-6">
                 <div className="flex items-center mb-2">
                     <LightningBoltIcon className="h-5 w-5 text-blue-700 mr-2" />

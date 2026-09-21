@@ -6,7 +6,7 @@
  * Adapted by: Julia Cotterrell (2025 Honours Project, University of Cape Town)
  * Modifies by: Nikita Martin (2026 Honours Project, University of Cape Town)
  *
- * Status: Modified - removed the .
+ * Status: Modified .
  * Context: Used in PDR's project for the closure entailment algorithms.
  * Purpose: Educational use only.
  */

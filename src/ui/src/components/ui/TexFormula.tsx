@@ -1,3 +1,9 @@
+/*
+ * File: Formula.tsx
+ * Original Author: Liam De Saldanha (2026 Honours Project - University of Cape Town)
+ * Purpose: Educational use only.
+ */
+
 import { ComponentPropsWithoutRef, ReactElement, ElementType } from "react";
 import TeX from "@matejmazur/react-katex";
 import { ParseError, KatexOptions } from "katex";
