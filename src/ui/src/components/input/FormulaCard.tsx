@@ -1,7 +1,8 @@
 /**
  * File: FormulaCard.tsx
- * Original Authors: Nikita, Liam, Samukelisiwe (2026 PDR Honours Project - University of Cape Town)
- * component to collect the KB from input
+ * Original Authors: Nikita Martin (2026 PDR Honours Project - University of Cape Town)
+ * Context: React component to collect the KB from input
+ * Purpose: Educational use only.
  */
 
 import React, {useState} from "react";

@@ -1,7 +1,8 @@
 /**
  * File: QueryInput.tsx
- * Original Author: Nikita Martin, Samukelisiwe Zwane, Liam De Saldanha (PDR Honours Project - University of Cape Town)
- * Component for the query input
+ * Original Author: Samukelisiwe Zwane (PDR Honours Project - University of Cape Town)
+ * Context: React component for the query input
+ * Purpose: Educational use only.
  */
 
 import React, { useState } from "react";

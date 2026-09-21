@@ -1,7 +1,9 @@
 /**
  * File: EntailmentQueryCard.tsx
- * Original Author: Nikita Martin, Samukelisiwe Zwane, Liam De Saldanha (PDR Honours Project - University of Cape Town)
- * Component for the entailment algo options
+ * Original Author: Nikita Martin (PDR Honours Project - University of Cape Town)
+ * Status: Original Work
+ * Context: React component for the entailment algo options
+ * Purpose: Educational use only.
  */
 
 import React from "react";
