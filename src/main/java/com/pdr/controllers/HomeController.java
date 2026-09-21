@@ -1,3 +1,8 @@
+/**
+ * File: HomeController.jaba
+ * Original Author: Liam De Saldanha (2026 Honours Project, University of Cape Town)
+ */
+
 package com.pdr.controllers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;

@@ -1,4 +1,14 @@
 package com.pdr.dtos;
+/*
+ * File: RankDTO.java
+ * Package: com.pdr.dtos
+ *
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original Author
+ * 
+ * Context: Used for PDR project for exceptionality check trace
+ * Purpose: Educational use only.
+ */
 
 import java.util.List;
 
