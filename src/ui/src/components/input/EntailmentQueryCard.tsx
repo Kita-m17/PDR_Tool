@@ -1,3 +1,9 @@
+/**
+ * File: EntailmentQueryCard.tsx
+ * Original Author: Nikita Martin, Samukelisiwe Zwane, Liam De Saldanha (PDR Honours Project - University of Cape Town)
+ * Component for the entailment algo options
+ */
+
 import React from "react";
 
 interface EntailmentQueryCardProps{
@@ -13,6 +19,7 @@ const EntailmentQueryCard: React.FC<EntailmentQueryCardProps> = ({selected, onAl
         {id: 'minimal relevant', label: 'Minimal Relevant Closure'},
     ];
 
+    //choose between the algos - can select more than one to render
     const toggleAlgorithm = (id: string) => {
         if (selected.includes(id)) {
             onAlgorithmChange(selected.filter((a) => a !== id));

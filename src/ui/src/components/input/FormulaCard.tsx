@@ -1,3 +1,9 @@
+/**
+ * File: FormulaCard.tsx
+ * Original Authors: Nikita, Liam, Samukelisiwe (2026 PDR Honours Project - University of Cape Town)
+ * component to collect the KB from input
+ */
+
 import React, {useState} from "react";
 import { Button } from "../ui/Buttons";
 import { UploadIcon, TriangleDownIcon} from "@radix-ui/react-icons";
@@ -16,6 +22,7 @@ function splitFormulas(input: string): string[] {
 
 type InvalidFormulaResult = Extract<FormulaValidationResult, { valid: false }>;
 
+// Whole-textarea validation: catches "empty" up front, then runs each formula through validateFormula and reports the first failure (or a count, if more than one) as the field-level error message.
 const kbSchema = z.object({
     input: z.string().min(1, "Knowledge base cannot be empty").superRefine((val, ctx) => {
         const formulas = splitFormulas(val);
@@ -152,11 +159,6 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
 
             {/* Textarea for input */}
             <form onSubmit={handleSubmit(onValid)}>
-                {/* <textarea
-                    {...register("input")}
-                    className="mt-4 w-full border border-border rounded-lg p-4 font-mono text-sm h-40 resize-y focus:outline-none focus:border-primary"
-                    placeholder="e.g. (bird|~flies),(penguin=>bird),(penguin|~!flies)"
-                />   */}
                 <textarea
                     {...register("input")} disabled={disabled}
                     className={`mt-4 w-full border border-border rounded-lg p-4 font-mono text-sm h-40 resize-y focus:outline-none focus:border-primary ${disabled ? 'bg-accent text-muted-foreground cursor-not-allowed' : ''}`}
@@ -186,7 +188,7 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
                 </p>
 
                 {/* Buttons */}
-                <div className="flex justify-end gap-3 mt-3">
+                <div className="relative flex flex-wrap justify-end gap-3 mt-3">
                     {/* Hidden file input */}
                     <input
                         type="file"
@@ -206,8 +208,9 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
                         <TriangleDownIcon className="ml-2 h-4 w-4" />
                     </Button>
 
+                    {/* Show example tab - shown when the load example tab is open */}
                     {showExamples && (
-                        <div className ="absolute right-0 top-10 bg-white border border-border rounded-lg shadow-lg z-10 w-64">
+                        <div className ="absolute right-0 top-10 bg-white border border-border rounded-lg shadow-lg z-10 w-64 max-w-[calc(100vw-2rem)]">
                             {EXAMPLES.map((example) => (
                                 <button key={example.label} className="w-full text-left px-4 py-3 hover:bg-accent text-sm border-b border-border last:border-0" type="button"
                                     onClick={() => {

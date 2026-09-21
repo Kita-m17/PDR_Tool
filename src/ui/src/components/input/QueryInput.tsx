@@ -1,6 +1,10 @@
+/**
+ * File: QueryInput.tsx
+ * Original Author: Nikita Martin, Samukelisiwe Zwane, Liam De Saldanha (PDR Honours Project - University of Cape Town)
+ * Component for the query input
+ */
+
 import React, { useState } from "react";
-// import { Button } from "../ui/Buttons";
-// import { fi } from "zod/v4/locales";
 import { Link } from "react-router-dom";
 import { validateTerm } from "../../lib/formulaValidator";
 
@@ -14,6 +18,15 @@ interface QueryInputProps {
     onValidityChange?: (valid: boolean) => void;
 }
 
+/**
+ * Builds the entailment query (e.g. "penguin|~!flies") from four separate
+ * fields - Antecedent, Relation, Consequent, Negate - rather than a single
+ * free-text input. Splitting it up means each side of the relation can be
+ * validated independently and the user can't accidentally malform the
+ * connective itself, at the cost of needing to reconstruct/deconstruct the
+ * query string whenever it crosses the component boundary (see parseDefault
+ * and the query-building logic in the first useEffect below).
+ */
 const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disabled, onValidityChange }) => {
 
     //parse defaultValue back into parts
@@ -33,7 +46,7 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
 
     const defaults = parseDefault(defaultValue); // get default vals
 
-    //get query
+    //get query parts
     const [antecedent, setAntecedent] = useState(defaults.antecedent);
     const [consequent, setConsequent] = useState(defaults.consequent);
     const [relation, setRelation] = useState(defaults.relation);
@@ -67,8 +80,9 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
         setNegate(defaults.negate);
     }, [defaultValue]);
 
+    // shared styling between the inputs
     const fieldClass = (invalid: boolean) =>
-        `border rounded-lg px-3 py-2 text-sm focus:outline-none ${
+        `w-full border rounded-lg px-3 py-2 text-sm focus:outline-none ${
             invalid ? 'border-red-400 focus:border-red-500' : 'border-border focus:border-pdr-blue'
         } ${disabled ? 'bg-accent text-muted-foreground cursor-not-allowed' : ''}`;
 
@@ -91,9 +105,9 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
             </p>
 
             {/* Input row */}
-            <div className="mt-4 flex items-center gap-4">
+            <div className="mt-4 flex flex-wrap items-center gap-4">
                 {/* Antecedent */}
-                <div className="flex flex-col gap-1 flex-1">
+                <div className="flex flex-col gap-1 flex-1 min-w-[140px]">
                     <label className="text-sm text-gray-600"> 
                         Antecedent
                     </label>
@@ -112,7 +126,7 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
                     )}
                 </div>
 
-                {/* Relation */}
+                {/* Relation - connective between the antecedent & consequent */}
                 <div className="flex flex-col gap-1">
                     <label className="text-sm text-gray-600">
                         Relation
@@ -130,7 +144,7 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
                 </div>
 
                 {/* Consequent */}
-                <div className="flex flex-col gap-1 flex-1">
+                <div className="flex flex-col gap-1 flex-1 min-w-[140px]">
                     <label className="text-sm text-gray-600">
                         Consequent
                     </label>
@@ -149,7 +163,7 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
                     )}
                 </div>
 
-                {/* Negate */}
+                {/* Negate - toggle to negate the consequent */}
                 <div className="flex flex-col gap-1">
                     <label className="text-sm text-gray-600">
                         Negate consequent
@@ -168,7 +182,7 @@ const QueryInput: React.FC<QueryInputProps> = ({ onSubmit, defaultValue, disable
 
             </div>
 
-            {/* Preview */}
+            {/* Preview - read-only rendering of the query*/}
             {preview && (
                 <p className="mt-5 text-s text-gray-600">
                     <span className="font-medium pr-2">
