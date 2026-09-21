@@ -1,7 +1,7 @@
 /*
  * Original Author: Thabo Vincent Moloi (2024 Honours Project, University of Cape Town)
  * Adapted by: Samukelisiwe (2026 Honours Project, University of Cape Town)
- * Changes: Added the sub-knowledge base trace 
+ * Changes: Added the sub-knowledge base trace and justifications
  *
  * Context: Used in PDR's project for lexicographic closure reasoning.
  * Purpose: Educational use only.
@@ -17,21 +17,17 @@ import com.pdr.dtos.RankDTO;
 
 
 public class LexicographicEntailment extends Entailment {
-
+    // re-exposed as DTOs
     @JsonIgnore
     private final Ranking removedRanking;
+    // Each rank = single combined formula Ri,m
     @JsonIgnore
     private final Ranking weakenedRanking;
-
-    // The smallest set of statements in the surviving R∞ ∪ R that on its own
-    // entails the query - empty when the query is not entailed, since there is
-    // nothing to justify then.
     @JsonIgnore
     private final KnowledgeBase weakJustification;
 
     // surviving sub-KBs + query + answer
     private final List<SubKnowledgeBaseCheck> finalChecks;
-    // trace
     private final List<LexicographicStep> lexicographicSteps;
 
     private LexicographicEntailment(LexicographicEntailmentBuilder builder) {
@@ -46,6 +42,8 @@ public class LexicographicEntailment extends Entailment {
     public static LexicographicEntailmentBuilder builder() {
         return new LexicographicEntailmentBuilder();
     }
+    
+    // plain getters are for Java callers 
 
     public Ranking getRemovedRanking() {
         return removedRanking;
@@ -55,7 +53,7 @@ public class LexicographicEntailment extends Entailment {
         return weakenedRanking;
     }
 
-    // get query checked against each sub-knowledge base
+    // get query checked againstsurviving sub-knowledge base
     public List<SubKnowledgeBaseCheck> getFinalChecks() {
         return finalChecks;
     }
@@ -64,13 +62,8 @@ public class LexicographicEntailment extends Entailment {
         return lexicographicSteps;
     }
 
-    // JSON VIEW
+    // JSON VIEW 
 
-    /**
-     * The proof for the entailment, under the same JSON name Basic/Minimal
-     * Relevant Closure use, so the frontend reads it off EntailmentDTO the
-     * same way for all three closures.
-     */
     @JsonProperty("smallestWeakJustification")
     public List<String> getWeakJustification() {
         return weakJustification != null ? weakJustification.toStringList() : List.of();

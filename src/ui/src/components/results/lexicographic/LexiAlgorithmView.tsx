@@ -1,24 +1,33 @@
 import React from 'react';
 import { TriangleRightIcon } from '@radix-ui/react-icons';
+import { TexFormula } from '../../ui/TexFormula';
 
 interface LexicographicAlgorithmViewProps {
     highlightedLines: number[];
 }
 
-const lines = [
-    { num: 1, code: 'R := R₀ U ... U Rₙ₋₁' },
-    { num: 2, code: 'i := 0' },
-    { num: 3, code: 'while R∞ U R |= ¬α and R ≠ ∅' },
-    { num: 4, code: '   R := R \\ Rᵢ', indent: true },
-    { num: 5, code: '   m := |Rᵢ| − 1', indent: true },
-    { num: 6, code: '   Rᵢ,ₘ := ⋁ { ⋀X | X ⊆ Rᵢ, |X| = m }', indent: true },
-    { num: 7, code: '   while R∞ U R U {Rᵢ,ₘ} |= ¬α and m > 0', indent: true },
-    { num: 8, code: '      m := m − 1', indent: true },
-    { num: 9, code: '      Rᵢ,ₘ := ⋁ { ⋀X | X ⊆ Rᵢ, |X| = m }', indent: true },
-    { num: 10, code: '   R := R U {Rᵢ,ₘ}', indent: true },
-    { num: 11, code: '   i := i + 1', indent: true },
-    { num: 12, code: 'return R∞ U R |= α -> β' },
+// indentation = 1 inside the outer loop, 2 inside the inner one.
+const lines: { num: number; tex: string; indent?: number }[] = [
+    { num: 1, tex: "\\text{Input: A defeasible knowledge base } \\mathcal{K} \\text{ and a defeasible query } \\alpha \\vsim \\beta" },
+    { num: 2, tex: "\\text{Output: } \\textbf{true} \\text{ if } \\mathcal{K} \\mid \\! \\approx_{LC} \\alpha \\vsim \\beta \\text{, } \\textbf{false} \\text{ otherwise}" },
+    { num: 3, tex: "(\\mathcal{R}_0, \\dots, \\mathcal{R}_{n-1}, \\mathcal{R}_\\infty, n) := \\text{BaseRank}(\\mathcal{K})" },
+    { num: 4, tex: "\\mathcal{R} := \\bigcup_{j=0}^{n-1} \\mathcal{R}_j" },
+    { num: 5, tex: "i := 0, m:=0" },
+    { num: 6, tex: "\\textbf{while}\\ \\mathcal{\\overrightarrow{R}}_\\infty \\cup \\mathcal{\\overrightarrow{R}} \\models \\neg\\alpha\\ \\textbf{and}\\ \\mathcal{R} \\neq \\emptyset\\ \\textbf{do}" },
+    { num: 7, tex: "\\mathcal{R} := \\mathcal{R} \\setminus \\mathcal{R}_i", indent: 1 },
+    { num: 8, tex: "m := |\\mathcal{R}_i| - 1", indent: 1 },
+    { num: 9, tex: "\\mathcal{R}_{i,m} := \\bigvee_{X \\in \\text{Subsets}(\\mathcal{R}_i, m)} \\bigwedge_{x \\in X} x", indent: 1 },
+    { num: 10, tex: "\\textbf{while}\\ \\mathcal{\\overrightarrow{R}}_\\infty \\cup \\mathcal{\\overrightarrow{R}} \\cup \\{\\mathcal{\\overrightarrow{R}}_{i,m}\\} \\models \\neg\\alpha\\ \\textbf{and}\\ m > 0\\ \\textbf{do}", indent: 1 },
+    { num: 11, tex: "m := m - 1", indent: 2 },
+    { num: 12, tex: "\\mathcal{R}_{i,m} := \\bigvee_{X \\in \\text{Subsets}(\\mathcal{R}_i, m)} \\bigwedge_{x \\in X} x", indent: 2 },
+    { num: 13, tex: "\\textbf{end while}", indent: 1 },
+    { num: 14, tex: "\\mathcal{R} := \\mathcal{R} \\cup \\{\\mathcal{R}_{i,m}\\}", indent: 1 },
+    { num: 15, tex: "i := i + 1", indent: 1 },
+    { num: 16, tex: "\\textbf{end while}" },
+    { num: 17, tex: "\\textbf{return}\\ \\mathcal{R}_\\infty \\cup \\mathcal{R} \\models \\alpha \\rightarrow \\beta" },
 ];
+
+const indentClass = ['', 'ml-4', 'ml-8'];
 
 const LexicographicAlgorithmView: React.FC<LexicographicAlgorithmViewProps> = ({ highlightedLines }) => {
     return (
@@ -31,7 +40,7 @@ const LexicographicAlgorithmView: React.FC<LexicographicAlgorithmViewProps> = ({
                 Lexicographic Closure (pseudocode)
             </p>
 
-            <div className="font-mono text-sm space-y-1">
+            <div className="text-sm space-y-1">
                 {lines.map((line) => {
                     const isHighlighted = highlightedLines.includes(line.num);
                     return (
@@ -51,8 +60,8 @@ const LexicographicAlgorithmView: React.FC<LexicographicAlgorithmViewProps> = ({
                                 {line.num}
                             </span>
 
-                            <span className={isHighlighted ? 'text-foreground font-medium' : 'text-muted-foreground'}>
-                                {line.code}
+                            <span className={`${indentClass[line.indent ?? 0]} ${isHighlighted ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+                                <TexFormula>{line.tex}</TexFormula>
                             </span>
                         </div>
                     );
