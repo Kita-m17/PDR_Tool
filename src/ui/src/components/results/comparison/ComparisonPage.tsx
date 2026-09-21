@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BaseRankDTO, EntailmentDTO, LexicographicEntailmentDTO, RankDTO } from '../../../api/api';
+import { BaseRankDTO, EntailmentDTO, LexicographicEntailmentDTO, PartitionDTO, evaluate } from '../../../api/api';
 import Header from '../../layout/Header';
 import Footer from '../../layout/Footer';
 import StepControls from '../StepControls';
@@ -13,80 +13,69 @@ import { Button } from '../../ui/Buttons';
 import { ArrowLeftIcon,ArrowRightIcon } from '@radix-ui/react-icons';
 
 interface ComparisonState {
-    baseRank: BaseRankDTO;
+    formulas: string[];
     query: string;
-    rcEntailment: EntailmentDTO;
-    lcEntailment: EntailmentDTO;
-    relcEntailment: EntailmentDTO;
 };
 
 const ComparisonPage: React.FC = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
-    const {baseRank, query} = location.state as ComparisonState;
+    // location.state is lost on a browser refresh / direct visit, so guard it.
+    const state = location.state as ComparisonState | null;
+    const formulas = state?.formulas;
+    const query = state?.query ?? '';
 
     const [currentStep, setCurrentStep] = useState(0);
+    const [baseRank, setBaseRank] = useState<BaseRankDTO | null>(null);
     const [rcResult, setRcResult] = useState<EntailmentDTO | null>(null);
     const [lcResult, setLcResult] = useState<LexicographicEntailmentDTO | null>(null);
     const [relcResult, setRelcResult] = useState<EntailmentDTO | null>(null);
-    const [partition, setPartition] = useState<RankDTO | null>(null);
-
+    const [partition, setPartition] = useState<PartitionDTO | null>(null);
     const [loading, setLoading] = useState(true);
-
-
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (!formulas || !query) {
+            setLoading(false);
+            return;
+        }
         const fetchResults = async () => {
-            try{
+            try {
                 setLoading(true);
-
-                //rc
-                const rcResults = await fetch('http://localhost:8080/api/entailment/rational', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'text/plain'},
-                    body: query,
-                });
-
-                const rc = await rcResults.json();
-                setRcResult(rc);
-
-                //lc
-                const lcResults = await fetch('http://localhost:8080/api/entailment/lexicographic', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'text/plain'},
-                    body: query,
-                });
-
-                const lc = await lcResults.json();
-                setLcResult(lc);
-
-                //Minimal RelC - partition first, then entailment
-                const partitionRes = await fetch('http://localhost:8080/api/partition/relevant/create/minimal', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: query,
-                });
-                const partitionData = await partitionRes.json();
-                setPartition(partitionData); 
-
-                const relcResults = await fetch('http://localhost:8080/api/entailment/minimal relevant', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'text/plain'},
-                    body: query,
-                });
-                const relc = await relcResults.json();
-                setRelcResult(relc);
-
-            } catch (error) {
-                console.error('Error fetching entailment results:', error);
+                setError(null);
+                const res = await evaluate(formulas, query, ['rational', 'lexicographic', 'minimal relevant']);
+                const find = (name: string) => res.results.find(r => r.algorithm === name);
+                setBaseRank(res.baseRank);
+                setRcResult(find('rational')?.entailment ?? null);
+                setLcResult((find('lexicographic')?.entailment ?? null) as LexicographicEntailmentDTO | null);
+                setRelcResult(find('minimal relevant')?.entailment ?? null);
+                setPartition(find('minimal relevant')?.partition ?? null);
+            } catch (e) {
+                console.error('Error fetching entailment results:', e);
+                setError('Something went wrong. Make sure the backend is running.');
             } finally {
                 setLoading(false);
             }
         };
-
         fetchResults();
-    }, [query]);
+    }, [formulas, query]);
+
+    if (loading || !baseRank) {
+        return (
+            <div className="min-h-screen bg-accent flex flex-col">
+                <Header />
+                <main className="flex-1 flex flex-col items-center justify-center gap-4">
+                    <p className="text-muted-foreground">
+                        {loading ? 'Loading comparison...'
+                            : error ?? 'No comparison to show. Go back and enter a knowledge base and query.'}
+                    </p>
+                    {!loading && <Button variant="outline" size="lg" onClick={() => navigate('/')}>Back to input</Button>}
+                </main>
+                <Footer />
+            </div>
+        );
+    }
 
     const steps = [
         <Step1_CommonBaseRank 
@@ -125,21 +114,6 @@ const ComparisonPage: React.FC = () => {
     ];
 
     const totalSteps = steps.length;
-
-    if(loading){
-        return (
-            <div className="min-h-screen bg-accent flex flex-col">
-                <Header />
-                <main className="flex-1 flex items-center justify-center">
-                    <p className="text-muted-foreground">
-                        Loading comparison...
-                    </p>
-                </main>
-                <Footer />
-            </div>
-        );
-    }
-
 
     return(
         <div className="min-h-screen bg-accent flex flex-col">
