@@ -1,3 +1,10 @@
+/*
+ * File: Step5_FinalResults.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: React component for displaying a step five of the comparison.
+ * Purpose: Educational use only.
+ */
 import React from 'react';
 import { EntailmentDTO, LexicographicEntailmentDTO } from '../../../../api/api';
 

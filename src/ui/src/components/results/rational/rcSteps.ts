@@ -28,7 +28,12 @@ export interface DebuggerStep {
         culprit: string;
         innocent: string[];
     };
+    // Shown in ExplanationView's "Show details" panel on the exceptional-check
+    // step: the formulas responsible for the antecedent still being exceptional.
     justification?: string[];
+    // Shown on the final step when entailed: the surviving formulas that
+    // entail the query. NOT yet minimised to a true unsat/entailment core -
+    // this is the full surviving working set until that's available.
     weakJustification?: string[];
 }
 
@@ -113,12 +118,13 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
 
     const queryConsequent = rawConsequent?.replace('!', '').trim() || '';
 
+
     // Step 1 -Initialise
     steps.push({
         stepNumber: 2,
         totalSteps: 0, //will update at the end
         highlightedLines: [2,3,4],
-        explanation: `We begin the entailment process by combining all finite ranks into one working set R, alongside R∞ which always remains.\n\nWorking set R contains all defeasible statements. R∞ contains the classical statements that are never removed.`,
+        explanation: `We begin by combining all finite ranks into one working set R, alongside R∞ which always remains.\n\nR holds the statements that may still be removed if they turn out exceptional. R∞ holds the statements that never get removed - usually classical (strict) statements, though a defeasible one can end up here too if it never stops being exceptional.`,
         workingSet: finiteRanks.flatMap(r => r.knowledgeBase).map(f => f.replace('|~', '=>')),
         rInfinity,
         rankingState: buildRankingState(baseRanking, removedSoFar, -1),
@@ -146,6 +152,9 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 queryAntecedent,
                 queryConsequent,
                 workingSetIncludesRInfinity: true,
+                // The rank about to be removed is exactly what's keeping the
+                // antecedent exceptional - shown as the "unsatisfiable core" below.
+                justification: traceStep.removed.map(f => f.replace('|~', '=>')),
             });
 
             // Step - remove rank
@@ -188,7 +197,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 stepNumber: steps.length + 1,
                 totalSteps: 0,
                 highlightedLines: [8,9],
-                explanation: `We now perform the final classical entailment check.\n\nDoes R∞ U R classically entail the materialised query?\n\nRemaining set: { ${traceStep.remaining.map(f => f.replace('|~', '=>')).join(', ')} }`,
+                explanation: `We now perform the final classical entailment check.\n\nDoes R∞ U R classically entail the materialised query?`,
                 workingSet: traceStep.remaining.map(f => f.replace('|~', '=>')),
                 rInfinity,
                 rankingState: buildRankingState(baseRanking, removedSoFar, -1),
@@ -197,6 +206,9 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 queryAntecedent,
                 queryConsequent,
                 workingSetIncludesRInfinity: true,
+                // Not a minimised unsat/entailment core yet - the full surviving
+                // working set, shown only when the query is actually entailed.
+                weakJustification: entailed ? traceStep.remaining.map(f => f.replace('|~', '=>')) : undefined,
             });
         }
     });
