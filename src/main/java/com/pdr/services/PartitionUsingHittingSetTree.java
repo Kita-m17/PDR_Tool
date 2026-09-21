@@ -1,3 +1,4 @@
+
 package com.pdr.services;
 
 import com.pdr.models.*;
@@ -17,6 +18,14 @@ import java.util.List;
 import java.util.Queue;
 
 import static com.pdr.services.ClassicalJustificationService.computeSingleJustification;
+
+/*
+ * Original Author: Liam De Saldanha , Honours Project (2026), University of Cape Town
+ *
+ * Context: Used in PDR project for the combined "evaluate all algorithms" endpoint.
+ * Purpose: Educational use only.
+ */
+
 @Service
 public class PartitionUsingHittingSetTree implements PartitionService{
     /**
