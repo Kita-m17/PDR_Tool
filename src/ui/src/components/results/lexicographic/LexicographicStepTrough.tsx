@@ -48,12 +48,10 @@ const LexicographicStepThrough: React.FC = () => {
                             Step-by-step evaluation
                         </p>
 
-                        {/* Brief explanation of the LexC algorithm */}
-                        <p className="text-sm text-foreground mt-2 max-w-2xl">
-                            Lexicographic Closure weakens an exceptional rank instead of
-                            discarding it. It keeps as many statements from the rank as it can,
-                            and only drops one more when every remaining sub-knowledge base
-                            still refutes the query antecedent.
+                        {/* Brief explanation of algorithm */}
+                        <p className="text-sm text-foreground mt-2">
+                            Lexicographic Closure weakens an exceptional rank instead of discarding it. It keeps as many statements from the rank as it can,
+                            and only drops one more when every remaining sub-knowledge base still refutes the query antecedent.
                         </p>
                     </div>
 
@@ -75,12 +73,12 @@ const LexicographicStepThrough: React.FC = () => {
                     <span className="font-mono text-foreground">{query}</span>
                 </div>
 
-                {/* Ranking visualiser, full width */}
+                {/* Ranking visualiser */}
                 <div className="bg-white border border-border rounded-xl p-6 mb-4">
                     <LexicographicRankingVisualiser rankingState={step.rankingState} />
                 </div>
 
-                {/* Algorithm + Explanation side by side */}
+                {/* Algorithm + Explanation */}
                 <div className="flex gap-4 mb-4">
                     <div className="bg-white border border-border rounded-xl p-6 flex-1">
                         <LexicographicAlgorithmView highlightedLines={step.highlightedLines} />
@@ -103,7 +101,7 @@ const LexicographicStepThrough: React.FC = () => {
                     />
                 </div>
 
-                {/* Done button, only on final step */}
+                {/* Done button*/}
                 {step.isFinalStep && (
                     <div className="flex justify-end mt-4">
                         <Button variant="primary" size="lg" 

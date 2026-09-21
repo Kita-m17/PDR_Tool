@@ -3,6 +3,8 @@ package com.pdr.dtos;
  * File: BaseRankDTO.java
  * Package: com.pdr.dtos
  *
+ * Original Author: Nikita Martin, Liam De Saldanha, Samukelisiwe Zwane (2026 Honours Project, University of Cape Town)
+ * Context: Used in PDR project for the BaseRank algorithm.
  * Original Author: Nikita Martin (2026 Honours Project, University of Cape Town)
  * Context: Used in PDR project for the BaseRank algorithm display on frontend.
  * Purpose: Used for educational purposes

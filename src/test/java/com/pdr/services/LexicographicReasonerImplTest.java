@@ -2,6 +2,7 @@ package com.pdr.services;
 /*
  * Original Author: Samukelisiwe Zwane, Honours Project (2026), University of Cape Town
  *
+ * AI was used to assist making this class
  * Context: Used in PDR project for testing lexicographic closure.
  * Purpose: Educational use only.
  */
@@ -82,7 +83,7 @@ class LexicographicReasonerImplTest {
     }
 
     @Test
-    @DisplayName("Drowning problem: RC loses penguin|~wings, LexC keeps it")
+    @DisplayName("Drowning problem: RC drops penguin|~wings, LC keeps it")
     void getEntailmentRecoversDrownedStatement() throws Exception {
         assertThat(rational(DROWNING_KB, "(penguin|~wings)").getEntailed()).isFalse();
         assertThat(lexicographic(DROWNING_KB, "(penguin|~wings)").getEntailed()).isTrue();
@@ -115,7 +116,7 @@ class LexicographicReasonerImplTest {
     }
 
     @Test
-    @DisplayName("A single-statement rank is dropped outright, matching Rational Closure")
+    @DisplayName("A single-statement rank is dropped")
     void getEntailmentRemovesSingleStatementRank() throws Exception {
         String kb = "(bird|~flies),(penguin=>bird),(penguin|~!flies)";
         LexicographicEntailment result = lexicographic(kb, "(penguin|~!flies)");
@@ -138,7 +139,7 @@ class LexicographicReasonerImplTest {
     }
 
     @Test
-    @DisplayName("Garfield: RC loses garfield|~hasFur, LexC keeps it")
+    @DisplayName("Garfield: RC discards garfield|~hasFur, while LC keeps it")
     void getEntailmentGarfieldHasFur() throws Exception {
         assertThat(rational(GARFIELD_KB, "(garfield|~hasFur)").getEntailed()).isFalse();
         assertThat(lexicographic(GARFIELD_KB, "(garfield|~hasFur)").getEntailed()).isTrue();
@@ -160,7 +161,7 @@ class LexicographicReasonerImplTest {
     }
 
     @Test
-    @DisplayName("Garfield: rank 0 is weakened down to one statement, not two")
+    @DisplayName("Garfield: rank 0 is weakened down to one statement")
     void getEntailmentGarfieldWeakeningStopsAtOne() throws Exception {
         LexicographicEntailment result = lexicographic(GARFIELD_KB, "(garfield|~hasFur)");
 
@@ -182,7 +183,7 @@ class LexicographicReasonerImplTest {
     }
 
     @Test
-    @DisplayName("Trace has one entry per weakened rank plus a closing entry")
+    @DisplayName("Trace has one entry per weakened rank plus closing entry")
     void getEntailmentTraceShape() throws Exception {
         LexicographicEntailment result = lexicographic(GARFIELD_KB, "(garfield|~hasFur)");
 
