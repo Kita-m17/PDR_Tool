@@ -5,7 +5,7 @@ export interface LexRankState {
     rankNumber: number;
     formulas: string[];
     isRemoved: boolean;         // dropped entirely - no subset survived
-    isBeingWeakened: boolean;   // currently under consideration
+    isBeingWeakened: boolean;   
     weakenedTo?: string;        // the combined formula that replaced it
 }
 
@@ -18,7 +18,7 @@ export interface LexDebuggerStep {
     rInfinity: string[];
     rankingState: LexRankState[];
 
-    // populated while a rank is being weakened
+    // populated when a rank is being weakened
     rankNumber?: number;
     rankSize?: number;
     subsetSize?: number;
@@ -26,10 +26,10 @@ export interface LexDebuggerStep {
     combinedFormula?: string | null;
     rankRemoved?: boolean;
 
-    // detail panel material, sent by the backend on every LexicographicStepDTO
-    stepDetails?: string;                        // the backend's own narrative for this rank
-    survivingSubKBs?: SubKnowledgeBaseCheckDTO[];// the sub-KBs that stopped refuting the antecedent
-    subsetCount?: number;                        // how many subsets exist at this m
+    // detail panel material
+    stepDetails?: string;                        
+    survivingSubKBs?: SubKnowledgeBaseCheckDTO[];
+    subsetCount?: number;                        
 
     // populated on the final step
     finalChecks?: SubKnowledgeBaseCheckDTO[];
@@ -72,8 +72,8 @@ export function buildLexicographicSteps(entailment: LexicographicEntailmentDTO):
         ...base,
         stepNumber: 1,
         totalSteps: 0,
-        highlightedLines: [1, 2],
-        explanation: `We materialise the ranked knowledge base. Each defeasible statement α |~ β becomes a classical implication α → β, so the rest of the algorithm can use classical entailment checks.\n\nThe finite ranks make up the working set R. R∞ holds the classical statements, which are never weakened or removed.`,
+        highlightedLines: [3, 4, 5],
+        explanation: `We materialise the ranked knowledge base to perform classical entailment checks.\n\nThe finite ranks make up the working set R. R∞ holds the classical statements, which are never weakened or removed.`,
         workingSet: finiteRanks.flatMap(r => r.knowledgeBase).map(f => f.replace('|~', '=>')),
         rankingState: buildRankingState(baseRanking, removedSoFar, weakenedSoFar, -1),
         isFinalStep: false,
@@ -83,19 +83,17 @@ export function buildLexicographicSteps(entailment: LexicographicEntailmentDTO):
     lexicographicSteps.forEach((lexStep: LexicographicStepDTO) => {
         const groups = groupBySubsetSize(lexStep.subKBs);
 
-        // Line 3 - the antecedent is still refuted, so this rank must be weakened.
+        //line 6 rank must be weakened.
         steps.push({
             ...base,
             stepNumber: steps.length + 1,
             totalSteps: 0,
-            highlightedLines: [3],
-            explanation: `Does R∞ ∪ R still entail ¬${queryAntecedent}?\n\nYes, so ${queryAntecedent} is still refuted and Rank ${lexStep.rankNumber} has to be dealt with. Rational Closure would throw the whole rank away. Lexicographic Closure keeps as much of it as it can.`,
+            highlightedLines: [6],
+            explanation: `Does R∞ ∪ R still entail ¬${queryAntecedent}?\n\nYes, so ${queryAntecedent} is still refuted and Rank ${lexStep.rankNumber} has to be dealt with. Lexicographic Closure keeps as much of the rank as possible.`,
             workingSet: unionOf(lexStep.remainingRanks, lexStep.originalRank),
             rankingState: buildRankingState(baseRanking, removedSoFar, weakenedSoFar, lexStep.rankNumber),
             rankNumber: lexStep.rankNumber,
             rankSize: lexStep.rankSize,
-            stepDetails: lexStep.stepDetails,
-            survivingSubKBs: lexStep.survivingSubKBs,
             isFinalStep: false,
         });
 
@@ -106,7 +104,7 @@ export function buildLexicographicSteps(entailment: LexicographicEntailmentDTO):
             const allRefuted = group.every(check => check.holds);
 
             const opening = first
-                ? `Rank ${lexStep.rankNumber} is taken out of R, and we start by dropping one statement: m = |R${lexStep.rankNumber}| − 1 = ${m}.`
+                ? `Rank ${lexStep.rankNumber} is taken out of R, and we drop one statement: m = |R${lexStep.rankNumber}| − 1 = ${m}.`
                 : `Every sub-knowledge base at m = ${m + 1} still refuted ${queryAntecedent}, so we drop one more statement: m = ${m}.`;
 
             const body = m === 0
@@ -117,7 +115,7 @@ export function buildLexicographicSteps(entailment: LexicographicEntailmentDTO):
                 ...base,
                 stepNumber: steps.length + 1,
                 totalSteps: 0,
-                highlightedLines: first ? [4, 5, 6] : [7, 8, 9],
+                highlightedLines: first ? [7, 8, 9] : [10, 11, 12],
                 explanation: opening + body,
                 workingSet: lexStep.remainingRanks,
                 rankingState: buildRankingState(baseRanking, removedSoFar, weakenedSoFar, lexStep.rankNumber),
@@ -126,15 +124,12 @@ export function buildLexicographicSteps(entailment: LexicographicEntailmentDTO):
                 subsetSize: m,
                 subKBs: group,
                 subsetCount: group.length,
-                stepDetails: lexStep.stepDetails,
-                // Only meaningful once the inner loop has settled, which is the group
-                // the algorithm actually stopped at.
-                survivingSubKBs: m === lexStep.finalSubsetSize ? lexStep.survivingSubKBs : undefined,
+                //survivingSubKBs: m === lexStep.finalSubsetSize ? lexStep.survivingSubKBs : undefined,
                 isFinalStep: false,
             });
         });
 
-        // Line 10 - put the weakened rank back, or leave it out.
+        // Line 14 - put the weakened rank back, or leave it out.
         if (lexStep.rankRemoved) {
             removedSoFar.add(lexStep.rankNumber);
         } else {
@@ -145,10 +140,11 @@ export function buildLexicographicSteps(entailment: LexicographicEntailmentDTO):
             ...base,
             stepNumber: steps.length + 1,
             totalSteps: 0,
-            highlightedLines: [10, 11],
+            highlightedLines: [14, 15],
             explanation: lexStep.rankRemoved
-                ? `No subset of Rank ${lexStep.rankNumber} stops refuting ${queryAntecedent}, so the whole rank is dropped and nothing goes back into R.\n\nRational Closure would have removed the rank here too.`
-                : `Rank ${lexStep.rankNumber} goes back into R as the single combined formula R${lexStep.rankNumber},${lexStep.finalSubsetSize}, which keeps ${lexStep.finalSubsetSize} of its ${lexStep.rankSize} statements.\n\nR∞ ∪ R no longer entails ¬${queryAntecedent}, so the outer loop stops here.`,
+                ? `No subset of Rank ${lexStep.rankNumber} stops refuting ${queryAntecedent}, so the whole rank is dropped and nothing goes back into R.\n\n Same behaviour as Rational Closure.`
+                : `Rank ${lexStep.rankNumber} goes back into R as the single combined formula R${lexStep.rankNumber},${lexStep.finalSubsetSize}, which keeps ${lexStep.finalSubsetSize} of its ${lexStep.rankSize} statements.
+                \n\nR∞ ∪ R no longer entails ¬${queryAntecedent}, so the outer loop stops here.`,
             workingSet: lexStep.remainingAfter,
             rankingState: buildRankingState(baseRanking, removedSoFar, weakenedSoFar, -1),
             rankNumber: lexStep.rankNumber,
@@ -162,7 +158,7 @@ export function buildLexicographicSteps(entailment: LexicographicEntailmentDTO):
         });
     });
 
-    // Line 12 - the loop has stopped, ask the query.
+    // Line 17 final query check
     const lastStep = lexicographicSteps.length > 0
         ? lexicographicSteps[lexicographicSteps.length - 1]
         : undefined;
@@ -175,8 +171,8 @@ export function buildLexicographicSteps(entailment: LexicographicEntailmentDTO):
         ...base,
         stepNumber: steps.length + 1,
         totalSteps: 0,
-        highlightedLines: [12],
-        explanation: `${queryAntecedent} is no longer refuted, so the loop has stopped.\n\nThe last thing to do is the classical entailment check: does R∞ ∪ R entail the materialised query? The query has to hold in every surviving sub-knowledge base, not just one of them.`,
+        highlightedLines: [17],
+        explanation: `${queryAntecedent} is no longer refuted, so the loop has stopped.\n\nThe classical entailment check: does R∞ ∪ R entail the materialised query? The query has to hold in every surviving sub-knowledge base.`,
         workingSet: finalWorkingSet,
         rankingState: buildRankingState(baseRanking, removedSoFar, weakenedSoFar, -1),
         finalChecks,
@@ -193,7 +189,7 @@ export function buildLexicographicSteps(entailment: LexicographicEntailmentDTO):
     return steps;
 }
 
-// The sub-KBs arrive largest subset first, so grouping in order gives one group per m.
+// The sub-KBs arrive largest subset first.
 function groupBySubsetSize(subKBs: SubKnowledgeBaseCheckDTO[]): SubKnowledgeBaseCheckDTO[][] {
     const groups: SubKnowledgeBaseCheckDTO[][] = [];
     let current = -1;

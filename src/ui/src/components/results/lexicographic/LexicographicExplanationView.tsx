@@ -11,18 +11,15 @@ interface LexicographicExplanationViewProps {
 const LexicographicExplanationView: React.FC<LexicographicExplanationViewProps> = ({ step }) => {
     const [showDetails, setShowDetails] = useState(false);
 
-    // reset showDetails when the step changes, same as the Rational Closure view
+    // reset showDetails when the step changes
     React.useEffect(() => {
         setShowDetails(false);
     }, [step.stepNumber]);
 
-    // Details are offered on the steps where the algorithm is actually doing
-    // something - weakening a rank, or asking the final query. The opening
-    // materialisation step has nothing extra to say.
+    // Details are offered on weakening a rank, or asking the final query.
     const hasDetails = !step.isInitialStep &&
         (!!step.stepDetails || !!step.subKBs?.length || step.isFinalStep);
 
-    // The formal definition only makes sense while a rank is being weakened.
     const isSubsetStep = step.subsetSize !== undefined && !!step.subKBs?.length;
 
     const renderChips = (values: string[]) => (
@@ -41,10 +38,7 @@ const LexicographicExplanationView: React.FC<LexicographicExplanationViewProps> 
         </div>
     );
 
-    // `holds` carries opposite polarity in the two tables this renders. On the weakening
-    // steps it means "refutes the antecedent", which is the bad outcome, so Yes is amber.
-    // On the final step it means "entails the query", which is the good outcome. Pass
-    // holdsIsGood so the colours track what the answer means rather than its truth value.
+    //holds = refutes the anteceden on the weakening steps but entails the query on the final step.
     const renderChecks = (checks: SubKnowledgeBaseCheckDTO[], testedLabel: string, holdsIsGood = false) => (
         <table className="w-full border-collapse">
             <thead>
@@ -137,7 +131,7 @@ const LexicographicExplanationView: React.FC<LexicographicExplanationViewProps> 
 
                             <p className="text-xs text-muted-foreground mt-2">
                                 These subsets of Rank {step.survivingSubKBs[0].rankNumber} no longer
-                                refute {step.queryAntecedent}. They are the ones the combined formula keeps.
+                                refute {step.queryAntecedent}. They are the ones kept by the combined formula.
                             </p>
                         </div>
                     )}
@@ -155,7 +149,6 @@ const LexicographicExplanationView: React.FC<LexicographicExplanationViewProps> 
                         </div>
                     )}
 
-                    {/* The final step has no rank of its own to describe */}
                     {step.isFinalStep && (
                         <p className="text-xs text-muted-foreground">
                             The query is asked of every sub-knowledge base that survived the weakening loop.
@@ -195,7 +188,7 @@ const LexicographicExplanationView: React.FC<LexicographicExplanationViewProps> 
                 </div>
             )}
 
-            {/* The final check, one row per surviving sub-knowledge base */}
+            {/*one row per surviving sub-knowledge base */}
             {step.isFinalStep && step.finalChecks && step.finalChecks.length > 0 && (
                 <div className="mb-4">
                     <p className="text-sm font-medium text-foreground mb-2">
@@ -205,16 +198,13 @@ const LexicographicExplanationView: React.FC<LexicographicExplanationViewProps> 
                 </div>
             )}
 
-            {/* Result */}
             {step.isFinalStep && (
                 <div className={`border rounded-lg p-4 ${step.entailed ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
                     <p className={`text-sm font-semibold ${step.entailed ? 'text-green-700' : 'text-red-700'}`}>
                         {step.entailed ? 'The query IS entailed under Lexicographic Closure.' : 'The query is NOT entailed under Lexicographic Closure.'}
                     </p>
 
-                    {/* Justification (proof) - only meaningful when the query is
-                        entailed, since there's nothing to justify otherwise. Shown
-                        the same way Basic and Minimal Relevant Closure show theirs. */}
+                    {/* Justification */}
                     {step.isResultStep && step.entailed && (
                         <div className="mt-3">
                             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-green-800">

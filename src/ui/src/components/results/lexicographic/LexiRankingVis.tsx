@@ -14,7 +14,7 @@ const LexicographicRankingVisualiser: React.FC<LexicographicRankingVisualiserPro
             </h3>
 
             <p className="text-xs text-muted-foreground mb-3">
-                Ranks are ordered from least to most exceptional. A weakened rank is replaced by a single combined formula.
+                Ranks are ordered from least to most exceptional. A weakened rank is replaced by a combined formula.
             </p>
 
             <table className="w-full border-collapse">
@@ -24,7 +24,7 @@ const LexicographicRankingVisualiser: React.FC<LexicographicRankingVisualiserPro
                             <td className={`py-3 px-4 font-semibold text-sm w-24 text-primary ${rank.isRemoved ? 'opacity-40' : ''}`}>
                                 Rank {rank.rankName}
                             </td>
-
+                            {/* ranking */}
                             <td className="py-3 px-4">
                                 <div className="flex flex-wrap gap-2">
                                     {rank.formulas.map((formula, i) => (
