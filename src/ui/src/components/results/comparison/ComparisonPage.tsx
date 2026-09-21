@@ -17,16 +17,48 @@ interface ComparisonState {
     query: string;
 };
 
+const STORAGE_KEY = 'pdr-comparison-context';
+
+const loadSaved = (): (ComparisonState & { step: number }) | null => {
+    try {
+        const raw = sessionStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+};
+
 const ComparisonPage: React.FC = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
-    // location.state is lost on a browser refresh / direct visit, so guard it.
-    const state = location.state as ComparisonState | null;
-    const formulas = state?.formulas;
-    const query = state?.query ?? '';
+    // Fresh entry from the input page carries {formulas, query}. When returning
+    // from an inspect page ("Back to Comparison") the router state only has
+    // {baseRank, query, ...}, so the comparison context is restored from
+    // sessionStorage, which also survives a refresh.
+    // Resolved ONCE on mount. Re-reading storage every render would create a new
+    // `formulas` array each time and re-trigger the fetch effect in a loop.
+    const [ctx] = useState(() => {
+        const state = location.state as Partial<ComparisonState> | null;
+        const saved = loadSaved();
+        const isFresh = !!state?.formulas;
+        return {
+            formulas: (isFresh ? state!.formulas : saved?.formulas) as string[] | undefined,
+            query: (isFresh ? state!.query : saved?.query) ?? state?.query ?? '',
+            step: isFresh ? 0 : saved?.step ?? 0,
+        };
+    });
+    const { formulas, query } = ctx;
 
-    const [currentStep, setCurrentStep] = useState(0);
+    const [currentStep, setCurrentStep] = useState(ctx.step);
+
+    useEffect(() => {
+        if (!formulas) return;
+        try {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ formulas, query, step: currentStep }));
+        } catch { /* storage unavailable - ignore */ }
+    }, [formulas, query, currentStep]);
+
     const [baseRank, setBaseRank] = useState<BaseRankDTO | null>(null);
     const [rcResult, setRcResult] = useState<EntailmentDTO | null>(null);
     const [lcResult, setLcResult] = useState<LexicographicEntailmentDTO | null>(null);
@@ -59,7 +91,8 @@ const ComparisonPage: React.FC = () => {
             }
         };
         fetchResults();
-    }, [formulas, query]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     if (loading || !baseRank) {
         return (
