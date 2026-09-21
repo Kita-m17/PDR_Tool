@@ -1,3 +1,10 @@
+/*
+ * File: ExplanationView.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: explanation view view - shows algo execution explanayion
+ * Purpose: Educational use only.
+ */
 import React, {useState} from 'react';
 import { DebuggerStep } from './rcSteps';
 import { InfoCircledIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
@@ -20,9 +27,9 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
     return(
         <div className="h-full flex flex-col"> 
             
-                <h3 className="text-primary font-semibold mb-4 flex items-center gap-2">
-                    Explanation
-                </h3>
+            <h3 className="text-primary font-semibold mb-4 flex items-center gap-2">
+                Explanation
+            </h3>
 
             <div className="flex-1 min-h-0 pr-1 overflow-y-auto">
 

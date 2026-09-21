@@ -1,12 +1,20 @@
+/*
+ * File: ExplanationView.tsx
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: algo view - shows algo pseudocode
+ * Purpose: Educational use only.
+ */
 import React from 'react';
 import { TriangleRightIcon } from '@radix-ui/react-icons';
 import { TexFormula } from '../../ui/TexFormula';
 
-
+//interface showing highlighted code
 interface AlgorithmViewProps{
     highlightedLines: number[];
 }
 
+//algo pseudocode
 const lines: { num: number; tex: string; indent?: boolean }[] = [
     { num: 0, tex: "\\text{Input: A knowledge base } \\mathcal{K} \\text{ and a query } \\alpha \\mid \\! \\sim \\beta" },
     { num: 1, tex: "\\text{Output: } \\textbf{true} \\text{ if } \\mathcal{K} \\mid \\! \\approx_{RC} \\alpha  \\mid \\! \\sim \\beta \\text{, } \\textbf{false} \\text{ otherwise}" },
@@ -24,13 +32,13 @@ const AlgorithmView: React.FC<AlgorithmViewProps> =({highlightedLines}) => {
     return (
         <div className="h-full flex flex-col"> 
             
-                <h3 className="text-primary font-semibold mb-1 flex items-center gap-2">
-                    Algorithm
-                </h3>
+            <h3 className="text-primary font-semibold mb-1 flex items-center gap-2">
+                Algorithm
+            </h3>
 
-                <p className="text-xs text-muted-foreground mb-4">
-                    Rational Closure (pseudocode)
-                </p>
+            <p className="text-xs text-muted-foreground mb-4">
+                Rational Closure (pseudocode)
+            </p>
                 
             <div className="flex-1 min-h-0 pr-1 overflow-y-auto">
                 <div className="font-mono text-sm space-y-1">

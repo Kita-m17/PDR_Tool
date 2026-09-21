@@ -1,3 +1,11 @@
+/*
+ * File: rcSteps.ts
+ * Author: Nikita Martin (2026 Honours Project, University of Cape Town)
+ * Status: Original work.
+ * Context: rc steps explanationa
+ * Purpose: Educational use only.
+ */
+
 import { EntailmentDTO, EntailmentStepDTO, RankDTO } from '../../../api/api';
 
 export interface DebuggerStep {
@@ -20,7 +28,7 @@ export interface DebuggerStep {
         culprit: string;
         innocent: string[];
     };
-     justification?: string[];
+    justification?: string[];
     weakJustification?: string[];
 }
 
