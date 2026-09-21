@@ -16,9 +16,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ReasonerFactory {
-
-
-
     public ReasonerService createReasoner(String type) {
 
         return switch (type) {
