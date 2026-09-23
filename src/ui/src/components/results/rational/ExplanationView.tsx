@@ -96,7 +96,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
 
                         <p className="text-xs text-muted-foreground">
                             {step.justification && step.justification.length > 0
-                                ? `This is the unsatisfiable core: the smallest set of formulas that, together with '${step.queryAntecedent}', leads to a contradiction.`
+                                ? `Together with '${step.queryAntecedent}', these formulas in the current working set lead to a contradiction.`
                                 : ''}
                         </p>
                     </div>
@@ -175,7 +175,7 @@ const ExplanationView: React.FC<ExplanationViewProps> = ({ step }) => {
                             ))}
                         </div>
                         <p className="text-sm text-muted-foreground mt-2">
-                            The smallest set of statements in the surviving R∞ ∪ R that entails the query on its own.
+                            The statements in the surviving R∞ ∪ R that entail the query.
                         </p>
                     </div>
                 )}
