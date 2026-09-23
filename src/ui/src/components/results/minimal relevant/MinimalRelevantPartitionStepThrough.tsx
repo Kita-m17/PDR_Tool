@@ -100,7 +100,7 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                         </p>
 
                         <p className="text-sm text-foreground mt-2 max-w-4xl">
-                        A sample of sets (inclusive of all justifications of the negation of the antecedent) is checked for classical entailment of the negation of the query's antecedent in this case {"!"+getAntecedent(query)}.
+                        A sample of sets from the powerset of the knowledge base (inclusive of all justifications of the negation of the antecedent) is checked for classical entailment of the negation of the query's antecedent in this case {"!"+getAntecedent(query)}.
                                                      This is done to find the set of defeasible statements that lead the knowledge base to conclude that no {getAntecedent(query)} exists.
                                                     Minimal entailing subsets are called justifications. Unlike Basic Justifications, Minimal Justifications keep only their lowest-ranked statement
                                                     in the justification. Statements that appear in at
