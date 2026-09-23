@@ -49,6 +49,8 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
 
     const step: MinimalPartitionDebuggerStep | undefined = filteredSteps[currentStep];
     const isLastInView = filteredSteps.length > 0 && currentStep === filteredSteps.length - 1;
+    // Antecedent not exceptional (e.g. not in the KB): the backend returns no trace steps
+    const noJustifications = steps.length === 0;
 
     const handleFilterChange = (next: PartitionFilter) => {
         setFilter(next);
@@ -130,11 +132,11 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                 </div>
 
                 {/* Justification visualiser */}
-                {step && (
+                {(step || noJustifications) && (
                     <div className="bg-white border border-border rounded-xl p-6 mb-4">
                         <JustificationVisualiser
-                            justificationsSoFar={step.justificationsSoFar}
-                            isFinalStep={isLastInView}
+                            justificationsSoFar={step?.justificationsSoFar ?? []}
+                            isFinalStep={isLastInView || noJustifications}
                             relevantPartition={partition.relevantPartition}
                             irrelevantPartition={partition.irrelevantPartition}
                         />
@@ -228,9 +230,9 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                             </>
                         ) : (
                             <p className="text-sm text-muted-foreground italic">
-                                {steps.length === 0
-                                    ? 'No partition trace data was returned for this query.'
-                                    : 'No subsets match this filter - try a different option on the left.'}
+                                {noJustifications
+                                    ? `No justifications were found`
+                                    : 'No subsets match this filter'}
                             </p>
                         )}
                     </div>
@@ -264,6 +266,20 @@ const MinimalRelevantPartitionStepThrough: React.FC = () => {
                             </div>
                         )}
                     </>
+                )}
+
+                {/* No justifications: nothing to step through, but still allow moving on */}
+                {noJustifications && (
+                    <div className="flex justify-end mt-4">
+                        <Button variant="primary" size="lg"
+                            onClick={() => navigate('/results/relevant/basic', {
+                                state: { baseRank, entailment, partition, query, algorithm, fromComparison }
+                            })}
+                        >
+                            Continue to Relevant Closure
+                            <ArrowRightIcon className="ml-2 h-4 w-4" />
+                        </Button>
+                    </div>
                 )}
 
             </main>

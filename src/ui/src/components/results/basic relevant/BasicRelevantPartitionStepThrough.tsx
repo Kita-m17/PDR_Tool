@@ -46,6 +46,8 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
 
     const step: PartitionDebuggerStep | undefined = filteredSteps[currentStep];
     const isLastInView = filteredSteps.length > 0 && currentStep === filteredSteps.length - 1;
+    // Antecedent not exceptional (e.g. not in the KB): the backend returns no trace steps
+    const noJustifications = steps.length === 0;
 
     const handleFilterChange = (next: PartitionFilter) => {
         setFilter(next);
@@ -124,11 +126,11 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
                 </div>
 
                 {/* Justification visualiser, full width - only meaningful once a step exists */}
-                {step && (
+                {(step || noJustifications) && (
                     <div className="bg-white border border-border rounded-xl p-6 mb-4">
                         <JustificationVisualiser
-                            justificationsSoFar={step.justificationsSoFar}
-                            isFinalStep={isLastInView}
+                            justificationsSoFar={step?.justificationsSoFar ?? []}
+                            isFinalStep={isLastInView || noJustifications}
                             relevantPartition={partition.relevantPartition}
                             irrelevantPartition={partition.irrelevantPartition}
                         />
@@ -172,8 +174,8 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
                             </>
                         ) : (
                             <p className="text-sm text-muted-foreground italic">
-                                {steps.length === 0
-                                    ? 'No partition trace data was returned for this query.'
+                                {noJustifications
+                                    ? `No justifications were found: the knowledge base does not classically entail !${getAntecedent(query)}, so ${getAntecedent(query)} is not exceptional (this includes the case where ${getAntecedent(query)} does not appear in the knowledge base). The relevant partition is therefore empty and every statement is irrelevant, so Relevant Closure will not remove any statements.`
                                     : 'No subsets match this filter - try a different option on the left.'}
                             </p>
                         )}
@@ -207,6 +209,20 @@ const BasicRelevantPartitionStepThrough: React.FC = () => {
                             </div>
                         )}
                     </>
+                )}
+
+                {/* No justifications: nothing to step through, but still allow moving on */}
+                {noJustifications && (
+                    <div className="flex justify-end mt-4">
+                        <Button variant="primary" size="lg"
+                            onClick={() => navigate('/results/relevant/basic', {
+                                state: { baseRank, entailment, partition, query, algorithm }
+                            })}
+                        >
+                            Continue to Relevant Closure
+                            <ArrowRightIcon className="ml-2 h-4 w-4" />
+                        </Button>
+                    </div>
                 )}
 
             </main>
