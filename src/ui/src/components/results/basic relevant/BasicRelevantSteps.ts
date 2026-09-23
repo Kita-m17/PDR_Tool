@@ -94,7 +94,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
         totalSteps: 0, //will update at the end
         highlightedLines: [4, 5],
         explanation: `We begin the entailment process by initialising R' to the relevant partition.`,
-        workingSet: finiteRanks.flatMap(r => r.knowledgeBase).map(f => f.replace('|~', '=>')),
+        workingSet: currentRPrime.map(f => f.replace('|~', '=>')),
         rInfinity,
         rankingState: buildRankingState(baseRanking, removedFormulas, new Set(), -1),
         isInitialStep: true,
