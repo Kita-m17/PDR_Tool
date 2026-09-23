@@ -152,9 +152,9 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 queryAntecedent,
                 queryConsequent,
                 workingSetIncludesRInfinity: true,
-                // The rank about to be removed is exactly what's keeping the
-                // antecedent exceptional - shown as the "unsatisfiable core" below.
-                justification: traceStep.removed.map(f => f.replace('|~', '=>')),
+                // The FULL current working set is what's tested for unsatisfiability
+                // together with the antecedent - not just the rank about to be removed.
+                justification: traceStep.remaining.map(f => f.replace('|~', '=>')),
             });
 
             // Step - remove rank
