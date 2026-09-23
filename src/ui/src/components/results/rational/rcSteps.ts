@@ -154,7 +154,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 workingSetIncludesRInfinity: true,
                 // The FULL current working set is what's tested for unsatisfiability
                 // together with the antecedent - not just the rank about to be removed.
-                justification: traceStep.remaining.map(f => f.replace('|~', '=>')),
+                justification: traceStep.justification?.map(f => f.replace('|~', '=>')),
             });
 
             // Step - remove rank
@@ -208,7 +208,7 @@ export function buildDebuggerSteps(entailment: EntailmentDTO): DebuggerStep[] {
                 workingSetIncludesRInfinity: true,
                 // Not a minimised unsat/entailment core yet - the full surviving
                 // working set, shown only when the query is actually entailed.
-                weakJustification: entailed ? traceStep.remaining.map(f => f.replace('|~', '=>')) : undefined,
+                weakJustification: traceStep.weakJustification?.map(f => f.replace('|~', '=>')),
             });
         }
     });
