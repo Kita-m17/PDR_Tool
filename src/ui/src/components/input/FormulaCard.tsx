@@ -21,6 +21,9 @@ function splitFormulas(input: string): string[] {
     return input.split(',').map((f) => f.trim()).filter((f) => f.length > 0);
 }
 
+// Upper bound on knowledge base size (keeps justification search responsive).
+export const MAX_KB_STATEMENTS = 30;
+
 type InvalidFormulaResult = Extract<FormulaValidationResult, { valid: false }>;
 
 // Whole-textarea validation: catches "empty" up front, then runs each formula through validateFormula and reports the first failure (or a count, if more than one) as the field-level error message.
@@ -32,6 +35,14 @@ const kbSchema = z.object({
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Knowledge base cannot be empty",
+            });
+            return;
+        }
+
+        if (formulas.length > MAX_KB_STATEMENTS) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: `Maximum ${MAX_KB_STATEMENTS} statements (${formulas.length} entered).`,
             });
             return;
         }
@@ -91,10 +102,13 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
         (f): f is { raw: string; result: InvalidFormulaResult } => !f.result.valid
     );
 
+    const statementCount = formulaResults.length;
+    const tooManyStatements = statementCount > MAX_KB_STATEMENTS;
+
     React.useEffect(() => {
         const formulas = splitFormulas(inputValue);
         onSubmit(formulas);
-        onValidityChange?.(formulas.length > 0 && invalidFormulaResults.length === 0);
+        onValidityChange?.(formulas.length > 0 && formulas.length <= MAX_KB_STATEMENTS && invalidFormulaResults.length === 0);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [inputValue, onSubmit, onValidityChange, invalidFormulaResults.length]);
 
@@ -166,7 +180,13 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
                     placeholder="e.g. (bird|~flies),(penguin=>bird),(penguin|~!flies)"
                 />
 
-                {errors.input && invalidFormulaResults.length === 0 && (
+                {tooManyStatements && (
+                    <p className="text-red-500 text-xs mt-1">
+                        Maximum {MAX_KB_STATEMENTS} statements ({statementCount} entered).
+                    </p>
+                )}
+
+                {errors.input && invalidFormulaResults.length === 0 && !tooManyStatements && (
                     <p className="text-red-500 text-xs mt-1">{errors.input.message}</p>
                 )}
 
@@ -185,7 +205,10 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ onSubmit, defaultValue, onLoa
                 <p className = "text-sm text-muted-foreground mt-2">
                     Use |~ for defeasible, =&gt; for classical, ! for negation, &amp;&amp; for and, and || for or.
                     Each formula must be wrapped in parentheses, e.g. (a=&gt;b) or (a|~!b). Combine terms with
-                    &amp;&amp; or || by giving each group its own parentheses, e.g. ((a&amp;&amp;b)=&gt;c) or (a|~(b||!c)).
+                    &amp;&amp; or || by giving each group its own parentheses, e.g. ((a&amp;&amp;b)=&gt;c) or (a|~(b||!c)).{" "}
+                    <span className="font-semibold text-orange-600">
+                        Max {MAX_KB_STATEMENTS} statements
+                    </span>
                 </p>
 
                 {/* Buttons */}

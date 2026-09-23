@@ -29,6 +29,7 @@ public class ReasonerController {
     private final BaseRankService baseRankService;
     private final ReasonerFactory reasonerFactory;
     private final DefeasibleParser parser;
+    private static final int MAX_KB_STATEMENTS = 30;
     private final KnowledgeBaseService knowledgeBaseService;
     private final PartitionService partitionService;
 
@@ -61,6 +62,13 @@ public class ReasonerController {
         }
 
         InputDTO inputDTO = request.getInput();
+
+        // Keep in sync with MAX_KB_STATEMENTS in the frontend (FormulaCard.tsx)
+        List<String> kbFormulas = inputDTO.getKnowledgeBaseDTO().getFormulas();
+        if (kbFormulas != null && kbFormulas.size() > MAX_KB_STATEMENTS) {
+            ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Bad Request", "Maximum " + MAX_KB_STATEMENTS + " statements in the knowledge base");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+        }
 
         // Extract KnowledgeBase and Query information
         KnowledgeBaseDTO knowledgeBaseDTO = inputDTO.getKnowledgeBaseDTO();
